@@ -1,0 +1,650 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>PriceAlert</title>
+<style>
+:root{--bg:#0A0F1C;--card:#111829;--line:#1E2A42;--line2:#23304A;--tx:#E6EAF2;--mut:#9AA4B8;--acc:#38BDF8;--ok:#34D399;--okt:#6EE7B7;--warn:#FCD34D;--bad:#FCA5A5;--mono:ui-monospace,"Roboto Mono",monospace}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--tx);font-family:Roboto,"Segoe UI",system-ui,sans-serif;font-size:14px}
+button{font:inherit;color:inherit;cursor:pointer}
+input{font:inherit;color:var(--tx)}
+.app{display:flex;flex-direction:column;min-height:100vh}
+header.top{position:sticky;top:0;z-index:5;background:var(--bg);padding:14px 16px 10px;border-bottom:1px solid transparent}
+header.top.sh{border-bottom-color:var(--line)}
+.brand{display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:10px}
+.logo i{width:36px;height:36px;border-radius:10px;background:var(--acc);display:flex;align-items:center;justify-content:center}
+.logo b{display:block;font-size:18px;letter-spacing:-.01em}
+.logo small{color:var(--mut);font-size:12px}
+.icbtn{width:44px;height:44px;border-radius:12px;border:1px solid var(--line2);background:var(--card);display:flex;align-items:center;justify-content:center}
+.icbtn.spin svg{animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.status{display:flex;align-items:flex-start;gap:8px;margin-top:10px;font-size:12px;color:var(--mut);line-height:1.4}
+.status span:last-child{flex:1;min-width:0}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--ok);flex-shrink:0;margin-top:4px}
+.dot.off{background:#64748B}
+main{flex:1;padding:0 14px 96px}
+.view{display:none}.view.on{display:block}
+.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:6px 0 12px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;text-align:left}
+.tile small{font-size:11px;color:var(--mut)}
+.tile b{display:block;font-size:22px}
+.tile.w small,.tile.w b{color:var(--warn)}
+.tile.h{background:#2A1216;border-color:#5B1F27}.tile.h small,.tile.h b{color:var(--bad)}
+.tile.sel{outline:2px solid var(--acc)}
+.mon{display:flex;align-items:center;gap:10px;background:#0E2236;border:1px solid #17406A;border-radius:12px;padding:10px 12px;margin-bottom:12px;font-size:12.5px;color:#BAE6FD}
+.mon.off{background:#2A2112;border-color:#5C4718;color:#FDE68A}
+.mon button{margin-left:auto;border:0;border-radius:10px;height:36px;padding:0 12px;background:var(--acc);color:#0A0F1C;font-weight:700;flex-shrink:0}
+.mon.off button{background:var(--warn)}
+.sect{display:flex;justify-content:space-between;align-items:center;margin:4px 2px 8px}
+.sect b{font-size:14px}.sect small{font-size:11px;color:var(--mut)}
+.list{display:flex;flex-direction:column;gap:8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:10px;transition:border-color .2s,background .2s}
+.card.hit{background:#1A0E14;border-color:#5B1F27}
+.card.near{border-color:#4D3D14}
+.card.flash{border-color:var(--acc);box-shadow:0 0 0 2px rgba(56,189,248,.35)}
+.card.empty{opacity:.82}
+.r1{display:flex;gap:8px;align-items:flex-start;justify-content:space-between}
+.symbox{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}
+.symrow{display:flex;align-items:center;gap:6px}
+.num{font-size:10px;color:var(--mut);width:18px;flex-shrink:0}
+.sym{width:100%;max-width:170px;background:transparent;border:1px solid transparent;border-radius:8px;padding:4px 6px;margin-left:-6px;font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:.01em}
+.sym:focus{outline:none;border-color:var(--acc);background:var(--bg)}
+.sym::placeholder{color:#5B6782;font-weight:500;text-transform:none}
+.name{font-size:11px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-left:24px}
+.tag{font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px;background:#16233B;color:#7DD3FC;white-space:nowrap;border:0}
+.tag.near{background:#3D3112;color:var(--warn)}
+.tag.hit{background:#5B1F27;color:var(--bad)}
+.tag.paused{background:#27304A;color:#C7D2FE}
+.tag.idle{background:#1A2236;color:var(--mut)}
+.px{text-align:right;flex-shrink:0}
+.ltp{font-family:var(--mono);font-size:15px;font-weight:600}
+.chg{font-size:11px;color:var(--mut)}
+.up{color:var(--okt)}.dn{color:var(--bad)}
+.r2{display:flex;gap:8px;align-items:center}
+.ap{flex:1;display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--line2);border-radius:10px;padding:0 10px;height:44px;min-width:0}
+.ap:focus-within{border-color:var(--acc)}
+.ap span{font-size:11px;color:var(--mut);white-space:nowrap}
+.ap input{flex:1;min-width:0;background:transparent;border:0;outline:none;font-family:var(--mono);font-size:14px}
+.set{height:44px;min-width:74px;border-radius:10px;border:0;background:var(--acc);color:#0A0F1C;font-weight:700;font-size:13px}
+.set.saved{background:#1F3A33;color:var(--okt)}
+.set.dirty{background:var(--warn)}
+.set:disabled{opacity:.6}
+.clr{width:44px;height:44px;border-radius:10px;border:1px solid var(--line2);background:transparent;color:var(--mut);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.r3{display:flex;align-items:center;gap:8px}
+.bar{flex:1;height:5px;border-radius:999px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:5px;border-radius:999px;background:#7DD3FC;width:0;transition:width .4s}
+.dist{font-size:11px;color:var(--mut);white-space:nowrap}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}
+.panel h3{margin:0;font-size:15px}
+.panel p{margin:4px 0 12px;font-size:12px;color:var(--mut);line-height:1.45}
+.chips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.chip{height:44px;border-radius:12px;border:1px solid var(--line2);background:var(--bg);font-weight:600;font-size:13px}
+.chip.on{background:var(--acc);border-color:var(--acc);color:#0A0F1C}
+.hint{margin-top:10px;font-size:12px;color:#7DD3FC;background:#0E2236;border-radius:10px;padding:10px 12px}
+.trow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #1A2438}
+.trow:last-child{border-bottom:0}
+.trow b{display:block;font-size:14px;font-weight:500}.trow small{font-size:12px;color:var(--mut)}
+.sw{flex-shrink:0;width:50px;height:30px;border-radius:999px;border:0;background:#2A3650;position:relative;padding:0}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .2s}
+.sw.on{background:var(--ok)}.sw.on::after{left:23px}
+.src{display:flex;align-items:center;gap:10px;background:var(--bg);border-radius:10px;padding:10px 12px;margin-top:8px;font-size:13px}
+.src em{font-style:normal;font-size:11px;font-weight:700;color:#0A0F1C;background:var(--ok);border-radius:6px;padding:2px 7px}
+.src em.g{background:var(--mut)}
+.src span{flex:1}.src small{font-size:11px;color:var(--mut)}
+.btn{width:100%;height:48px;border-radius:12px;border:1px solid var(--line2);background:var(--card);font-weight:600;margin-top:4px}
+.btn.pri{background:var(--acc);border:0;color:#0A0F1C}
+.btn.warn{background:#3D3112;border-color:#5C4718;color:var(--warn)}
+.big{display:flex;align-items:center;gap:12px}
+.big .sw{margin-left:auto}
+.perm{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #1A2438;font-size:13px}
+.perm:last-child{border-bottom:0}
+.perm span{flex:1}
+.perm button{border:1px solid var(--line2);background:var(--bg);border-radius:10px;height:36px;padding:0 12px;font-size:12px;font-weight:600}
+.ok{color:var(--okt);font-size:12px;font-weight:600}
+.hgroup{font-size:11px;color:var(--mut);font-weight:700;letter-spacing:.04em;margin:14px 4px 6px}
+.hitem{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;gap:12px;align-items:center;margin-bottom:8px}
+.hic{width:40px;height:40px;border-radius:10px;background:#2A1216;color:var(--bad);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hic.n{background:#3D3112;color:var(--warn)}
+.hbody{flex:1;min-width:0}
+.hbody .t{display:flex;justify-content:space-between;gap:8px}
+.hbody b{font-size:14px}.hbody small{font-size:11px;color:var(--mut)}
+.hbody .p{font-family:var(--mono);font-size:12px;color:#C9D1E0;margin-top:3px}
+.emptyh{text-align:center;color:var(--mut);padding:48px 20px;font-size:13px;line-height:1.5}
+nav.bot{position:fixed;left:0;right:0;bottom:0;z-index:6;border-top:1px solid var(--line);background:#0D1424;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding:6px 8px calc(10px + env(safe-area-inset-bottom))}
+nav.bot button{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px;border:0;background:transparent;color:var(--mut);font-size:11px;position:relative}
+nav.bot button.on{color:var(--acc);font-weight:600}
+.badge{position:absolute;top:2px;left:calc(50% + 6px);min-width:16px;height:16px;border-radius:8px;background:#EF4444;color:#fff;font-size:10px;font-weight:700;display:none;align-items:center;justify-content:center;padding:0 4px}
+.toast{position:fixed;left:16px;right:16px;bottom:84px;z-index:9;background:#1F2A44;border:1px solid #2F3D5C;color:var(--tx);border-radius:12px;padding:12px 14px;font-size:13px;opacity:0;transform:translateY(10px);transition:all .25s;pointer-events:none}
+.toast.show{opacity:1;transform:none}
+.toast.err{background:#3A1519;border-color:#5B1F27}
+.filter{display:flex;gap:6px}
+.filter button{height:30px;border-radius:999px;border:1px solid var(--line2);background:transparent;color:var(--mut);font-size:12px;padding:0 10px}
+.filter button.on{background:#16233B;color:#7DD3FC;border-color:#1E3A5F}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top" id="top">
+    <div class="brand">
+      <div class="logo">
+        <i><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0A0F1C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></i>
+        <div><b>PriceAlert</b><small id="subtitle">NSE stock alerts</small></div>
+      </div>
+      <button class="icbtn" id="refreshBtn" aria-label="Refresh prices now">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
+      </button>
+    </div>
+    <div class="status"><span class="dot" id="mDot"></span><span id="mText">Loading…</span></div>
+  </header>
+
+  <main>
+    <!-- ALERTS -->
+    <section class="view on" id="v-alerts">
+      <div class="tiles">
+        <button class="tile" data-f="active"><small>Watching</small><b id="nWatch">0</b></button>
+        <button class="tile w" data-f="near"><small>Near alert</small><b id="nNear">0</b></button>
+        <button class="tile h" data-f="hit"><small>Triggered</small><b id="nHit">0</b></button>
+      </div>
+      <div class="mon" id="monBar"><span id="monText"></span><button id="monBtn"></button></div>
+      <div class="sect">
+        <b>My alerts (20 slots)</b>
+        <div class="filter" id="filter">
+          <button data-f="all" class="on">All</button>
+          <button data-f="active">Active</button>
+          <button data-f="empty">Empty</button>
+        </div>
+      </div>
+      <div class="list" id="list"></div>
+      <p style="font-size:11px;color:var(--mut);text-align:center;margin:16px 8px;line-height:1.5">Type the NSE symbol (e.g. SBIN, TATASTEEL, M&amp;M), enter your alert price and tap Set. Leave the price empty to just watch a stock.</p>
+    </section>
+
+    <!-- HISTORY -->
+    <section class="view" id="v-history">
+      <div class="sect" style="margin-top:8px"><div><b style="font-size:18px">Alert history</b><br><small>Every alert the app has sent</small></div>
+        <button class="icbtn" id="clearHist" aria-label="Clear history" style="width:auto;padding:0 12px;height:36px;font-size:12px">Clear</button></div>
+      <div id="hist"></div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section class="view" id="v-settings">
+      <div class="panel" style="margin-top:8px">
+        <div class="big">
+          <div><h3>Background monitoring</h3><p style="margin:4px 0 0" id="monSub">Off</p></div>
+          <button class="sw" id="swMon" aria-label="Background monitoring"></button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Repeat alert after</h3>
+        <p>If the price is still at or below your alert price, you'll be notified again after this gap.</p>
+        <div class="chips" id="repeatChips"></div>
+        <div class="hint" id="repeatHint"></div>
+      </div>
+
+      <div class="panel">
+        <h3>Price check frequency</h3>
+        <p>How often prices are fetched while monitoring. Faster checks use a little more battery and data.</p>
+        <div class="chips" id="pollChips"></div>
+      </div>
+
+      <div class="panel" style="padding:4px 16px">
+        <div class="trow"><div><b>Only during market hours</b><small>Mon–Fri, 9:15 AM – 3:30 PM IST</small></div><button class="sw" data-k="marketOnly" aria-label="Only during market hours"></button></div>
+        <div class="trow"><div><b>Alert sound</b><small>Play a tone with each alert</small></div><button class="sw" data-k="sound" aria-label="Alert sound"></button></div>
+        <div class="trow"><div><b>Vibrate</b><small>Vibrate with each alert</small></div><button class="sw" data-k="vibrate" aria-label="Vibrate"></button></div>
+        <div class="trow"><div><b>Early warning</b><small id="nearSub">Heads-up when price is within 2% of alert</small></div><button class="sw" data-k="nearWarn" aria-label="Early warning"></button></div>
+      </div>
+
+      <div class="panel">
+        <h3>Early warning distance</h3>
+        <p>How close (above your alert price) counts as "near".</p>
+        <div class="chips" id="nearChips"></div>
+      </div>
+
+      <div class="panel">
+        <h3>Price source</h3>
+        <div class="src"><em>1</em><span>NSE India</span><small id="srcNse">primary</small></div>
+        <div class="src"><em class="g">2</em><span>Google Finance</span><small id="srcG">fallback</small></div>
+        <p style="margin:10px 0 0" id="lastFetch"></p>
+      </div>
+
+      <div class="panel">
+        <h3>Phone permissions</h3>
+        <p>Both are needed for alerts to arrive reliably with the screen off.</p>
+        <div class="perm"><span>Notifications</span><b id="pNotif"></b></div>
+        <div class="perm"><span>Battery: unrestricted</span><b id="pBatt"></b></div>
+      </div>
+
+      <button class="btn" id="testBtn">Send test notification</button>
+      <button class="btn" id="chanBtn" style="margin-top:8px">Notification sound &amp; style settings</button>
+      <p style="font-size:11px;color:var(--mut);text-align:center;margin:16px 8px;line-height:1.5">PriceAlert v1.0 · Prices may be delayed. Not investment advice.</p>
+    </section>
+  </main>
+
+  <nav class="bot">
+    <button data-v="alerts" class="on"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>Alerts</button>
+    <button data-v="history"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>History<span class="badge" id="histBadge"></span></button>
+    <button data-v="settings"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>Settings</button>
+  </nav>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var A = window.Android;
+  var S = null;            // latest state from the phone
+  var view = 'alerts';
+  var filter = 'all';
+  var dirty = {};          // slot index -> true while edited but not saved
+  var busy = {};           // slot index -> true while saving
+  var seenHist = 0;
+  try { seenHist = +localStorage.getItem('seenHist') || 0; } catch (e) {}
+  var $ = function (id) { return document.getElementById(id); };
+
+  var REPEAT = [[1, '1 min'], [3, '3 min'], [5, '5 min'], [10, '10 min'], [60, '1 hour'], [1440, '1 day']];
+  var POLL = [[1, '1 min'], [2, '2 min'], [5, '5 min']];
+  var NEAR = [[1, '1%'], [2, '2%'], [5, '5%']];
+
+  function fmt(n) {
+    return Number(n).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  function tm(ms) {
+    return new Date(ms).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', timeZone: 'Asia/Kolkata' });
+  }
+  function dayKey(ms) {
+    return new Date(ms).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata' });
+  }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  var toastT;
+  function toast(msg, err) {
+    var t = $('toast');
+    t.textContent = msg;
+    t.className = 'toast show' + (err ? ' err' : '');
+    clearTimeout(toastT);
+    toastT = setTimeout(function () { t.className = 'toast' + (err ? ' err' : ''); }, 2600);
+  }
+  function load() {
+    try { S = JSON.parse(A.getState()); } catch (e) { return; }
+    render();
+  }
+
+  // ---------- build the 20 cards once ----------
+  var ICON_X = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>';
+  function buildCards() {
+    var html = '';
+    for (var i = 0; i < 20; i++) {
+      html += '<div class="card empty" id="c' + i + '" data-i="' + i + '">' +
+        '<div class="r1"><div class="symbox"><div class="symrow"><span class="num">' + (i + 1) + '</span>' +
+        '<input class="sym" maxlength="20" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="Add stock (e.g. SBIN)" aria-label="Stock symbol for slot ' + (i + 1) + '">' +
+        '<button class="tag idle" tabindex="-1">EMPTY</button></div><div class="name"></div></div>' +
+        '<div class="px"><div class="ltp">—</div><div class="chg"></div></div></div>' +
+        '<div class="r2"><label class="ap"><span>Alert ₹</span><input class="apv" inputmode="decimal" placeholder="0.00" aria-label="Alert price for slot ' + (i + 1) + '"></label>' +
+        '<button class="set">Set</button><button class="clr" aria-label="Clear slot ' + (i + 1) + '">' + ICON_X + '</button></div>' +
+        '<div class="r3"><div class="bar"><i></i></div><span class="dist"></span></div></div>';
+    }
+    $('list').innerHTML = html;
+    Array.prototype.forEach.call(document.querySelectorAll('.card'), function (c) {
+      var i = +c.dataset.i;
+      var sym = c.querySelector('.sym'), ap = c.querySelector('.apv');
+      sym.addEventListener('input', function () {
+        var p = sym.selectionStart;
+        sym.value = sym.value.toUpperCase().replace(/\s+/g, '');
+        try { sym.setSelectionRange(p, p); } catch (e) {}
+        markDirty(i);
+      });
+      ap.addEventListener('input', function () { markDirty(i); });
+      ap.addEventListener('keydown', function (e) { if (e.key === 'Enter') { ap.blur(); save(i); } });
+      sym.addEventListener('keydown', function (e) { if (e.key === 'Enter') ap.focus(); });
+      c.querySelector('.set').addEventListener('click', function () { save(i); });
+      c.querySelector('.clr').addEventListener('click', function () { clearSlot(i); });
+      c.querySelector('.tag').addEventListener('click', function () {
+        var s = S && S.slots[i];
+        if (s && isPaused(s.sym)) { A.resume(s.sym); toast(s.sym + ' alerts resumed'); load(); }
+      });
+    });
+  }
+
+  function markDirty(i) {
+    dirty[i] = true;
+    var b = $('c' + i).querySelector('.set');
+    b.className = 'set dirty';
+    b.textContent = 'Set';
+  }
+
+  function save(i) {
+    var c = $('c' + i);
+    var sym = c.querySelector('.sym').value.trim().toUpperCase();
+    var raw = c.querySelector('.apv').value.trim().replace(/,/g, '');
+    if (sym && !/^[A-Z0-9&\-_.]{1,20}$/.test(sym)) { toast('Use the NSE symbol, e.g. SBIN or M&M', true); return; }
+    if (raw && (isNaN(+raw) || +raw <= 0)) { toast('Enter a valid alert price', true); return; }
+    if (!sym && raw) { toast('Type a stock symbol first', true); return; }
+    var dupe = -1;
+    if (sym) S.slots.forEach(function (s, k) { if (k !== i && s.sym === sym) dupe = k; });
+    if (dupe >= 0) { toast(sym + ' is already in slot ' + (dupe + 1), true); return; }
+    busy[i] = true;
+    var b = c.querySelector('.set');
+    b.disabled = true;
+    b.textContent = 'Checking…';
+    A.saveSlot(i, sym, raw || '0');
+    S.slots[i] = { sym: sym, alert: +raw || 0, setAt: Date.now() };
+    delete dirty[i];
+  }
+
+  function clearSlot(i) {
+    var s = S.slots[i];
+    if (!s.sym && !dirty[i]) return;
+    if (s.sym && !confirm('Remove ' + s.sym + ' from slot ' + (i + 1) + '?')) return;
+    var c = $('c' + i);
+    c.querySelector('.sym').value = '';
+    c.querySelector('.apv').value = '';
+    delete dirty[i];
+    A.saveSlot(i, '', '0');
+    S.slots[i] = { sym: '', alert: 0, setAt: 0 };
+    render();
+  }
+
+  function isPaused(sym) {
+    var st = S && S.alertState && S.alertState[sym];
+    return !!(st && st.pausedUntil && st.pausedUntil > Date.now());
+  }
+
+  function slotInfo(s) {
+    var q = s.sym ? S.quotes[s.sym] : null;
+    var info = { q: q, kind: 'idle', tag: 'EMPTY', dist: '', bar: 0 };
+    if (!s.sym) return info;
+    if (!q) { info.tag = 'NO PRICE'; info.dist = 'Waiting for price'; return info; }
+    if (!(s.alert > 0)) { info.kind = 'idle'; info.tag = 'NO ALERT'; info.dist = 'Set an alert price'; return info; }
+    var d = (q.price - s.alert) / s.alert * 100;
+    var nearPct = S.settings.nearPct || 2;
+    if (isPaused(s.sym)) { info.kind = 'paused'; info.tag = 'PAUSED · TAP'; }
+    else if (q.price <= s.alert) { info.kind = 'hit'; info.tag = 'ALERT HIT'; }
+    else if (d <= nearPct) { info.kind = 'near'; info.tag = 'NEAR'; }
+    else { info.kind = 'watch'; info.tag = 'WATCHING'; }
+    info.dist = q.price <= s.alert ? (Math.abs(d).toFixed(2) + '% below alert') : (d.toFixed(2) + '% above alert');
+    info.bar = q.price <= s.alert ? 100 : Math.max(4, Math.min(100, 100 - d * 6));
+    info.d = d;
+    return info;
+  }
+
+  function renderCards() {
+    var nW = 0, nN = 0, nH = 0;
+    S.slots.forEach(function (s, i) {
+      var c = $('c' + i);
+      var inf = slotInfo(s);
+      if (s.sym && s.alert > 0) {
+        if (inf.kind === 'hit') nH++; else if (inf.kind === 'near') nN++; else nW++;
+      }
+      var sym = c.querySelector('.sym'), ap = c.querySelector('.apv');
+      if (!dirty[i] && document.activeElement !== sym && document.activeElement !== ap) {
+        sym.value = s.sym || '';
+        ap.value = s.alert > 0 ? s.alert : '';
+      }
+      c.className = 'card' + (inf.kind === 'hit' ? ' hit' : inf.kind === 'near' ? ' near' : '') + (!s.sym ? ' empty' : '') + (c.classList.contains('flash') ? ' flash' : '');
+      var tag = c.querySelector('.tag');
+      tag.className = 'tag ' + (inf.kind === 'watch' ? '' : inf.kind);
+      tag.textContent = inf.tag;
+      var q = inf.q;
+      c.querySelector('.name').textContent = q && q.name ? q.name : (s.sym ? '' : 'Empty slot');
+      c.querySelector('.ltp').textContent = q ? '₹' + fmt(q.price) : '—';
+      var chg = c.querySelector('.chg');
+      if (q && q.hasChg) {
+        chg.textContent = (q.chg >= 0 ? '+' : '') + fmt(q.chg) + ' (' + (q.pchg >= 0 ? '+' : '') + q.pchg.toFixed(2) + '%)';
+        chg.className = 'chg ' + (q.chg >= 0 ? 'up' : 'dn');
+      } else {
+        chg.textContent = q ? q.src : '';
+        chg.className = 'chg';
+      }
+      var bar = c.querySelector('.bar i');
+      bar.style.width = inf.bar + '%';
+      bar.style.background = inf.kind === 'hit' ? '#FCA5A5' : inf.kind === 'near' ? '#FCD34D' : '#7DD3FC';
+      c.querySelector('.dist').textContent = inf.dist;
+      c.querySelector('.r3').style.display = s.sym ? 'flex' : 'none';
+      var b = c.querySelector('.set');
+      if (!busy[i]) {
+        b.disabled = false;
+        if (dirty[i]) { b.className = 'set dirty'; b.textContent = 'Set'; }
+        else if (s.sym && s.alert > 0) { b.className = 'set saved'; b.textContent = 'Saved ✓'; }
+        else { b.className = 'set'; b.textContent = 'Set'; }
+      }
+      var show = filter === 'all' ||
+        (filter === 'active' && s.sym && s.alert > 0) ||
+        (filter === 'empty' && !s.sym) ||
+        (filter === 'near' && inf.kind === 'near') ||
+        (filter === 'hit' && inf.kind === 'hit');
+      c.style.display = show ? '' : 'none';
+    });
+    $('nWatch').textContent = nW;
+    $('nNear').textContent = nN;
+    $('nHit').textContent = nH;
+  }
+
+  function renderStatus() {
+    var lf = S.lastFetch || {};
+    var parts = [];
+    if (S.marketOpen) { $('mDot').className = 'dot'; parts.push('Market open'); }
+    else { $('mDot').className = 'dot off'; parts.push('Market closed'); }
+    if (lf.t) parts.push((lf.src || '') + ' · ' + tm(lf.t));
+    if (lf.err && lf.got < lf.asked) parts.push((lf.asked - lf.got) + ' price(s) unavailable');
+    $('mText').textContent = parts.join(' · ');
+
+    var mon = S.settings.monitoring;
+    var bar = $('monBar');
+    bar.className = 'mon' + (mon ? '' : ' off');
+    if (mon) {
+      $('monText').textContent = S.marketOpen || !S.settings.marketOnly
+        ? 'Monitoring on · checks every ' + S.settings.pollMin + ' min'
+        : 'Monitoring on · resumes at market open';
+      $('monBtn').textContent = 'Stop';
+    } else {
+      $('monText').textContent = 'Monitoring is off. Alerts won\'t arrive.';
+      $('monBtn').textContent = 'Start';
+    }
+  }
+
+  function chips(el, list, cur, key) {
+    el.innerHTML = list.map(function (o) {
+      return '<button class="chip' + (o[0] === cur ? ' on' : '') + '" data-v="' + o[0] + '" aria-pressed="' + (o[0] === cur) + '">' + o[1] + '</button>';
+    }).join('');
+    Array.prototype.forEach.call(el.children, function (b) {
+      b.onclick = function () { setSetting(key, +b.dataset.v); };
+    });
+  }
+
+  function renderSettings() {
+    var st = S.settings;
+    chips($('repeatChips'), REPEAT, st.repeatMin, 'repeatMin');
+    chips($('pollChips'), POLL, st.pollMin, 'pollMin');
+    chips($('nearChips'), NEAR, st.nearPct, 'nearPct');
+    var lbl = (REPEAT.filter(function (o) { return o[0] === st.repeatMin; })[0] || [0, st.repeatMin + ' min'])[1];
+    $('repeatHint').textContent = 'While a stock stays at or below its alert price, you\'ll be reminded every ' + lbl + '.' +
+      (st.repeatMin < st.pollMin ? ' Prices are checked every ' + st.pollMin + ' min, so reminders come at that pace.' : '');
+    $('nearSub').textContent = 'Heads-up when price is within ' + st.nearPct + '% of alert';
+    Array.prototype.forEach.call(document.querySelectorAll('.sw[data-k]'), function (b) {
+      b.className = 'sw' + (st[b.dataset.k] ? ' on' : '');
+      b.setAttribute('aria-pressed', !!st[b.dataset.k]);
+    });
+    $('swMon').className = 'sw' + (st.monitoring ? ' on' : '');
+    $('swMon').setAttribute('aria-pressed', !!st.monitoring);
+    $('monSub').textContent = st.monitoring
+      ? (S.running ? 'Running · a small notification stays visible while it works' : 'Starting…')
+      : 'Off · turn on to receive alerts';
+    var lf = S.lastFetch || {};
+    var src = lf.src || '';
+    $('srcNse').textContent = src.indexOf('NSE') >= 0 ? 'in use' : 'primary';
+    $('srcG').textContent = src.indexOf('Google') >= 0 ? 'in use' : 'fallback';
+    $('lastFetch').textContent = lf.t
+      ? 'Last check ' + tm(lf.t) + ': ' + lf.got + ' of ' + lf.asked + ' prices received' + (lf.err ? ' · ' + lf.err : '')
+      : 'No price check yet.';
+    $('pNotif').innerHTML = S.notifAllowed ? '<span class="ok">Allowed</span>' : '<button id="pNotifBtn">Allow</button>';
+    $('pBatt').innerHTML = S.batteryFree ? '<span class="ok">Done</span>' : '<button id="pBattBtn">Fix</button>';
+    if ($('pNotifBtn')) $('pNotifBtn').onclick = function () { A.askNotificationPermission(); };
+    if ($('pBattBtn')) $('pBattBtn').onclick = function () { A.openBatterySettings(); };
+  }
+
+  function renderHistory() {
+    var h = S.history || [];
+    var badge = $('histBadge');
+    var unseen = h.filter(function (x) { return x.t > seenHist; }).length;
+    if (view === 'history') { seenHist = h.length ? h[0].t : seenHist; unseen = 0; try { localStorage.setItem('seenHist', seenHist); } catch (e) {} }
+    badge.style.display = unseen ? 'flex' : 'none';
+    badge.textContent = unseen > 9 ? '9+' : unseen;
+    if (view !== 'history') return;
+    if (!h.length) {
+      $('hist').innerHTML = '<div class="emptyh">No alerts yet.<br>When a stock reaches your alert price, it will be listed here.</div>';
+      return;
+    }
+    var html = '', last = '';
+    var today = dayKey(Date.now()), yest = dayKey(Date.now() - 864e5);
+    h.forEach(function (x) {
+      var k = dayKey(x.t);
+      if (k !== last) {
+        html += '<div class="hgroup">' + (k === today ? 'TODAY' : k === yest ? 'YESTERDAY' : esc(k).toUpperCase()) + '</div>';
+        last = k;
+      }
+      var hit = x.kind === 'hit';
+      html += '<div class="hitem"><div class="hic' + (hit ? '' : ' n') + '">' +
+        (hit ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>'
+             : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 8v5"/><path d="M12 16.5v.5"/><circle cx="12" cy="12" r="9"/></svg>') +
+        '</div><div class="hbody"><div class="t"><b>' + esc(x.sym) + '</b><small>' + tm(x.t) + '</small></div>' +
+        '<div class="p">₹' + fmt(x.price) + (hit ? ' ≤ ₹' : ' · alert ₹') + fmt(x.alert) + '</div>' +
+        '<small>' + (hit ? (x.n > 1 ? 'Reminder #' + x.n : 'First alert') : 'Early warning') + ' · via ' + esc(x.src) + '</small></div></div>';
+    });
+    $('hist').innerHTML = html;
+  }
+
+  function render() {
+    if (!S) return;
+    renderStatus();
+    renderCards();
+    if (view === 'settings') renderSettings();
+    renderHistory();
+    var f = A.takeFocusSlot();
+    if (f >= 0) focusSlot(f);
+  }
+
+  function focusSlot(i) {
+    show('alerts');
+    filter = 'all';
+    setFilterUi();
+    renderCards();
+    var c = $('c' + i);
+    if (!c) return;
+    c.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    c.classList.add('flash');
+    setTimeout(function () { c.classList.remove('flash'); c.querySelector('.apv').focus(); }, 600);
+    setTimeout(function () { c.classList.remove('flash'); }, 2500);
+  }
+
+  function setSetting(k, v) {
+    var o = {}; o[k] = v;
+    S.settings[k] = v;
+    A.saveSettings(JSON.stringify(o));
+    renderSettings();
+    renderStatus();
+    renderCards();
+  }
+
+  function setMonitoring(on) {
+    if (on && !S.notifAllowed) A.askNotificationPermission();
+    setSetting('monitoring', on);
+    toast(on ? 'Monitoring started' : 'Monitoring stopped');
+    setTimeout(load, 1200);
+  }
+
+  function show(v) {
+    view = v;
+    ['alerts', 'history', 'settings'].forEach(function (n) {
+      $('v-' + n).className = 'view' + (n === v ? ' on' : '');
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('nav.bot button'), function (b) {
+      b.className = b.dataset.v === v ? 'on' : '';
+    });
+    window.scrollTo(0, 0);
+    if (S) { if (v === 'settings') renderSettings(); renderHistory(); }
+  }
+
+  function setFilterUi() {
+    Array.prototype.forEach.call($('filter').children, function (b) {
+      b.className = b.dataset.f === filter ? 'on' : '';
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('.tile'), function (b) {
+      b.className = b.className.replace(/ sel/g, '') + (b.dataset.f === filter ? ' sel' : '');
+    });
+  }
+
+  // ---------- events from the phone ----------
+  window.onNative = function (ev, data) {
+    var d = {};
+    try { d = data ? JSON.parse(data) : {}; } catch (e) {}
+    if (ev === 'slot') {
+      delete busy[d.i];
+      if (!d.sym) toast('Slot ' + (d.i + 1) + ' cleared');
+      else if (d.ok) toast(d.sym + (d.price ? ' ₹' + fmt(d.price) : '') + (d.alert > 0 ? ' · alert set at ₹' + fmt(d.alert) : ' added'));
+      else toast('Couldn\'t get a price for ' + d.sym + '. Check the NSE symbol or your internet.', true);
+      load();
+    } else if (ev === 'refreshed') {
+      $('refreshBtn').classList.remove('spin');
+      if (d.asked && d.got < d.asked) toast('Got ' + d.got + ' of ' + d.asked + ' prices' + (d.err ? ' · ' + d.err : ''), true);
+      else if (d.asked) toast('Prices updated');
+      else toast('Add a stock to get prices');
+      load();
+    } else if (ev === 'resume') {
+      load();
+    }
+  };
+  window.goBack = function () {
+    if (view !== 'alerts') { show('alerts'); return true; }
+    return false;
+  };
+
+  // ---------- wire up ----------
+  buildCards();
+  $('refreshBtn').onclick = function () {
+    $('refreshBtn').classList.add('spin');
+    A.refresh();
+  };
+  $('monBtn').onclick = function () { setMonitoring(!S.settings.monitoring); };
+  $('swMon').onclick = function () { setMonitoring(!S.settings.monitoring); };
+  Array.prototype.forEach.call(document.querySelectorAll('.sw[data-k]'), function (b) {
+    b.onclick = function () { setSetting(b.dataset.k, !S.settings[b.dataset.k]); };
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('nav.bot button'), function (b) {
+    b.onclick = function () { show(b.dataset.v); };
+  });
+  Array.prototype.forEach.call($('filter').children, function (b) {
+    b.onclick = function () { filter = b.dataset.f; setFilterUi(); renderCards(); };
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('.tile'), function (b) {
+    b.onclick = function () { filter = filter === b.dataset.f ? 'all' : b.dataset.f; setFilterUi(); renderCards(); };
+  });
+  $('clearHist').onclick = function () {
+    if (confirm('Clear all alert history?')) { A.clearHistory(); load(); }
+  };
+  $('testBtn').onclick = function () {
+    if (!S.notifAllowed) { A.askNotificationPermission(); return; }
+    A.testNotification();
+    toast('Test notification sent');
+  };
+  $('chanBtn').onclick = function () { A.openChannelSettings(); };
+  window.addEventListener('scroll', function () {
+    $('top').className = 'top' + (window.scrollY > 4 ? ' sh' : '');
+  });
+
+  load();
+  setInterval(function () { if (!document.hidden) load(); }, 5000);
+  // first open: get prices straight away
+  if (S && (!S.lastFetch || !S.lastFetch.t || Date.now() - S.lastFetch.t > 60000)) {
+    $('refreshBtn').classList.add('spin');
+    A.refresh();
+  }
+})();
+</script>
+</body>
+</html>
