@@ -113,7 +113,7 @@ main{flex:1;padding:0 14px 96px}
 .hbody b{font-size:14px}.hbody small{font-size:11px;color:var(--mut)}
 .hbody .p{font-family:var(--mono);font-size:12px;color:#C9D1E0;margin-top:3px}
 .emptyh{text-align:center;color:var(--mut);padding:48px 20px;font-size:13px;line-height:1.5}
-nav.bot{position:fixed;left:0;right:0;bottom:0;z-index:6;border-top:1px solid var(--line);background:#0D1424;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding:6px 8px calc(10px + env(safe-area-inset-bottom))}
+nav.bot{position:fixed;left:0;right:0;bottom:0;z-index:6;border-top:1px solid var(--line);background:#0D1424;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:6px 8px calc(10px + env(safe-area-inset-bottom))}
 nav.bot button{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px;border:0;background:transparent;color:var(--mut);font-size:11px;position:relative}
 nav.bot button.on{color:var(--acc);font-weight:600}
 .badge{position:absolute;top:2px;left:calc(50% + 6px);min-width:16px;height:16px;border-radius:8px;background:#EF4444;color:#fff;font-size:10px;font-weight:700;display:none;align-items:center;justify-content:center;padding:0 4px}
@@ -126,6 +126,54 @@ nav.bot button.on{color:var(--acc);font-weight:600}
 .search input::placeholder{color:#5B6782}
 .search button{width:36px;height:36px;border:0;background:transparent;color:var(--mut);display:none;align-items:center;justify-content:center}
 .nores{text-align:center;color:var(--mut);font-size:13px;padding:28px 12px;display:none}
+.dhero{background:linear-gradient(160deg,#122340 0%,#111829 60%);border:1px solid #1E3A5F;border-radius:18px;padding:16px;margin:8px 0 12px}
+.dhero .lbl{font-size:11px;font-weight:700;letter-spacing:.06em;color:#7DD3FC}
+.dhero .row{display:flex;align-items:center;gap:12px;margin-top:6px}
+.gauge{flex-shrink:0;width:150px}
+.gauge svg{display:block;width:150px;height:96px}
+.hinfo{flex:1;min-width:0}
+.hinfo b{display:block;font-size:20px;letter-spacing:-.01em}
+.hinfo .nm{font-size:11px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hinfo .pct{font-size:28px;font-weight:800;margin-top:4px;font-family:var(--mono)}
+.hinfo .sub{font-size:12px;color:var(--mut);margin-top:4px;display:flex;flex-direction:column;gap:2px}
+.hinfo .sub em{font-style:normal;font-family:var(--mono);font-weight:600;color:#E6EAF2}
+.hinfo .sub .buy em{color:#A7F3D0}
+.drow2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:12px}
+.dcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+.dcard h4{margin:0 0 10px;font-size:12px;color:var(--mut);font-weight:600}
+.donut{display:flex;align-items:center;gap:10px}
+.legend{display:flex;flex-direction:column;gap:6px;font-size:12px}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:9px;height:9px;border-radius:3px;display:inline-block}
+.mini{display:flex;flex-direction:column;gap:8px}
+.mini div{display:flex;justify-content:space-between;font-size:12px;gap:6px}
+.mini div b{font-family:var(--mono);font-size:12px}
+.dlist{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:6px 12px 10px}
+.dhead{display:flex;justify-content:space-between;align-items:center;padding:8px 0 6px}
+.dhead b{font-size:14px}
+.seg{display:flex;background:var(--bg);border:1px solid var(--line2);border-radius:999px;padding:2px}
+.seg button{border:0;background:transparent;color:var(--mut);font-size:11px;font-weight:600;padding:5px 10px;border-radius:999px}
+.seg button.on{background:#16233B;color:#7DD3FC}
+.scale{display:flex;gap:8px;font-size:10px;color:#64748B;padding:0 0 2px}
+.scale .sp{width:0}.scale .sv{width:62px;flex-shrink:0}
+.scale .st{flex:1;position:relative;height:14px}
+.scale .st span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+.scale .st span.r{transform:translateX(-100%)}
+.brow{display:flex;flex-direction:column;gap:7px;padding:10px 0;border-top:1px solid #1A2438;cursor:pointer;width:100%;background:transparent;border-left:0;border-right:0;border-bottom:0;text-align:left;color:inherit}
+.brow .top{display:flex;align-items:baseline;gap:8px;width:100%}
+.brow .top b{font-size:14px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prices{display:flex;gap:10px;font-size:11px;color:var(--mut);white-space:nowrap}
+.prices em{font-style:normal;font-family:var(--mono);font-size:12px;font-weight:600;color:#E6EAF2}
+.prices .buy em{color:#A7F3D0}
+.brow .bar2{display:flex;align-items:center;gap:8px;width:100%}
+.brow .who b{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brow .who small{display:block;font-size:10px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:var(--mono)}
+.btrack{flex:1;position:relative;height:14px;border-radius:7px;background:#0D1424}
+.btrack .zero{position:absolute;top:-3px;bottom:-3px;width:2px;background:#E6EAF2;opacity:.55;border-radius:1px}
+.btrack .fill{position:absolute;top:2px;bottom:2px;border-radius:5px}
+.brow .val{width:62px;flex-shrink:0;text-align:right;font-family:var(--mono);font-size:12px;font-weight:700}
+.dempty{text-align:center;color:var(--mut);font-size:13px;line-height:1.5;padding:40px 16px}
+.dempty button{margin-top:12px;border:0;border-radius:10px;height:40px;padding:0 16px;background:var(--acc);color:#0A0F1C;font-weight:700}
 .filter{display:flex;gap:6px}
 .filter button{height:30px;border-radius:999px;border:1px solid var(--line2);background:transparent;color:var(--mut);font-size:12px;padding:0 10px}
 .filter button.on{background:#16233B;color:#7DD3FC;border-color:#1E3A5F}
@@ -152,8 +200,13 @@ nav.bot button.on{color:var(--acc);font-weight:600}
   </header>
 
   <main>
+    <!-- DASHBOARD -->
+    <section class="view on" id="v-dashboard">
+      <div id="dash"></div>
+    </section>
+
     <!-- ALERTS -->
-    <section class="view on" id="v-alerts">
+    <section class="view" id="v-alerts">
       <div class="tiles">
         <button class="tile" data-f="active"><small>Watching</small><b id="nWatch">0</b></button>
         <button class="tile w" data-f="near"><small>Near alert</small><b id="nNear">0</b></button>
@@ -236,7 +289,8 @@ nav.bot button.on{color:var(--acc);font-weight:600}
   </main>
 
   <nav class="bot">
-    <button data-v="alerts" class="on"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>Alerts</button>
+    <button data-v="dashboard" class="on"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Dashboard</button>
+    <button data-v="alerts"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>Alerts</button>
     <button data-v="history"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>History<span class="badge" id="histBadge"></span></button>
     <button data-v="settings"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>Settings</button>
   </nav>
@@ -248,7 +302,8 @@ nav.bot button.on{color:var(--acc);font-weight:600}
   'use strict';
   var A = window.Android;
   var S = null;            // latest state from the phone
-  var view = 'alerts';
+  var view = 'dashboard';
+  var dsort = 'near';       // dashboard order: near | az
   var filter = 'all';
   var query = '';           // search text
   var SLOTS = 50;
@@ -540,11 +595,115 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     $('hist').innerHTML = html;
   }
 
+  // ---------- dashboard ----------
+  function arcPath(cx, cy, r, a0, a1) {
+    // angles in degrees, 180 = left, 0 = right (upper half circle)
+    var p = function (a) { var t = a * Math.PI / 180; return [cx + r * Math.cos(t), cy - r * Math.sin(t)]; };
+    var s = p(a0), e = p(a1);
+    return 'M' + s[0].toFixed(1) + ' ' + s[1].toFixed(1) + ' A' + r + ' ' + r + ' 0 0 1 ' + e[0].toFixed(1) + ' ' + e[1].toFixed(1);
+  }
+  function kindColor(k) { return k === 'hit' ? '#F87171' : k === 'near' ? '#FCD34D' : k === 'paused' ? '#A5B4FC' : '#38BDF8'; }
+
+  function renderDashboard() {
+    var items = [];
+    S.slots.forEach(function (s, i) {
+      if (!s.sym || !(s.alert > 0)) return;
+      var inf = slotInfo(s);
+      if (!inf.q) return;
+      items.push({ i: i, sym: s.sym, name: inf.q.name || '', price: inf.q.price, alert: s.alert, d: inf.d, kind: inf.kind });
+    });
+    var el = $('dash');
+    if (!items.length) {
+      el.innerHTML = '<div class="dempty">No alerts with prices yet.<br>Add stocks and alert prices in the Alerts tab and they will appear here as a chart.<br><button id="goAlerts">Go to Alerts</button></div>';
+      $('goAlerts').onclick = function () { show('alerts'); };
+      return;
+    }
+    var nearPct = S.settings.nearPct || 2;
+    var nH = 0, nN = 0, nW = 0, nP = 0;
+    items.forEach(function (x) { if (x.kind === 'hit') nH++; else if (x.kind === 'near') nN++; else if (x.kind === 'paused') nP++; else nW++; });
+
+    // closest stock that has not hit yet (or the deepest hit if all hit)
+    var above = items.filter(function (x) { return x.d > 0; }).sort(function (a, b) { return a.d - b.d; });
+    var hero = above[0] || items.slice().sort(function (a, b) { return a.d - b.d; })[0];
+    var maxG = 10;
+    var gv = Math.max(0, Math.min(maxG, hero.d));
+    var ang = 180 - gv / maxG * 180;
+    var nx = 75 + 58 * Math.cos(ang * Math.PI / 180), ny = 80 - 58 * Math.sin(ang * Math.PI / 180);
+    var nearAng = 180 - Math.min(nearPct, maxG) / maxG * 180;
+    var gauge = '<svg viewBox="0 0 150 96" role="img" aria-label="' + esc(hero.sym) + ' is ' + hero.d.toFixed(2) + '% from alert">' +
+      '<path d="' + arcPath(75, 80, 58, 180, 0) + '" stroke="#1E2A42" stroke-width="14" fill="none" stroke-linecap="round"/>' +
+      '<path d="' + arcPath(75, 80, 58, 180, nearAng) + '" stroke="#FCD34D" stroke-width="14" fill="none" opacity=".9"/>' +
+      '<path d="' + arcPath(75, 80, 58, nearAng, 0) + '" stroke="#38BDF8" stroke-width="14" fill="none" opacity=".35"/>' +
+      '<line x1="75" y1="80" x2="' + nx.toFixed(1) + '" y2="' + ny.toFixed(1) + '" stroke="#E6EAF2" stroke-width="3" stroke-linecap="round"/>' +
+      '<circle cx="75" cy="80" r="6" fill="#E6EAF2"/>' +
+      '<text x="17" y="92" text-anchor="middle" fill="#9AA4B8" font-size="9">0%</text><text x="133" y="92" text-anchor="middle" fill="#9AA4B8" font-size="9">' + maxG + '%+</text></svg>';
+    var hc = kindColor(hero.kind);
+    var html = '<div class="dhero"><div class="lbl">' + (hero.d > 0 ? 'CLOSEST TO BUY PRICE' : 'DEEPEST BELOW BUY PRICE') + '</div><div class="row">' +
+      '<div class="gauge">' + gauge + '</div>' +
+      '<div class="hinfo"><b>' + esc(hero.sym) + '</b><div class="nm">' + esc(hero.name) + '</div>' +
+      '<div class="pct" style="color:' + hc + '">' + (hero.d >= 0 ? '+' : '') + hero.d.toFixed(2) + '%</div>' +
+      '<div class="sub"><span>CMP <em>₹' + fmt(hero.price) + '</em></span><span class="buy">Buy price <em>₹' + fmt(hero.alert) + '</em></span></div></div></div></div>';
+
+    // donut of statuses
+    var total = items.length, C = 2 * Math.PI * 30, off = 0;
+    var segs = [[nH, '#F87171'], [nN, '#FCD34D'], [nW, '#38BDF8'], [nP, '#A5B4FC']];
+    var donut = '<svg width="76" height="76" viewBox="0 0 76 76" role="img" aria-label="Alert status mix"><circle cx="38" cy="38" r="30" fill="none" stroke="#1E2A42" stroke-width="10"/>';
+    segs.forEach(function (sg) {
+      if (!sg[0]) return;
+      var len = sg[0] / total * C;
+      donut += '<circle cx="38" cy="38" r="30" fill="none" stroke="' + sg[1] + '" stroke-width="10" stroke-dasharray="' + Math.max(0, len - 2).toFixed(1) + ' ' + C.toFixed(1) + '" stroke-dashoffset="' + (-off).toFixed(1) + '" transform="rotate(-90 38 38)"/>';
+      off += len;
+    });
+    donut += '<text x="38" y="42" text-anchor="middle" fill="#E6EAF2" font-size="15" font-weight="700">' + total + '</text></svg>';
+    var avg = items.reduce(function (a, x) { return a + x.d; }, 0) / total;
+    var within5 = items.filter(function (x) { return x.d <= 5; }).length;
+    html += '<div class="drow2"><div class="dcard"><h4>Alert status</h4><div class="donut">' + donut +
+      '<div class="legend"><span><i style="background:#F87171"></i>Hit ' + nH + '</span><span><i style="background:#FCD34D"></i>Near ' + nN + '</span><span><i style="background:#38BDF8"></i>Watch ' + nW + '</span>' + (nP ? '<span><i style="background:#A5B4FC"></i>Paused ' + nP + '</span>' : '') + '</div></div></div>' +
+      '<div class="dcard"><h4>Quick stats</h4><div class="mini"><div><span>Within 5%</span><b>' + within5 + ' / ' + total + '</b></div>' +
+      '<div><span>Avg gap to buy</span><b>' + (avg >= 0 ? '+' : '') + avg.toFixed(1) + '%</b></div>' +
+      '<div><span>Near zone</span><b>≤ ' + nearPct + '%</b></div></div></div></div>';
+
+    // distance bars
+    var list = items.slice();
+    if (dsort === 'az') list.sort(function (a, b) { return a.sym < b.sym ? -1 : 1; });
+    else list.sort(function (a, b) { return a.d - b.d; });
+    var maxPos = Math.max(5, Math.ceil(Math.max.apply(null, list.map(function (x) { return x.d; }))));
+    maxPos = Math.min(maxPos, 30);
+    var minNeg = Math.min(0, Math.min.apply(null, list.map(function (x) { return x.d; })));
+    var negSpan = minNeg < 0 ? Math.max(2, Math.ceil(-minNeg)) : 0;
+    var zeroAt = negSpan ? 18 : 3;           // % of track width used for "below alert"
+    html += '<div class="dlist"><div class="dhead"><b>Distance from buy price</b><div class="seg">' +
+      '<button data-s="near" class="' + (dsort === 'near' ? 'on' : '') + '">Closest</button><button data-s="az" class="' + (dsort === 'az' ? 'on' : '') + '">A–Z</button></div></div>' +
+      '<div class="scale"><div class="sp"></div><div class="st">' +
+      (negSpan ? '<span style="left:0;transform:none">−' + negSpan + '%</span>' : '') +
+      '<span style="left:' + zeroAt + '%">buy</span>' +
+      '<span style="left:' + (zeroAt + (100 - zeroAt) / 2) + '%">+' + (maxPos / 2) + '%</span>' +
+      '<span class="r" style="left:100%">+' + maxPos + '%</span></div><div class="sv"></div></div>';
+    list.forEach(function (x) {
+      var col = kindColor(x.kind), left, width;
+      if (x.d >= 0) { left = zeroAt; width = Math.max(1.5, Math.min(1, x.d / maxPos) * (100 - zeroAt)); }
+      else { width = Math.min(1, -x.d / negSpan) * zeroAt; left = zeroAt - width; }
+      html += '<button class="brow" data-i="' + x.i + '"><div class="top"><b>' + esc(x.sym) + '</b>' +
+        '<div class="prices"><span>CMP <em>₹' + fmt(x.price) + '</em></span><span class="buy">Buy <em>₹' + fmt(x.alert) + '</em></span></div></div>' +
+        '<div class="bar2"><div class="btrack"><div class="fill" style="left:' + left.toFixed(1) + '%;width:' + width.toFixed(1) + '%;background:' + col + '"></div><div class="zero" style="left:calc(' + zeroAt + '% - 1px)"></div></div>' +
+        '<div class="val" style="color:' + col + '">' + (x.d >= 0 ? '+' : '') + x.d.toFixed(2) + '%</div></div></button>';
+    });
+    html += '</div><p style="font-size:11px;color:var(--mut);text-align:center;margin:14px 8px;line-height:1.5">CMP = current market price. Buy = your alert price. Bars show how far CMP is above (right) or below (left) the buy price. Tap a row to edit it.</p>';
+    el.innerHTML = html;
+    Array.prototype.forEach.call(el.querySelectorAll('.seg button'), function (b) {
+      b.onclick = function () { dsort = b.dataset.s; renderDashboard(); };
+    });
+    Array.prototype.forEach.call(el.querySelectorAll('.brow'), function (b) {
+      b.onclick = function () { focusSlot(+b.dataset.i); };
+    });
+  }
+
   function render() {
     if (!S) return;
     renderStatus();
     renderCards();
     if (view === 'settings') renderSettings();
+    if (view === 'dashboard') renderDashboard();
     renderHistory();
     var f = A.takeFocusSlot();
     if (f >= 0) focusSlot(f);
@@ -585,14 +744,14 @@ nav.bot button.on{color:var(--acc);font-weight:600}
   function show(v) {
     view = v;
     $('searchBox').style.display = v === 'alerts' ? 'flex' : 'none';
-    ['alerts', 'history', 'settings'].forEach(function (n) {
+    ['dashboard', 'alerts', 'history', 'settings'].forEach(function (n) {
       $('v-' + n).className = 'view' + (n === v ? ' on' : '');
     });
     Array.prototype.forEach.call(document.querySelectorAll('nav.bot button'), function (b) {
       b.className = b.dataset.v === v ? 'on' : '';
     });
     window.scrollTo(0, 0);
-    if (S) { if (v === 'settings') renderSettings(); renderHistory(); }
+    if (S) { if (v === 'settings') renderSettings(); if (v === 'dashboard') renderDashboard(); renderHistory(); }
   }
 
   function setFilterUi() {
@@ -625,7 +784,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     }
   };
   window.goBack = function () {
-    if (view !== 'alerts') { show('alerts'); return true; }
+    if (view !== 'dashboard') { show('dashboard'); return true; }
     return false;
   };
 
@@ -674,6 +833,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     $('top').className = 'top' + (window.scrollY > 4 ? ' sh' : '');
   });
 
+  show('dashboard');
   load();
   setInterval(function () { if (!document.hidden) load(); }, 5000);
   // first open: get prices straight away
