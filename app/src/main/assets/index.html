@@ -158,7 +158,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
         </div>
       </div>
       <div class="list" id="list"></div>
-      <p style="font-size:11px;color:var(--mut);text-align:center;margin:16px 8px;line-height:1.5">Type the NSE symbol (e.g. SBIN, TATASTEEL, M&amp;M), enter your alert price and tap Set. Leave the price empty to just watch a stock.</p>
+      <p style="font-size:11px;color:var(--mut);text-align:center;margin:16px 8px;line-height:1.5">Type the NSE symbol (e.g. SBIN, TATASTEEL, M&amp;M) or an index (NIFTY, BANKNIFTY, FINNIFTY, NIFTYIT, SENSEX, MIDCAP100, MIDCAP50), enter your alert price and tap Set. Leave the price empty to just watch it.</p>
     </section>
 
     <!-- HISTORY -->
@@ -282,7 +282,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     for (var i = 0; i < 20; i++) {
       html += '<div class="card empty" id="c' + i + '" data-i="' + i + '">' +
         '<div class="r1"><div class="symbox"><div class="symrow"><span class="num">' + (i + 1) + '</span>' +
-        '<input class="sym" maxlength="20" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="Add stock (e.g. SBIN)" aria-label="Stock symbol for slot ' + (i + 1) + '">' +
+        '<input class="sym" maxlength="20" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="Stock or index (e.g. SBIN, NIFTY)" aria-label="Stock symbol for slot ' + (i + 1) + '">' +
         '<button class="tag idle" tabindex="-1">EMPTY</button></div><div class="name"></div></div>' +
         '<div class="px"><div class="ltp">—</div><div class="chg"></div></div></div>' +
         '<div class="r2"><label class="ap"><span>Alert ₹</span><input class="apv" inputmode="decimal" placeholder="0.00" aria-label="Alert price for slot ' + (i + 1) + '"></label>' +
@@ -322,7 +322,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     var c = $('c' + i);
     var sym = c.querySelector('.sym').value.trim().toUpperCase();
     var raw = c.querySelector('.apv').value.trim().replace(/,/g, '');
-    if (sym && !/^[A-Z0-9&\-_.]{1,20}$/.test(sym)) { toast('Use the NSE symbol, e.g. SBIN or M&M', true); return; }
+    if (sym && !/^[A-Z0-9&\-_.]{1,20}$/.test(sym)) { toast('Use the NSE symbol (e.g. SBIN, M&M) or an index name (e.g. NIFTY)', true); return; }
     if (raw && (isNaN(+raw) || +raw <= 0)) { toast('Enter a valid alert price', true); return; }
     if (!sym && raw) { toast('Type a stock symbol first', true); return; }
     var dupe = -1;
