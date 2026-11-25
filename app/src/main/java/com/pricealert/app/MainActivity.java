@@ -7,10 +7,12 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.WindowInsets;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.FrameLayout;
 
 public class MainActivity extends Activity {
     private WebView web;
@@ -32,7 +34,26 @@ public class MainActivity extends Activity {
         web.setWebChromeClient(new WebChromeClient());
         bridge = new Bridge(this, web);
         web.addJavascriptInterface(bridge, "Android");
-        setContentView(web);
+
+        // Android 15+ draws apps edge to edge: keep the page clear of the status bar,
+        // navigation bar and keyboard.
+        FrameLayout root = new FrameLayout(this);
+        root.setBackgroundColor(0xFF0A0F1C);
+        root.addView(web, new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+        if (Build.VERSION.SDK_INT >= 35) {
+            root.setOnApplyWindowInsetsListener((v, insets) -> {
+                android.graphics.Insets b = insets.getInsets(
+                        WindowInsets.Type.systemBars() | WindowInsets.Type.displayCutout() | WindowInsets.Type.ime());
+                v.setPadding(b.left, b.top, b.right, b.bottom);
+                return WindowInsets.CONSUMED;
+            });
+        }
+        setContentView(root);
+        if (Build.VERSION.SDK_INT >= 33) {
+            getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
+                    android.window.OnBackInvokedDispatcher.PRIORITY_DEFAULT, this::handleBack);
+        }
         web.loadUrl("file:///android_asset/index.html");
 
         handleIntent(getIntent());
@@ -71,11 +92,16 @@ public class MainActivity extends Activity {
         bridge.emit("resume", "");
     }
 
+    /** Back goes to the Alerts tab first, then closes the app. */
+    private void handleBack() {
+        web.evaluateJavascript("window.goBack ? window.goBack() : false", value -> {
+            if (!"true".equals(value)) finish();
+        });
+    }
+
     @Override
     public void onBackPressed() {
-        web.evaluateJavascript("window.goBack ? window.goBack() : false", value -> {
-            if (!"true".equals(value)) MainActivity.super.onBackPressed();
-        });
+        handleBack();
     }
 
     @Override
