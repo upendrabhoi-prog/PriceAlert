@@ -113,8 +113,8 @@ main{flex:1;padding:0 14px 96px}
 .hbody b{font-size:14px}.hbody small{font-size:11px;color:var(--mut)}
 .hbody .p{font-family:var(--mono);font-size:12px;color:#C9D1E0;margin-top:3px}
 .emptyh{text-align:center;color:var(--mut);padding:48px 20px;font-size:13px;line-height:1.5}
-nav.bot{position:fixed;left:0;right:0;bottom:0;z-index:6;border-top:1px solid var(--line);background:#0D1424;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:6px 8px calc(10px + env(safe-area-inset-bottom))}
-nav.bot button{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px;border:0;background:transparent;color:var(--mut);font-size:11px;position:relative}
+nav.bot{position:fixed;left:0;right:0;bottom:0;z-index:6;border-top:1px solid var(--line);background:#0D1424;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding:6px 4px calc(10px + env(safe-area-inset-bottom))}
+nav.bot button{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;border:0;background:transparent;color:var(--mut);font-size:11px;position:relative}
 nav.bot button.on{color:var(--acc);font-weight:600}
 .badge{position:absolute;top:2px;left:calc(50% + 6px);min-width:16px;height:16px;border-radius:8px;background:#EF4444;color:#fff;font-size:10px;font-weight:700;display:none;align-items:center;justify-content:center;padding:0 4px}
 .toast{position:fixed;left:16px;right:16px;bottom:84px;z-index:9;background:#1F2A44;border:1px solid #2F3D5C;color:var(--tx);border-radius:12px;padding:12px 14px;font-size:13px;opacity:0;transform:translateY(10px);transition:all .25s;pointer-events:none}
@@ -172,6 +172,29 @@ nav.bot button.on{color:var(--acc);font-weight:600}
 .btrack .zero{position:absolute;top:-3px;bottom:-3px;width:2px;background:#E6EAF2;opacity:.55;border-radius:1px}
 .btrack .fill{position:absolute;top:2px;bottom:2px;border-radius:5px}
 .brow .val{width:62px;flex-shrink:0;text-align:right;font-family:var(--mono);font-size:12px;font-weight:700}
+.wsum{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:8px 0 12px}
+.wsum .t{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:var(--mut)}
+.wsum .t b{font-size:14px;color:var(--tx)}
+.breadth{display:flex;height:10px;border-radius:999px;overflow:hidden;margin:10px 0 8px;background:#1E2A42}
+.breadth i{display:block;height:100%}
+.wsum .lg{display:flex;justify-content:space-between;font-size:12px}
+.wsum .lg .g{color:#6EE7B7}.wsum .lg .r{color:#FCA5A5}.wsum .lg .n{color:var(--mut)}
+.whead{display:flex;justify-content:space-between;align-items:center;margin:4px 2px 8px}
+.whead b{font-size:14px}
+.wlist{display:flex;flex-direction:column;gap:8px}
+.wrow{display:flex;align-items:center;gap:10px;width:100%;text-align:left;color:inherit;border-radius:14px;padding:12px 14px;border:1px solid var(--line);background:var(--card);cursor:pointer}
+.wrow.up{background:rgba(16,185,129,.24);border-color:rgba(52,211,153,.6)}
+.wrow.dn{background:rgba(239,68,68,.24);border-color:rgba(248,113,113,.6)}
+.wrow .nm{flex:1;min-width:0}
+.wrow .nm b{display:block;font-size:15px}
+.wrow .nm small{display:block;font-size:11px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wrow .pr{text-align:right;flex-shrink:0}
+.wrow .pr b{display:block;font-family:var(--mono);font-size:15px}
+.wrow .pr small{display:block;font-size:11px;color:var(--mut);margin-top:2px;white-space:nowrap}
+.wrow .pr small em{font-style:normal;font-family:var(--mono);font-weight:600;color:#A7F3D0}
+.wrow .pc small{display:block;font-size:10px;font-weight:700;opacity:.8;margin-top:1px}
+.wrow .pc{flex-shrink:0;min-width:78px;text-align:center;border-radius:10px;padding:7px 6px;font-family:var(--mono);font-size:13px;font-weight:800;color:#0A0F1C;background:#64748B}
+.wrow.up .pc{background:#34D399}.wrow.dn .pc{background:#F87171}
 .dempty{text-align:center;color:var(--mut);font-size:13px;line-height:1.5;padding:40px 16px}
 .dempty button{margin-top:12px;border:0;border-radius:10px;height:40px;padding:0 16px;background:var(--acc);color:#0A0F1C;font-weight:700}
 .filter{display:flex;gap:6px}
@@ -203,6 +226,11 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     <!-- DASHBOARD -->
     <section class="view on" id="v-dashboard">
       <div id="dash"></div>
+    </section>
+
+    <!-- WATCHLIST -->
+    <section class="view" id="v-watch">
+      <div id="watch"></div>
     </section>
 
     <!-- ALERTS -->
@@ -290,6 +318,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
 
   <nav class="bot">
     <button data-v="dashboard" class="on"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Dashboard</button>
+    <button data-v="watch"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l5-5 4 4 8-8"/><path d="M15 8h5v5"/></svg>Watchlist</button>
     <button data-v="alerts"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>Alerts</button>
     <button data-v="history"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>History<span class="badge" id="histBadge"></span></button>
     <button data-v="settings"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>Settings</button>
@@ -304,6 +333,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
   var S = null;            // latest state from the phone
   var view = 'dashboard';
   var dsort = 'near';       // dashboard order: near | az
+  var wsort = 'up';         // watchlist order: up (gainers first) | down (losers first)
   var filter = 'all';
   var query = '';           // search text
   var SLOTS = 50;
@@ -698,12 +728,59 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     });
   }
 
+  // ---------- watchlist ----------
+  function renderWatch() {
+    var items = [];
+    S.slots.forEach(function (s, i) {
+      if (!s.sym || !(s.alert > 0)) return;
+      var q = S.quotes[s.sym];
+      items.push({ i: i, sym: s.sym, name: q && q.name ? q.name : '', q: q, alert: s.alert,
+        p: q && q.hasChg ? q.pchg : null });
+    });
+    var el = $('watch');
+    if (!items.length) {
+      el.innerHTML = '<div class="dempty">Your watchlist is empty.<br>Every stock or index that has an alert price appears here automatically.<br><button id="goAlerts2">Go to Alerts</button></div>';
+      $('goAlerts2').onclick = function () { show('alerts'); };
+      return;
+    }
+    var up = 0, dn = 0, fl = 0;
+    items.forEach(function (x) { if (x.p == null || x.p === 0) fl++; else if (x.p > 0) up++; else dn++; });
+    items.sort(function (a, b) {
+      var pa = a.p == null ? -1e9 : a.p, pb = b.p == null ? -1e9 : b.p;
+      if (wsort === 'down') { pa = a.p == null ? 1e9 : a.p; pb = b.p == null ? 1e9 : b.p; return pa - pb; }
+      return pb - pa;
+    });
+    var n = items.length;
+    var html = '<div class="wsum"><div class="t"><b>Today\'s move</b><span>vs previous close</span></div>' +
+      '<div class="breadth"><i style="width:' + (up / n * 100) + '%;background:#34D399"></i><i style="width:' + (fl / n * 100) + '%;background:#64748B"></i><i style="width:' + (dn / n * 100) + '%;background:#F87171"></i></div>' +
+      '<div class="lg"><span class="g">▲ ' + up + ' up</span><span class="n">' + (fl ? fl + ' flat / no data' : '') + '</span><span class="r">▼ ' + dn + ' down</span></div></div>' +
+      '<div class="whead"><b>Watchlist (' + n + ')</b><div class="seg">' +
+      '<button data-w="up" class="' + (wsort === 'up' ? 'on' : '') + '">% Change ↑</button><button data-w="down" class="' + (wsort === 'down' ? 'on' : '') + '">% Change ↓</button></div></div><div class="wlist">';
+    items.forEach(function (x) {
+      var cls = x.p == null || x.p === 0 ? '' : x.p > 0 ? ' up' : ' dn';
+      var pct = x.p == null ? '—' : (x.p > 0 ? '+' : '') + x.p.toFixed(2) + '%';
+      var chg = x.q && x.q.hasChg ? (x.q.chg >= 0 ? '+' : '') + fmt(x.q.chg) : '';
+      html += '<button class="wrow' + cls + '" data-i="' + x.i + '"><div class="nm"><b>' + esc(x.sym) + '</b><small>' + esc(x.name) + '</small></div>' +
+        '<div class="pr"><b>' + (x.q ? '₹' + fmt(x.q.price) : '—') + '</b><small>Buy <em>₹' + fmt(x.alert) + '</em></small></div>' +
+        '<div class="pc">' + pct + (chg ? '<small>' + chg + '</small>' : '') + '</div></button>';
+    });
+    html += '</div><p style="font-size:11px;color:var(--mut);text-align:center;margin:14px 8px;line-height:1.5">Green = trading above yesterday\'s close. Red = trading below it. Price = current market price (CMP), Buy = your alert price. Tap a row to edit its alert.</p>';
+    el.innerHTML = html;
+    Array.prototype.forEach.call(el.querySelectorAll('.seg button'), function (b) {
+      b.onclick = function () { wsort = b.dataset.w; renderWatch(); };
+    });
+    Array.prototype.forEach.call(el.querySelectorAll('.wrow'), function (b) {
+      b.onclick = function () { focusSlot(+b.dataset.i); };
+    });
+  }
+
   function render() {
     if (!S) return;
     renderStatus();
     renderCards();
     if (view === 'settings') renderSettings();
     if (view === 'dashboard') renderDashboard();
+    if (view === 'watch') renderWatch();
     renderHistory();
     var f = A.takeFocusSlot();
     if (f >= 0) focusSlot(f);
@@ -744,14 +821,14 @@ nav.bot button.on{color:var(--acc);font-weight:600}
   function show(v) {
     view = v;
     $('searchBox').style.display = v === 'alerts' ? 'flex' : 'none';
-    ['dashboard', 'alerts', 'history', 'settings'].forEach(function (n) {
+    ['dashboard', 'watch', 'alerts', 'history', 'settings'].forEach(function (n) {
       $('v-' + n).className = 'view' + (n === v ? ' on' : '');
     });
     Array.prototype.forEach.call(document.querySelectorAll('nav.bot button'), function (b) {
       b.className = b.dataset.v === v ? 'on' : '';
     });
     window.scrollTo(0, 0);
-    if (S) { if (v === 'settings') renderSettings(); if (v === 'dashboard') renderDashboard(); renderHistory(); }
+    if (S) { if (v === 'settings') renderSettings(); if (v === 'dashboard') renderDashboard(); if (v === 'watch') renderWatch(); renderHistory(); }
   }
 
   function setFilterUi() {
