@@ -24,8 +24,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Gets live prices. Order: NSE NIFTY 500 list (one request for many stocks),
- * then NSE single-stock quote, then Google Finance for anything still missing.
+ * Gets live prices. For each stock: NSE India first, then Google Finance,
+ * then Yahoo Finance. All three also return the last price after market hours.
  */
 public final class PriceFetcher {
 
@@ -40,8 +40,8 @@ public final class PriceFetcher {
     }
 
     private static final String UA =
-            "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36";
-    private static final String NSE = "https://www.nseindia.com";
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36";
+    private static final String NSE = "https://www.nseindia.in";
     private static final CookieManager COOKIES = new CookieManager(null, CookiePolicy.ACCEPT_ALL);
     private static long cookieTime = 0;
     public static volatile String lastError = "";
@@ -59,7 +59,7 @@ public final class PriceFetcher {
 
     private static String get(String url, String referer, boolean json) throws IOException {
         HttpURLConnection c = (HttpURLConnection) new URL(url).openConnection();
-        c.setConnectTimeout(12000);
+        c.setConnectTimeout(10000);
         c.setReadTimeout(15000);
         c.setInstanceFollowRedirects(true);
         c.setRequestProperty("User-Agent", UA);
@@ -86,113 +86,125 @@ public final class PriceFetcher {
         try { return URLEncoder.encode(s, "UTF-8"); } catch (Exception e) { return s; }
     }
 
-    /** NSE only answers its API after the home page has set its cookies. */
+    private static double num(String s) { return Double.parseDouble(s.replace(",", "")); }
+
+    // ---------------- NSE India ----------------
+
+    /** Visit the home page once in a while so NSE's cookies are set. */
     private static synchronized void warmNse(boolean force) {
         long now = System.currentTimeMillis();
-        if (!force && now - cookieTime < 4 * 60 * 1000L) return;
+        if (!force && now - cookieTime < 5 * 60 * 1000L) return;
         if (force) COOKIES.getCookieStore().removeAll();
-        try {
-            get(NSE + "/", null, false);
-            get(NSE + "/market-data/live-equity-market", NSE + "/", false);
-        } catch (IOException ignored) {
-            // the API call will report the real problem
-        }
+        try { get(NSE + "/", null, false); } catch (IOException ignored) { }
         cookieTime = System.currentTimeMillis();
     }
 
-    private static String nseApi(String path, String referer) throws IOException {
+    private static Quote nse(String sym) throws Exception {
         warmNse(false);
+        String url = NSE + "/api/NextApi/apiClient/GetQuoteApi?functionName=getSymbolData&marketType=N&series=EQ&symbol=" + enc(sym);
+        String ref = NSE + "/get-quote/equity/" + enc(sym);
+        String body;
         try {
-            return get(NSE + path, referer, true);
+            body = get(url, ref, true);
         } catch (HttpError e) {
-            if (e.code == 401 || e.code == 403) {
-                warmNse(true);
-                return get(NSE + path, referer, true);
-            }
-            throw e;
+            if (e.code == 404) return null;          // unknown symbol
+            if (e.code != 401 && e.code != 403) throw e;
+            warmNse(true);
+            body = get(url, ref, true);
         }
-    }
-
-    /** One request returns about 500 large companies. */
-    private static void nseBulk(Set<String> want, Map<String, Quote> out) throws Exception {
-        String body = nseApi("/api/equity-stockIndices?index=" + enc("NIFTY 500"),
-                NSE + "/market-data/live-equity-market");
-        JSONArray data = new JSONObject(body).optJSONArray("data");
-        if (data == null) return;
-        for (int i = 0; i < data.length(); i++) {
-            JSONObject d = data.optJSONObject(i);
-            if (d == null) continue;
-            String sym = d.optString("symbol");
-            if (!want.contains(sym) || out.containsKey(sym)) continue;
-            double p = d.optDouble("lastPrice", Double.NaN);
-            if (Double.isNaN(p) || p <= 0) continue;
-            Quote q = new Quote();
-            q.sym = sym;
-            q.price = p;
-            q.chg = d.optDouble("change", 0);
-            q.pchg = d.optDouble("pChange", 0);
-            q.hasChange = true;
-            JSONObject meta = d.optJSONObject("meta");
-            if (meta != null) q.name = meta.optString("companyName", "");
-            q.src = "NSE";
-            out.put(sym, q);
-        }
-    }
-
-    private static Quote nseSingle(String sym) throws Exception {
-        String body = nseApi("/api/quote-equity?symbol=" + enc(sym),
-                NSE + "/get-quotes/equity?symbol=" + enc(sym));
-        JSONObject o = new JSONObject(body);
-        JSONObject pi = o.optJSONObject("priceInfo");
-        if (pi == null) return null;
-        double p = pi.optDouble("lastPrice", Double.NaN);
+        JSONArray arr = new JSONObject(body).optJSONArray("equityResponse");
+        JSONObject r = arr == null ? null : arr.optJSONObject(0);
+        if (r == null) return null;
+        JSONObject meta = r.optJSONObject("metaData");
+        JSONObject trade = r.optJSONObject("tradeInfo");
+        JSONObject book = r.optJSONObject("orderBook");
+        double p = Double.NaN;
+        if (book != null) p = book.optDouble("lastPrice", Double.NaN);
+        if ((Double.isNaN(p) || p <= 0) && trade != null) p = trade.optDouble("lastPrice", Double.NaN);
+        if ((Double.isNaN(p) || p <= 0) && meta != null) p = meta.optDouble("closePrice", Double.NaN);
         if (Double.isNaN(p) || p <= 0) return null;
         Quote q = new Quote();
         q.sym = sym;
         q.price = p;
-        q.chg = pi.optDouble("change", 0);
-        q.pchg = pi.optDouble("pChange", 0);
-        q.hasChange = true;
-        JSONObject info = o.optJSONObject("info");
-        if (info != null) q.name = info.optString("companyName", "");
         q.src = "NSE";
-        return q;
-    }
-
-    private static final Pattern G_PRICE = Pattern.compile("data-last-price=\"([0-9.]+)\"");
-    private static final Pattern G_PRICE2 = Pattern.compile("class=\"YMlKec fxKbKc\">[^0-9]*([0-9,]+(?:\\.[0-9]+)?)<");
-    private static final Pattern G_PREV = Pattern.compile("Previous close.{0,400}?class=\"P6K39c\">[^0-9]*([0-9,]+(?:\\.[0-9]+)?)<", Pattern.DOTALL);
-    private static final Pattern G_NAME = Pattern.compile("class=\"zzDege\">([^<]+)<");
-
-    private static double num(String s) { return Double.parseDouble(s.replace(",", "")); }
-
-    private static Quote google(String sym) throws Exception {
-        String html = get("https://www.google.com/finance/quote/" + enc(sym) + ":NSE?hl=en", null, false);
-        Matcher m = G_PRICE.matcher(html);
-        double p;
-        if (m.find()) {
-            p = num(m.group(1));
-        } else {
-            Matcher m2 = G_PRICE2.matcher(html);
-            if (!m2.find()) return null;
-            p = num(m2.group(1));
-        }
-        if (p <= 0) return null;
-        Quote q = new Quote();
-        q.sym = sym;
-        q.price = p;
-        q.src = "Google Finance";
-        Matcher pm = G_PREV.matcher(html);
-        if (pm.find()) {
-            double prev = num(pm.group(1));
+        if (meta != null) {
+            q.name = meta.optString("companyName", "");
+            double prev = meta.optDouble("previousClose", 0);
             if (prev > 0) {
                 q.chg = p - prev;
                 q.pchg = q.chg / prev * 100.0;
                 q.hasChange = true;
             }
         }
-        Matcher nm = G_NAME.matcher(html);
-        if (nm.find()) q.name = nm.group(1).replace("&amp;", "&").replace("&#39;", "'").trim();
+        return q;
+    }
+
+    // ---------------- Google Finance ----------------
+
+    private static final Pattern G_SPAN = Pattern.compile("jsname=\"Pdsbrc\"[^>]*><span>[^0-9<]*([0-9][0-9,]*(?:\\.[0-9]+)?)<");
+    private static final Pattern G_PREV = Pattern.compile("Prev(?:ious|\\.) close.{0,400}?[^0-9]([0-9][0-9,]*\\.[0-9]+)", Pattern.DOTALL);
+    private static final Pattern G_OLD = Pattern.compile("data-last-price=\"([0-9.]+)\"");
+
+    private static Quote google(String sym) throws Exception {
+        String html = get("https://www.google.com/finance/quote/" + enc(sym) + ":NSE?hl=en", null, false);
+        Quote q = new Quote();
+        q.sym = sym;
+        q.src = "Google Finance";
+        // Page data block: ["SBIN","NSE"],"State Bank of India",0,"INR",[price,change,changePct,...]
+        Pattern data = Pattern.compile("\\[\"" + Pattern.quote(sym) + "\",\"NSE\"\\],\"([^\"]*)\",\\d+,\"[A-Z]{3}\",\\[([0-9.]+),(-?[0-9.Ee-]+),(-?[0-9.Ee-]+)");
+        Matcher m = data.matcher(html);
+        if (m.find()) {
+            q.name = m.group(1);
+            q.price = Double.parseDouble(m.group(2));
+            q.chg = Double.parseDouble(m.group(3));
+            q.pchg = Double.parseDouble(m.group(4));
+            q.hasChange = true;
+        } else {
+            Matcher s = G_SPAN.matcher(html);
+            Matcher o = G_OLD.matcher(html);
+            if (s.find()) q.price = num(s.group(1));
+            else if (o.find()) q.price = num(o.group(1));
+            else return null;
+            Matcher pm = G_PREV.matcher(html);
+            if (pm.find()) {
+                double prev = num(pm.group(1));
+                if (prev > 0) {
+                    q.chg = q.price - prev;
+                    q.pchg = q.chg / prev * 100.0;
+                    q.hasChange = true;
+                }
+            }
+        }
+        return q.price > 0 ? q : null;
+    }
+
+    // ---------------- Yahoo Finance ----------------
+
+    private static Quote yahoo(String sym) throws Exception {
+        String body;
+        try {
+            body = get("https://query1.finance.yahoo.com/v8/finance/chart/" + enc(sym + ".NS") + "?range=1d&interval=1d", null, true);
+        } catch (HttpError e) {
+            if (e.code == 404) return null;
+            throw e;
+        }
+        JSONObject chart = new JSONObject(body).optJSONObject("chart");
+        JSONArray res = chart == null ? null : chart.optJSONArray("result");
+        JSONObject meta = res == null || res.optJSONObject(0) == null ? null : res.optJSONObject(0).optJSONObject("meta");
+        if (meta == null) return null;
+        double p = meta.optDouble("regularMarketPrice", Double.NaN);
+        if (Double.isNaN(p) || p <= 0) return null;
+        Quote q = new Quote();
+        q.sym = sym;
+        q.price = p;
+        q.src = "Yahoo Finance";
+        q.name = meta.optString("longName", meta.optString("shortName", ""));
+        double prev = meta.optDouble("chartPreviousClose", meta.optDouble("previousClose", 0));
+        if (prev > 0) {
+            q.chg = p - prev;
+            q.pchg = q.chg / prev * 100.0;
+            q.hasChange = true;
+        }
         return q;
     }
 
@@ -201,28 +213,17 @@ public final class PriceFetcher {
         Set<String> want = new LinkedHashSet<>(symbols);
         Map<String, Quote> out = new HashMap<>();
         List<String> errors = new ArrayList<>();
-        if (want.isEmpty()) { lastError = ""; return out; }
-
-        if (want.size() > 2) {
-            try { nseBulk(want, out); } catch (Exception e) { errors.add("NSE list: " + e.getMessage()); }
-        }
         for (String s : want) {
-            if (out.containsKey(s)) continue;
-            try {
-                Quote q = nseSingle(s);
-                if (q != null) out.put(s, q);
-            } catch (Exception e) {
-                errors.add("NSE " + s + ": " + e.getMessage());
+            Quote q = null;
+            try { q = nse(s); } catch (Exception e) { errors.add("NSE " + s + ": " + e.getMessage()); }
+            if (q == null) {
+                try { q = google(s); } catch (Exception e) { errors.add("Google " + s + ": " + e.getMessage()); }
             }
-        }
-        for (String s : want) {
-            if (out.containsKey(s)) continue;
-            try {
-                Quote q = google(s);
-                if (q != null) out.put(s, q);
-            } catch (Exception e) {
-                errors.add("Google " + s + ": " + e.getMessage());
+            if (q == null) {
+                try { q = yahoo(s); } catch (Exception e) { errors.add("Yahoo " + s + ": " + e.getMessage()); }
             }
+            if (q != null) out.put(s, q);
+            else if (errors.isEmpty()) errors.add(s + ": symbol not found");
         }
         lastError = errors.isEmpty() ? "" : errors.get(0);
         return out;
