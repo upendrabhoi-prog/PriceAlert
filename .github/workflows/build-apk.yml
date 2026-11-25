@@ -39,7 +39,7 @@ jobs:
       - name: Publish APK on the Releases page
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.2.${{ github.run_number }}
-          name: PriceAlert v1.2.${{ github.run_number }}
+          tag_name: v1.3.${{ github.run_number }}
+          name: PriceAlert v1.3.${{ github.run_number }}
           body: Download PriceAlert.apk below and open it on your Android phone to install.
           files: PriceAlert.apk
