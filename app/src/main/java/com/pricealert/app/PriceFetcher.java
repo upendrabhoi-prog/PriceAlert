@@ -88,6 +88,32 @@ public final class PriceFetcher {
 
     private static double num(String s) { return Double.parseDouble(s.replace(",", "")); }
 
+    // ---------------- Indices ----------------
+
+    /** Typed name -> {Google Finance code, Yahoo Finance code, display name}. */
+    private static final Map<String, String[]> INDICES = new HashMap<>();
+    static {
+        String[] nifty = {"NIFTY_50:INDEXNSE", "^NSEI", "NIFTY 50"};
+        INDICES.put("NIFTY", nifty);
+        INDICES.put("NIFTY50", nifty);
+        String[] bank = {"NIFTY_BANK:INDEXNSE", "^NSEBANK", "NIFTY BANK"};
+        INDICES.put("BANKNIFTY", bank);
+        INDICES.put("NIFTYBANK", bank);
+        String[] fin = {"NIFTY_FIN_SERVICE:INDEXNSE", "NIFTY_FIN_SERVICE.NS", "NIFTY FINANCIAL SERVICES"};
+        INDICES.put("FINNIFTY", fin);
+        INDICES.put("NIFTYFIN", fin);
+        INDICES.put("NIFTYIT", new String[]{"NIFTY_IT:INDEXNSE", "^CNXIT", "NIFTY IT"});
+        INDICES.put("SENSEX", new String[]{"SENSEX:INDEXBOM", "^BSESN", "BSE SENSEX"});
+        String[] mid100 = {null, "NIFTY_MIDCAP_100.NS", "NIFTY MIDCAP 100"};
+        INDICES.put("MIDCAP100", mid100);
+        INDICES.put("NIFTYMIDCAP100", mid100);
+        String[] mid50 = {null, "^NSEMDCP50", "NIFTY MIDCAP 50"};
+        INDICES.put("MIDCAP50", mid50);
+        INDICES.put("NIFTYMIDCAP50", mid50);
+    }
+
+    public static boolean isIndex(String sym) { return INDICES.containsKey(sym); }
+
     // ---------------- NSE India ----------------
 
     /** Visit the home page once in a while so NSE's cookies are set. */
@@ -145,13 +171,17 @@ public final class PriceFetcher {
     private static final Pattern G_PREV = Pattern.compile("Prev(?:ious|\\.) close.{0,400}?[^0-9]([0-9][0-9,]*\\.[0-9]+)", Pattern.DOTALL);
     private static final Pattern G_OLD = Pattern.compile("data-last-price=\"([0-9.]+)\"");
 
-    private static Quote google(String sym) throws Exception {
-        String html = get("https://www.google.com/finance/quote/" + enc(sym) + ":NSE?hl=en", null, false);
+    /** code is like "SBIN:NSE" for a stock or "NIFTY_50:INDEXNSE" for an index. */
+    private static Quote google(String code, String sym) throws Exception {
+        String[] parts = code.split(":");
+        String html = get("https://www.google.com/finance/quote/" + enc(parts[0]) + ":" + parts[1] + "?hl=en", null, false);
         Quote q = new Quote();
         q.sym = sym;
         q.src = "Google Finance";
         // Page data block: ["SBIN","NSE"],"State Bank of India",0,"INR",[price,change,changePct,...]
-        Pattern data = Pattern.compile("\\[\"" + Pattern.quote(sym) + "\",\"NSE\"\\],\"([^\"]*)\",\\d+,\"[A-Z]{3}\",\\[([0-9.]+),(-?[0-9.Ee-]+),(-?[0-9.Ee-]+)");
+        // (for an index the currency is null)
+        Pattern data = Pattern.compile("\\[\"" + Pattern.quote(parts[0]) + "\",\"" + Pattern.quote(parts[1])
+                + "\"\\],\"([^\"]*)\",\\d+,(?:\"[A-Z]{3}\"|null),\\[([0-9.]+),(-?[0-9.Ee-]+),(-?[0-9.Ee-]+)");
         Matcher m = data.matcher(html);
         if (m.find()) {
             q.name = m.group(1);
@@ -180,10 +210,11 @@ public final class PriceFetcher {
 
     // ---------------- Yahoo Finance ----------------
 
-    private static Quote yahoo(String sym) throws Exception {
+    /** code is like "SBIN.NS" for a stock or "^NSEI" for an index. */
+    private static Quote yahoo(String code, String sym) throws Exception {
         String body;
         try {
-            body = get("https://query1.finance.yahoo.com/v8/finance/chart/" + enc(sym + ".NS") + "?range=1d&interval=1d", null, true);
+            body = get("https://query1.finance.yahoo.com/v8/finance/chart/" + enc(code) + "?range=1d&interval=1d", null, true);
         } catch (HttpError e) {
             if (e.code == 404) return null;
             throw e;
@@ -215,13 +246,18 @@ public final class PriceFetcher {
         List<String> errors = new ArrayList<>();
         for (String s : want) {
             Quote q = null;
-            try { q = nse(s); } catch (Exception e) { errors.add("NSE " + s + ": " + e.getMessage()); }
-            if (q == null) {
-                try { q = google(s); } catch (Exception e) { errors.add("Google " + s + ": " + e.getMessage()); }
+            String[] idx = INDICES.get(s);
+            if (idx == null) {
+                try { q = nse(s); } catch (Exception e) { errors.add("NSE " + s + ": " + e.getMessage()); }
+            }
+            String gCode = idx == null ? s + ":NSE" : idx[0];
+            if (q == null && gCode != null) {
+                try { q = google(gCode, s); } catch (Exception e) { errors.add("Google " + s + ": " + e.getMessage()); }
             }
             if (q == null) {
-                try { q = yahoo(s); } catch (Exception e) { errors.add("Yahoo " + s + ": " + e.getMessage()); }
+                try { q = yahoo(idx == null ? s + ".NS" : idx[1], s); } catch (Exception e) { errors.add("Yahoo " + s + ": " + e.getMessage()); }
             }
+            if (q != null && idx != null) q.name = idx[2];
             if (q != null) out.put(s, q);
             else if (errors.isEmpty()) errors.add(s + ": symbol not found");
         }
