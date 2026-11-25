@@ -9,7 +9,7 @@ import org.json.JSONObject;
 
 /** All app data, kept as JSON strings in SharedPreferences. */
 public final class Store {
-    public static final int SLOTS = 20;
+    public static final int SLOTS = 50;
     private static final int HISTORY_MAX = 300;
     private static final String[] DEFAULT_SYMBOLS = {
             "RELIANCE", "TCS", "INFY", "HDFCBANK", "ICICIBANK",
