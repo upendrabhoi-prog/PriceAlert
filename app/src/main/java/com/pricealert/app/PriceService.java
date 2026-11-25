@@ -51,9 +51,9 @@ public class PriceService extends Service {
     public void onCreate() {
         super.onCreate();
         Notifier.ensureChannels(this);
-        if (Build.VERSION.SDK_INT >= 29) {
+        if (Build.VERSION.SDK_INT >= 34) {
             startForeground(Notifier.MONITOR_ID, Notifier.monitor(this, "Starting…"),
-                    ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC);
+                    ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE);
         } else {
             startForeground(Notifier.MONITOR_ID, Notifier.monitor(this, "Starting…"));
         }
