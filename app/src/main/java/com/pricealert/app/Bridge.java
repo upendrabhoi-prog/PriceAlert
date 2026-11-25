@@ -177,12 +177,13 @@ public class Bridge {
     public void openBatterySettings() {
         act.runOnUiThread(() -> {
             try {
-                Intent i = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
-                i.setData(Uri.parse("package:" + act.getPackageName()));
-                act.startActivity(i);
+                act.startActivity(new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS));
             } catch (Exception e) {
-                try { act.startActivity(new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)); }
-                catch (Exception ignored) { }
+                try {
+                    Intent i = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    i.setData(Uri.parse("package:" + act.getPackageName()));
+                    act.startActivity(i);
+                } catch (Exception ignored) { }
             }
         });
     }
