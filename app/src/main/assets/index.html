@@ -120,6 +120,12 @@ nav.bot button.on{color:var(--acc);font-weight:600}
 .toast{position:fixed;left:16px;right:16px;bottom:84px;z-index:9;background:#1F2A44;border:1px solid #2F3D5C;color:var(--tx);border-radius:12px;padding:12px 14px;font-size:13px;opacity:0;transform:translateY(10px);transition:all .25s;pointer-events:none}
 .toast.show{opacity:1;transform:none}
 .toast.err{background:#3A1519;border-color:#5B1F27}
+.search{display:flex;align-items:center;gap:8px;margin-top:10px;background:var(--card);border:1px solid var(--line2);border-radius:12px;padding:0 6px 0 12px;height:44px}
+.search:focus-within{border-color:var(--acc)}
+.search input{flex:1;min-width:0;background:transparent;border:0;outline:none;font-size:14px}
+.search input::placeholder{color:#5B6782}
+.search button{width:36px;height:36px;border:0;background:transparent;color:var(--mut);display:none;align-items:center;justify-content:center}
+.nores{text-align:center;color:var(--mut);font-size:13px;padding:28px 12px;display:none}
 .filter{display:flex;gap:6px}
 .filter button{height:30px;border-radius:999px;border:1px solid var(--line2);background:transparent;color:var(--mut);font-size:12px;padding:0 10px}
 .filter button.on{background:#16233B;color:#7DD3FC;border-color:#1E3A5F}
@@ -138,6 +144,11 @@ nav.bot button.on{color:var(--acc);font-weight:600}
       </button>
     </div>
     <div class="status"><span class="dot" id="mDot"></span><span id="mText">Loading…</span></div>
+    <div class="search" id="searchBox">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9AA4B8" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="text" enterkeyhint="search" autocomplete="off" spellcheck="false" placeholder="Search alerts by stock or index name" aria-label="Search alerts">
+      <button id="qClear" aria-label="Clear search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
   </header>
 
   <main>
@@ -150,7 +161,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
       </div>
       <div class="mon" id="monBar"><span id="monText"></span><button id="monBtn"></button></div>
       <div class="sect">
-        <b>My alerts (20 slots)</b>
+        <b>My alerts (50 slots)</b>
         <div class="filter" id="filter">
           <button data-f="all" class="on">All</button>
           <button data-f="active">Active</button>
@@ -158,6 +169,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
         </div>
       </div>
       <div class="list" id="list"></div>
+      <div class="nores" id="noRes">No alerts match your search.</div>
       <p style="font-size:11px;color:var(--mut);text-align:center;margin:16px 8px;line-height:1.5">Type the NSE symbol (e.g. SBIN, TATASTEEL, M&amp;M) or an index (NIFTY, BANKNIFTY, FINNIFTY, NIFTYIT, SENSEX, MIDCAP100, MIDCAP50), enter your alert price and tap Set. Leave the price empty to just watch it.</p>
     </section>
 
@@ -238,6 +250,8 @@ nav.bot button.on{color:var(--acc);font-weight:600}
   var S = null;            // latest state from the phone
   var view = 'alerts';
   var filter = 'all';
+  var query = '';           // search text
+  var SLOTS = 50;
   var dirty = {};          // slot index -> true while edited but not saved
   var busy = {};           // slot index -> true while saving
   var seenHist = 0;
@@ -275,11 +289,11 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     render();
   }
 
-  // ---------- build the 20 cards once ----------
+  // ---------- build the 50 cards once ----------
   var ICON_X = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>';
   function buildCards() {
     var html = '';
-    for (var i = 0; i < 20; i++) {
+    for (var i = 0; i < SLOTS; i++) {
       html += '<div class="card empty" id="c' + i + '" data-i="' + i + '">' +
         '<div class="r1"><div class="symbox"><div class="symrow"><span class="num">' + (i + 1) + '</span>' +
         '<input class="sym" maxlength="20" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="Stock or index (e.g. SBIN, NIFTY)" aria-label="Stock symbol for slot ' + (i + 1) + '">' +
@@ -374,9 +388,10 @@ nav.bot button.on{color:var(--acc);font-weight:600}
   }
 
   function renderCards() {
-    var nW = 0, nN = 0, nH = 0;
+    var nW = 0, nN = 0, nH = 0, shown = 0;
     S.slots.forEach(function (s, i) {
       var c = $('c' + i);
+      if (!c) return;
       var inf = slotInfo(s);
       if (s.sym && s.alert > 0) {
         if (inf.kind === 'hit') nH++; else if (inf.kind === 'near') nN++; else nW++;
@@ -418,8 +433,14 @@ nav.bot button.on{color:var(--acc);font-weight:600}
         (filter === 'empty' && !s.sym) ||
         (filter === 'near' && inf.kind === 'near') ||
         (filter === 'hit' && inf.kind === 'hit');
+      if (show && query) {
+        var hay = ((s.sym || '') + ' ' + (inf.q && inf.q.name ? inf.q.name : '')).toUpperCase();
+        show = hay.indexOf(query) >= 0;
+      }
       c.style.display = show ? '' : 'none';
+      if (show) shown++;
     });
+    $('noRes').style.display = shown ? 'none' : 'block';
     $('nWatch').textContent = nW;
     $('nNear').textContent = nN;
     $('nHit').textContent = nH;
@@ -532,6 +553,9 @@ nav.bot button.on{color:var(--acc);font-weight:600}
   function focusSlot(i) {
     show('alerts');
     filter = 'all';
+    query = '';
+    $('q').value = '';
+    $('qClear').style.display = 'none';
     setFilterUi();
     renderCards();
     var c = $('c' + i);
@@ -560,6 +584,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
 
   function show(v) {
     view = v;
+    $('searchBox').style.display = v === 'alerts' ? 'flex' : 'none';
     ['alerts', 'history', 'settings'].forEach(function (n) {
       $('v-' + n).className = 'view' + (n === v ? ' on' : '');
     });
@@ -633,6 +658,18 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     toast('Test notification sent');
   };
   $('chanBtn').onclick = function () { A.openChannelSettings(); };
+  $('q').addEventListener('input', function () {
+    query = $('q').value.trim().toUpperCase();
+    $('qClear').style.display = query ? 'flex' : 'none';
+    if (S) renderCards();
+  });
+  $('qClear').onclick = function () {
+    $('q').value = '';
+    query = '';
+    $('qClear').style.display = 'none';
+    if (S) renderCards();
+    $('q').focus();
+  };
   window.addEventListener('scroll', function () {
     $('top').className = 'top' + (window.scrollY > 4 ? ' sh' : '');
   });
