@@ -5,10 +5,10 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-/** NSE regular session: Monday to Friday, 9:15 AM to 3:30 PM IST. */
+/** Price-check window: Monday to Friday, 9:00 AM to 3:30 PM IST (no automatic checks outside it). */
 public final class Market {
     public static final ZoneId IST = ZoneId.of("Asia/Kolkata");
-    private static final int OPEN = 9 * 60 + 15;
+    private static final int OPEN = 9 * 60;
     private static final int CLOSE = 15 * 60 + 30;
 
     private Market() { }
@@ -27,7 +27,7 @@ public final class Market {
 
     public static long nextOpen(long ms) {
         ZonedDateTime z = Instant.ofEpochMilli(ms).atZone(IST);
-        ZonedDateTime c = z.withHour(9).withMinute(15).withSecond(0).withNano(0);
+        ZonedDateTime c = z.withHour(9).withMinute(0).withSecond(0).withNano(0);
         if (!c.isAfter(z)) c = c.plusDays(1);
         while (weekend(c)) c = c.plusDays(1);
         return c.toInstant().toEpochMilli();

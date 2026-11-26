@@ -119,7 +119,7 @@ public final class Store {
             if (!s.has("repeatMin")) s.put("repeatMin", 5);
             if (!s.has("pollMin")) s.put("pollMin", 1);
             if (!s.has("pollSec")) s.put("pollSec", Math.max(15, s.optInt("pollMin", 1) * 60));
-            if (!s.has("marketOnly")) s.put("marketOnly", true);
+            s.put("marketOnly", true);   // prices are only checked automatically during market hours
             if (!s.has("sound")) s.put("sound", true);
             if (!s.has("vibrate")) s.put("vibrate", true);
             if (!s.has("nearWarn")) s.put("nearWarn", true);

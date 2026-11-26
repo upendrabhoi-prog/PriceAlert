@@ -181,6 +181,7 @@ public final class Widgets {
         int color;       // 'r', 'y', 'b' or 'g' bar
         int progress;    // 0-100
         boolean good;    // green row (target reached)
+        char bg = 'n';   // row background: 'n' normal, 'g' green (less than 5% away)
     }
 
     static RemoteViews listViews(Context c, int widgetId, String kind) {
@@ -228,6 +229,7 @@ public final class Widgets {
             it.sortKey = d;
             it.color = price <= al ? 'r' : d <= nearPct ? 'y' : 'b';
             it.progress = (int) Math.max(4, Math.min(100, Math.abs(d) / 5 * 100));
+            if (d < 5) it.bg = 'g';      // less than 5% from buy price: green
             out.add(it);
         }
         out.sort((a, b) -> Double.compare(a.sortKey, b.sortKey));
@@ -263,6 +265,7 @@ public final class Widgets {
             it.color = hit ? 'g' : 'y';
             double span = tg - buy;
             it.progress = hit ? 100 : (int) Math.max(2, Math.min(100, span > 0 ? (price - buy) / span * 100 : 2));
+            if (left < 5) it.bg = 'g';   // less than 5% left (or reached): green
             out.add(it);
         }
         out.sort((a, b) -> Double.compare(a.sortKey, b.sortKey));
@@ -298,7 +301,8 @@ public final class Widgets {
             v.setViewVisibility(bars[k], on ? android.view.View.VISIBLE : android.view.View.GONE);
             if (on) v.setProgressBar(bars[k], 100, it.progress, false);
         }
-        v.setInt(R.id.row2, "setBackgroundResource", it.good ? R.drawable.w_row_g : R.drawable.w_row_n);
+        v.setInt(R.id.row2, "setBackgroundResource",
+                it.bg == 'g' ? R.drawable.w_row_g : R.drawable.w_row_n);
         v.setOnClickFillInIntent(R.id.row2, new Intent());
         return v;
     }
