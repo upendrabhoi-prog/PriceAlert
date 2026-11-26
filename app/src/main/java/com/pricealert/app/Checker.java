@@ -33,6 +33,13 @@ public final class Checker {
             String sym = s.optString("sym", "").trim();
             if (!sym.isEmpty()) syms.add(sym);
         }
+        JSONArray holds = store.holdings();
+        for (int i = 0; i < holds.length(); i++) {
+            JSONObject h = holds.optJSONObject(i);
+            if (h == null) continue;
+            String sym = h.optString("sym", "").trim();
+            if (!sym.isEmpty()) syms.add(sym);
+        }
 
         Result r = new Result();
         r.asked = syms.size();
@@ -69,7 +76,10 @@ public final class Checker {
         } catch (JSONException ignored) { }
         store.saveLastFetch(lf);
 
-        if (evaluate) evaluate(ctx, store, slots, got, now);
+        if (evaluate) {
+            evaluate(ctx, store, slots, got, now);
+            evaluateTargets(ctx, store, holds, got, now);
+        }
         return r;
     }
 
@@ -123,6 +133,45 @@ public final class Checker {
             } catch (JSONException ignored) { }
         }
         store.saveAlertState(state);
+    }
+
+    /** My Stocks: notify when price is at or above the target, repeating at the user's interval. */
+    private static void evaluateTargets(Context ctx, Store store, JSONArray holds,
+                                        Map<String, PriceFetcher.Quote> got, long now) {
+        long repeatMs = Math.max(1, store.settings().optInt("repeatMin", 5)) * 60_000L;
+        JSONObject paused = store.alertState();
+        JSONObject state = store.targetState();
+        for (int i = 0; i < holds.length(); i++) {
+            JSONObject h = holds.optJSONObject(i);
+            if (h == null) continue;
+            String sym = h.optString("sym", "").trim();
+            double target = h.optDouble("target", 0);
+            if (sym.isEmpty() || target <= 0) continue;
+            PriceFetcher.Quote q = got.get(sym);
+            if (q == null) continue;
+            String key = String.valueOf(i);
+            JSONObject st = state.optJSONObject(key);
+            if (st == null) st = new JSONObject();
+            try {
+                JSONObject ps = paused.optJSONObject(sym);
+                if (ps != null && ps.optLong("pausedUntil", 0) > now) { state.put(key, st); continue; }
+                if (q.price >= target) {
+                    long last = st.optLong("lastHit", 0);
+                    if (last == 0 || now - last >= repeatMs - 5_000L) {
+                        int count = st.optInt("count", 0) + 1;
+                        st.put("lastHit", now);
+                        st.put("count", count);
+                        Notifier.targetHit(ctx, i, q, target, count);
+                        store.addHistory(hist(sym, q, target, now, "target", count));
+                    }
+                } else {
+                    st.put("lastHit", 0);
+                    st.put("count", 0);
+                }
+                state.put(key, st);
+            } catch (JSONException ignored) { }
+        }
+        store.saveTargetState(state);
     }
 
     private static JSONObject hist(String sym, PriceFetcher.Quote q, double alert, long t, String kind, int n) {
