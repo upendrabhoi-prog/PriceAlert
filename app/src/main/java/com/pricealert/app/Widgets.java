@@ -54,6 +54,16 @@ public final class Widgets {
             for (int id : w) m.updateAppWidget(id, watchViews(c, id));
             m.notifyAppWidgetViewDataChanged(w, R.id.w_list);
         }
+        int[] d = m.getAppWidgetIds(new ComponentName(c, DistWidget.class));
+        if (d != null && d.length > 0) {
+            for (int id : d) m.updateAppWidget(id, listViews(c, id, "dist"));
+            m.notifyAppWidgetViewDataChanged(d, R.id.w_list);
+        }
+        int[] t = m.getAppWidgetIds(new ComponentName(c, TargetWidget.class));
+        if (t != null && t.length > 0) {
+            for (int id : t) m.updateAppWidget(id, listViews(c, id, "target"));
+            m.notifyAppWidgetViewDataChanged(t, R.id.w_list);
+        }
     }
 
     static String time(long ms) {
@@ -160,6 +170,136 @@ public final class Widgets {
         v.setRemoteAdapter(R.id.w_list, svc);
         v.setEmptyView(R.id.w_list, R.id.w_empty);
         v.setPendingIntentTemplate(R.id.w_list, openApp(c, "watch", 63, true));
+        return v;
+    }
+
+    // ---------------- Distance from buy price / % Target left ----------------
+    /** One row of the distance or target widget. */
+    static final class Item {
+        String sym, tag = "", sub, pct, note = "";
+        double sortKey;
+        int color;       // 'r', 'y', 'b' or 'g' bar
+        int progress;    // 0-100
+        boolean good;    // green row (target reached)
+    }
+
+    static RemoteViews listViews(Context c, int widgetId, String kind) {
+        boolean dist = "dist".equals(kind);
+        List<Item> items = dist ? distItems(c) : targetItems(c);
+        RemoteViews v = new RemoteViews(c.getPackageName(), R.layout.w_watch);
+        String t = time(Store.get(c).lastFetch().optLong("t", 0));
+        v.setTextViewText(R.id.w_title, dist ? "Distance from buy price" : "% Target left");
+        v.setTextViewText(R.id.w_sub, (dist ? "Top 10 closest · " : "From current price · smallest first · ") + t);
+        v.setTextViewText(R.id.w_empty, dist ? "Set alert (buy) prices in Wealthora's Alerts tab to see them here."
+                : "Add target prices to your stocks in Wealthora's My Stocks tab to see them here.");
+        String tab = dist ? "dashboard" : "port";
+        v.setOnClickPendingIntent(R.id.w_head, openApp(c, tab, dist ? 64 : 65, false));
+        v.setOnClickPendingIntent(R.id.w_refresh, refresh(c));
+        Intent svc = new Intent(c, WatchService.class);
+        svc.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
+        svc.putExtra("kind", kind);
+        svc.setData(Uri.parse(svc.toUri(Intent.URI_INTENT_SCHEME)));
+        v.setRemoteAdapter(R.id.w_list, svc);
+        v.setEmptyView(R.id.w_list, R.id.w_empty);
+        v.setPendingIntentTemplate(R.id.w_list, openApp(c, tab, dist ? 66 : 67, true));
+        return v;
+    }
+
+    /** Alert stocks sorted like the Dashboard's "Closest" view (at/below buy price first), top 10. */
+    static List<Item> distItems(Context c) {
+        Store s = Store.get(c);
+        JSONArray sl = s.slots();
+        JSONObject quotes = s.quotes();
+        double nearPct = s.settings().optDouble("nearPct", 2);
+        List<Item> out = new ArrayList<>();
+        for (int i = 0; i < sl.length(); i++) {
+            JSONObject o = sl.optJSONObject(i);
+            if (o == null) continue;
+            String sym = o.optString("sym", "");
+            double al = o.optDouble("alert", 0);
+            JSONObject q = quotes.optJSONObject(sym);
+            if (sym.isEmpty() || al <= 0 || q == null) continue;
+            double price = q.optDouble("price", 0);
+            double d = (price - al) / al * 100;
+            Item it = new Item();
+            it.sym = sym;
+            it.sub = "CMP " + Notifier.rupees(price) + " · Buy " + Notifier.rupees(al);
+            it.pct = pct(d);
+            it.sortKey = d;
+            it.color = price <= al ? 'r' : d <= nearPct ? 'y' : 'b';
+            it.progress = (int) Math.max(4, Math.min(100, Math.abs(d) / 5 * 100));
+            out.add(it);
+        }
+        out.sort((a, b) -> Double.compare(a.sortKey, b.sortKey));
+        return out.size() > 10 ? new ArrayList<>(out.subList(0, 10)) : out;
+    }
+
+    /** My Stocks with a target: % the price still has to rise, smallest first (reached targets on top). */
+    static List<Item> targetItems(Context c) {
+        Store s = Store.get(c);
+        JSONArray hs = s.holdings();
+        JSONObject quotes = s.quotes();
+        JSONArray accts = s.settings().optJSONArray("accounts");
+        List<Item> out = new ArrayList<>();
+        for (int i = 0; i < hs.length(); i++) {
+            JSONObject h = hs.optJSONObject(i);
+            if (h == null) continue;
+            String sym = h.optString("sym", "");
+            double tg = h.optDouble("target", 0), buy = h.optDouble("buy", 0);
+            JSONObject q = quotes.optJSONObject(sym);
+            if (sym.isEmpty() || tg <= 0 || q == null) continue;
+            double price = q.optDouble("price", 0);
+            if (price <= 0) continue;
+            double left = (tg - price) / price * 100;
+            boolean hit = price >= tg;
+            Item it = new Item();
+            it.sym = sym;
+            it.tag = accountName(accts, h.optString("acct", ""));
+            it.sub = "CMP " + Notifier.rupees(price) + " · Target " + Notifier.rupees(tg);
+            it.pct = hit ? "✓ Hit" : String.format(Locale.US, "%.2f%%", left);
+            it.note = hit ? "reached" : "to go";
+            it.sortKey = left;
+            it.good = hit;
+            it.color = hit ? 'g' : 'y';
+            double span = tg - buy;
+            it.progress = hit ? 100 : (int) Math.max(2, Math.min(100, span > 0 ? (price - buy) / span * 100 : 2));
+            out.add(it);
+        }
+        out.sort((a, b) -> Double.compare(a.sortKey, b.sortKey));
+        return out;
+    }
+
+    /** Account name for a holding, shown only when the user has more than one account. */
+    private static String accountName(JSONArray accts, String id) {
+        if (accts == null || accts.length() < 2) return "";
+        for (int k = 0; k < accts.length(); k++) {
+            JSONObject a = accts.optJSONObject(k);
+            if (a != null && id.equals(a.optString("id"))) return a.optString("name", "");
+        }
+        JSONObject first = accts.optJSONObject(0);
+        return first == null ? "" : first.optString("name", "");
+    }
+
+    static RemoteViews itemViews(Context c, Item it) {
+        RemoteViews v = new RemoteViews(c.getPackageName(), R.layout.w_row2);
+        v.setTextViewText(R.id.r2_sym, it.sym);
+        v.setTextViewText(R.id.r2_sub, it.sub);
+        v.setTextViewText(R.id.r2_pct, it.pct);
+        int col = it.color == 'r' ? RED : it.color == 'y' ? 0xFFFCD34D : it.color == 'g' ? GREEN : 0xFF38BDF8;
+        v.setTextColor(R.id.r2_pct, col);
+        if (it.tag.isEmpty()) v.setViewVisibility(R.id.r2_tag, android.view.View.GONE);
+        else { v.setViewVisibility(R.id.r2_tag, android.view.View.VISIBLE); v.setTextViewText(R.id.r2_tag, it.tag); }
+        if (it.note.isEmpty()) v.setViewVisibility(R.id.r2_note, android.view.View.GONE);
+        else { v.setViewVisibility(R.id.r2_note, android.view.View.VISIBLE); v.setTextViewText(R.id.r2_note, it.note); }
+        int[] bars = {R.id.r2_pb_r, R.id.r2_pb_y, R.id.r2_pb_b, R.id.r2_pb_g};
+        char[] keys = {'r', 'y', 'b', 'g'};
+        for (int k = 0; k < 4; k++) {
+            boolean on = keys[k] == it.color;
+            v.setViewVisibility(bars[k], on ? android.view.View.VISIBLE : android.view.View.GONE);
+            if (on) v.setProgressBar(bars[k], 100, it.progress, false);
+        }
+        v.setInt(R.id.row2, "setBackgroundResource", it.good ? R.drawable.w_row_g : R.drawable.w_row_n);
+        v.setOnClickFillInIntent(R.id.row2, new Intent());
         return v;
     }
 

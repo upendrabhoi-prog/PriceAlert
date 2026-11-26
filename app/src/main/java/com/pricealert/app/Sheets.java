@@ -38,7 +38,11 @@ public final class Sheets {
         String t = s.settings().optString("sheetTab", "").trim();
         return t.isEmpty() ? "Realised Trades" : t;
     }
-    static int every(Store s) { return Math.max(5, s.settings().optInt("sheetEvery", 15)); }
+    /** Minutes between sheet checks: 30 min, 1 hour (default), 6 hours or 10 hours. */
+    static int every(Store s) {
+        int m = s.settings().optInt("sheetEvery", 60);
+        return m < 30 ? 60 : m;
+    }
 
     /** What the Realised tab needs: settings plus the last parsed rows. */
     public static JSONObject state(Context c) {
