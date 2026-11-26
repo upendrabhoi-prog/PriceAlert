@@ -312,6 +312,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
   <main>
     <!-- DASHBOARD -->
     <section class="view on" id="v-dashboard">
+      <div id="battWarn"></div>
       <div id="dash"></div>
     </section>
 
@@ -381,8 +382,13 @@ nav.bot button.on{color:var(--acc);font-weight:600}
 
       <div class="panel">
         <h3>Price check frequency</h3>
-        <p>How often prices are fetched while monitoring. Faster checks use a little more battery and data.</p>
+        <p>How often prices are fetched, in the background and while the app is open. Every tab and the home-screen widgets update at this pace. 15 and 30 seconds use more battery and data.</p>
         <div class="chips" id="pollChips"></div>
+      </div>
+
+      <div class="panel">
+        <h3>Home-screen widgets</h3>
+        <p>Long-press an empty spot on your home screen → <b>Widgets</b> → scroll to <b>Wealthora</b>. Add <b>Wealthora Portfolio</b> (value and profit / loss) or <b>Wealthora Watchlist</b> (scrollable, green / red by today's move). Tap ↻ on a widget to refresh it.</p>
       </div>
 
       <div class="panel" style="padding:4px 16px">
@@ -421,7 +427,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
 
       <button class="btn" id="testBtn">Send test notification</button>
       <button class="btn" id="chanBtn" style="margin-top:8px">Notification sound &amp; style settings</button>
-      <p style="font-size:11px;color:var(--mut);text-align:center;margin:16px 8px;line-height:1.5">Wealthora v1.5 · Prices may be delayed. Not investment advice.</p>
+      <p style="font-size:11px;color:var(--mut);text-align:center;margin:16px 8px;line-height:1.5">Wealthora v1.6 · Prices may be delayed. Not investment advice.</p>
     </section>
   </main>
 
@@ -464,7 +470,9 @@ nav.bot button.on{color:var(--acc);font-weight:600}
   var $ = function (id) { return document.getElementById(id); };
 
   var REPEAT = [[1, '1 min'], [3, '3 min'], [5, '5 min'], [10, '10 min'], [60, '1 hour'], [1440, '1 day']];
-  var POLL = [[1, '1 min'], [2, '2 min'], [5, '5 min']];
+  var POLL = [[15, '15 sec'], [30, '30 sec'], [60, '1 min'], [120, '2 min'], [300, '5 min']];
+  function pollSec() { var p = S && S.settings && S.settings.pollSec; return p > 0 ? p : 60; }
+  function pollLabel() { var p = pollSec(); return p < 60 ? p + ' sec' : (p / 60) + ' min'; }
   var NEAR = [[1, '1%'], [2, '2%'], [5, '5%']];
 
   function fmt(n) {
@@ -670,7 +678,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     bar.className = 'mon' + (mon ? '' : ' off');
     if (mon) {
       $('monText').textContent = S.marketOpen || !S.settings.marketOnly
-        ? 'Monitoring on · checks every ' + S.settings.pollMin + ' min'
+        ? 'Monitoring on · checks every ' + pollLabel()
         : 'Monitoring on · resumes at market open';
       $('monBtn').textContent = 'Stop';
     } else {
@@ -692,11 +700,11 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     var st = S.settings;
     renderAccounts();
     chips($('repeatChips'), REPEAT, st.repeatMin, 'repeatMin');
-    chips($('pollChips'), POLL, st.pollMin, 'pollMin');
+    chips($('pollChips'), POLL, pollSec(), 'pollSec');
     chips($('nearChips'), NEAR, st.nearPct, 'nearPct');
     var lbl = (REPEAT.filter(function (o) { return o[0] === st.repeatMin; })[0] || [0, st.repeatMin + ' min'])[1];
     $('repeatHint').textContent = 'While a stock stays at or below its alert price, you\'ll be reminded every ' + lbl + '.' +
-      (st.repeatMin < st.pollMin ? ' Prices are checked every ' + st.pollMin + ' min, so reminders come at that pace.' : '');
+      (st.repeatMin * 60 < pollSec() ? ' Prices are checked every ' + pollLabel() + ', so reminders come at that pace.' : '');
     $('nearSub').textContent = 'Heads-up when price is within ' + st.nearPct + '% of alert';
     Array.prototype.forEach.call(document.querySelectorAll('.sw[data-k]'), function (b) {
       b.className = 'sw' + (st[b.dataset.k] ? ' on' : '');
@@ -1296,6 +1304,25 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     });
   }
 
+  function renderBattWarn() {
+    var el = $('battWarn');
+    if (!el) return;
+    var need = !S.settings.monitoring || !S.batteryFree || !S.notifAllowed;
+    if (!need) { el.innerHTML = ''; return; }
+    var msg = !S.settings.monitoring ? 'Background monitoring is off, so alerts won\'t arrive when the app is closed.'
+      : !S.notifAllowed ? 'Notifications are blocked, so you won\'t see alerts.'
+      : 'Set Wealthora\'s battery use to “Unrestricted” so your phone doesn\'t stop price checks when the app is closed.';
+    var btn = !S.settings.monitoring ? 'Turn on' : !S.notifAllowed ? 'Allow' : 'Fix';
+    el.innerHTML = '<div class="dcard" style="margin:8px 0 12px;border-color:#7A5A12;background:#2A2110;display:flex;align-items:center;gap:10px">' +
+      '<div style="flex:1;font-size:12.5px;line-height:1.45;color:#FCD34D">' + msg + '</div>' +
+      '<button id="bwBtn" style="flex-shrink:0;height:36px;border-radius:10px;border:0;background:#FCD34D;color:#0A0F1C;font-weight:700;padding:0 14px">' + btn + '</button></div>';
+    $('bwBtn').onclick = function () {
+      if (!S.settings.monitoring) setMonitoring(true);
+      else if (!S.notifAllowed) A.askNotificationPermission();
+      else A.openBatterySettings();
+    };
+  }
+
   function render() {
     if (!S) return;
     ensureCards(S.slots.length);
@@ -1308,6 +1335,9 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     if (view === 'port') renderPortfolio();
     renderHoldings();
     renderHistory();
+    renderBattWarn();
+    var tb = A.takeTab ? A.takeTab() : '';
+    if (tb) show(tb);
     var f = A.takeFocusSlot();
     if (f >= 0) focusSlot(f);
   }
@@ -1384,8 +1414,11 @@ nav.bot button.on{color:var(--acc);font-weight:600}
       else if (d.ok) toast(d.sym + (d.price ? ' ₹' + fmt(d.price) : '') + (d.alert > 0 ? ' · alert set at ₹' + fmt(d.alert) : ' added'));
       else toast('Couldn\'t get a price for ' + d.sym + '. Check the NSE symbol or your internet.', true);
       load();
+    } else if (ev === 'updated') {
+      load();
     } else if (ev === 'refreshed') {
       $('refreshBtn').classList.remove('spin');
+      if (autoRef) { autoRef = false; load(); return; }
       if (d.asked && d.got < d.asked) toast('Got ' + d.got + ' of ' + d.asked + ' prices' + (d.err ? ' · ' + d.err : ''), true);
       else if (d.asked) toast('Prices updated');
       else toast('Add a stock to get prices');
@@ -1485,6 +1518,19 @@ nav.bot button.on{color:var(--acc);font-weight:600}
   show('dashboard');
   load();
   setInterval(function () { if (!document.hidden) load(); }, 5000);
+  // While the app is open, keep prices live at the chosen frequency on every tab,
+  // even if the background service has not started yet.
+  var autoRef = false, autoAt = 0;
+  setInterval(function () {
+    if (document.hidden || !S || autoRef) return;
+    var now = Date.now(), last = (S.lastFetch && S.lastFetch.t) || 0;
+    var gap = (S.marketOpen || !S.settings.marketOnly) ? pollSec() * 1000 : 300000;
+    if (now - last >= gap + 3000 && now - autoAt >= gap) {
+      autoAt = now; autoRef = true;
+      A.refresh();
+      setTimeout(function () { autoRef = false; }, 60000);
+    }
+  }, 3000);
   // first open: get prices straight away
   if (S && (!S.lastFetch || !S.lastFetch.t || Date.now() - S.lastFetch.t > 60000)) {
     $('refreshBtn').classList.add('spin');
