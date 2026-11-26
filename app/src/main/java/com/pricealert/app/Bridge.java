@@ -48,6 +48,7 @@ public class Bridge {
         JSONObject o = new JSONObject();
         try {
             o.put("slots", s.slots());
+            o.put("holdings", s.holdings());
             o.put("settings", s.settings());
             o.put("quotes", s.quotes());
             o.put("history", s.history());
@@ -101,6 +102,37 @@ public class Bridge {
             }
             emit("slot", r.toString());
         });
+    }
+
+    /** Save one My Stocks entry (empty symbol clears it), then fetch its price and report back. */
+    @JavascriptInterface
+    public void saveHolding(int i, String sym, String buy, String qty, String target, String acct) {
+        String s = sym == null ? "" : sym.trim().toUpperCase();
+        double b = num(buy), q = num(qty), t = num(target);
+        Store store = Store.get(ctx());
+        store.setHolding(i, s, b, q, t, acct);
+        store.resetTargetState(i);
+        bg.execute(() -> {
+            JSONObject r = new JSONObject();
+            try {
+                Checker.run(ctx(), true);
+                JSONObject qt = Store.get(ctx()).quotes().optJSONObject(s);
+                boolean fresh = qt != null && System.currentTimeMillis() - qt.optLong("t", 0) < 60_000L;
+                r.put("i", i);
+                r.put("sym", s);
+                r.put("target", t);
+                r.put("ok", s.isEmpty() || fresh);
+                if (qt != null) r.put("price", qt.optDouble("price", 0));
+            } catch (Exception e) {
+                try { r.put("i", i); r.put("sym", s); r.put("ok", false); } catch (JSONException ignored) { }
+            }
+            emit("holding", r.toString());
+        });
+    }
+
+    private static double num(String v) {
+        try { double d = Double.parseDouble(v == null ? "0" : v.trim()); return d > 0 ? d : 0; }
+        catch (Exception e) { return 0; }
     }
 
     @JavascriptInterface
