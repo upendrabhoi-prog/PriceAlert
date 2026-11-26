@@ -192,6 +192,11 @@ public final class Store {
 
     public synchronized void clearHistory() { put("history", new JSONArray()); }
 
+    // ---------- realised trades from Google Sheet ----------
+    public synchronized JSONObject realised() { return obj("realised"); }
+
+    public synchronized void saveRealised(JSONObject o) { put("realised", o); }
+
     // ---------- last fetch ----------
     public synchronized JSONObject lastFetch() { return obj("lastFetch"); }
 

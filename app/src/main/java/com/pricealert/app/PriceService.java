@@ -101,6 +101,7 @@ public class PriceService extends Service {
         long now = System.currentTimeMillis();
         boolean marketOnly = store.settings().optBoolean("marketOnly", true);
         long pollMs = store.pollMs();
+        try { Sheets.maybeSync(this); } catch (Exception ignored) { }
 
         if (!marketOnly || Market.isOpen(now)) {
             wakeLock.acquire(Math.max(120_000L, pollMs * 3));

@@ -74,6 +74,7 @@ public class Bridge {
             o.put("history", s.history());
             o.put("alertState", s.alertState());
             o.put("lastFetch", s.lastFetch());
+            o.put("realised", Sheets.state(ctx()));
             o.put("running", PriceService.running != null);
             o.put("marketOpen", Market.isOpen(System.currentTimeMillis()));
             o.put("nextOpen", Market.nextOpen(System.currentTimeMillis()));
@@ -192,6 +193,12 @@ public class Bridge {
                 act.runOnUiThread(() -> PriceService.start(act));
             }
         });
+    }
+
+    /** Re-reads the Google Sheet now; the result arrives as the "sheet" event. */
+    @JavascriptInterface
+    public void syncSheet() {
+        bg.execute(() -> Sheets.sync(ctx()));
     }
 
     @JavascriptInterface
