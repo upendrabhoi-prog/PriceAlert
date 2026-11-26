@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Wealthora</string>
+    <string name="w_port">Wealthora Portfolio</string>
+    <string name="w_watch">Wealthora Watchlist</string>
+    <string name="wd_port">Portfolio value, total and today\'s profit / loss</string>
+    <string name="wd_watch">Your stocks coloured by today\'s move, scrollable</string>
 </resources>
