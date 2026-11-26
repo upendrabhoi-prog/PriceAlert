@@ -14,7 +14,7 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 public final class Notifier {
-    public static final String CH_MONITOR = "monitor";
+    public static final String CH_MONITOR = "monitor_quiet";
     public static final int MONITOR_ID = 1;
     private static final int COLOR = 0xFF38BDF8;
 
@@ -26,10 +26,14 @@ public final class Notifier {
 
     public static void ensureChannels(Context c) {
         NotificationManager m = nm(c);
-        NotificationChannel mon = new NotificationChannel(CH_MONITOR, "Background monitoring",
-                NotificationManager.IMPORTANCE_LOW);
-        mon.setDescription("Shown while Wealthora is watching prices");
+        try { m.deleteNotificationChannel("monitor"); } catch (Exception ignored) { }
+        NotificationChannel mon = new NotificationChannel(CH_MONITOR, "Background service (can be turned off)",
+                NotificationManager.IMPORTANCE_MIN);
+        mon.setDescription("Android needs this while Wealthora checks prices in the background. "
+                + "You can turn it off; price checks and alerts keep working.");
         mon.setShowBadge(false);
+        mon.setSound(null, null);
+        mon.enableVibration(false);
         m.createNotificationChannel(mon);
 
         String[][] defs = {
@@ -160,8 +164,7 @@ public final class Notifier {
         return new Notification.Builder(c, CH_MONITOR)
                 .setSmallIcon(R.drawable.ic_stat_alert)
                 .setColor(COLOR)
-                .setContentTitle("Wealthora is watching your stocks")
-                .setContentText(text)
+                .setContentTitle("Wealthora price alerts are active")
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
                 .setShowWhen(false)
@@ -171,6 +174,6 @@ public final class Notifier {
     }
 
     public static void updateMonitor(Context c, String text) {
-        try { nm(c).notify(MONITOR_ID, monitor(c, text)); } catch (SecurityException ignored) { }
+        // Intentionally does nothing: the background notification stays quiet and never changes.
     }
 }

@@ -243,6 +243,17 @@ public class Bridge {
         });
     }
 
+    /** Opens the settings page of the background-service notification so it can be switched off. */
+    @JavascriptInterface
+    public void hideServiceNotification() {
+        act.runOnUiThread(() -> {
+            Intent i = new Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS);
+            i.putExtra(Settings.EXTRA_APP_PACKAGE, act.getPackageName());
+            i.putExtra(Settings.EXTRA_CHANNEL_ID, Notifier.CH_MONITOR);
+            try { act.startActivity(i); } catch (Exception e) { openChannelSettings(); }
+        });
+    }
+
     @JavascriptInterface
     public void openChannelSettings() {
         act.runOnUiThread(() -> {
