@@ -172,6 +172,16 @@ nav.bot button.on{color:var(--acc);font-weight:600}
 .btrack .zero{position:absolute;top:-3px;bottom:-3px;width:2px;background:#E6EAF2;opacity:.55;border-radius:1px}
 .btrack .fill{position:absolute;top:2px;bottom:2px;border-radius:5px}
 .brow .val{width:62px;flex-shrink:0;text-align:right;font-family:var(--mono);font-size:12px;font-weight:700}
+.brow.hl{background:rgba(16,185,129,.17);border:1px solid rgba(52,211,153,.5);border-radius:12px;padding:10px 10px;margin:4px 0}
+.brow.hl+.brow{border-top-color:transparent}
+.brow .tag2{font-size:9.5px;font-weight:700;color:#0A0F1C;border-radius:5px;padding:1px 5px;margin-left:-2px;flex-shrink:0;white-space:nowrap;align-self:center}
+.brow.t .top{flex-wrap:wrap;align-items:center;row-gap:3px}
+.brow.t .top b{flex:0 1 auto}
+.brow.t .top .prices{flex-basis:100%;justify-content:flex-start;margin-left:0}
+.brow.nt{opacity:.6}
+.dlist+.dlist{margin-top:14px}
+.hlnote{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--mut);margin:-2px 0 8px}
+.hlnote i{width:10px;height:10px;border-radius:3px;background:rgba(16,185,129,.45);border:1px solid #34D399}
 .wsum{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:8px 0 12px}
 .wsum .t{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:var(--mut)}
 .wsum .t b{font-size:14px;color:var(--tx)}
@@ -460,7 +470,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
       </div>
 
       <div class="panel" style="padding:4px 16px">
-        <div class="trow"><div><b>Only during market hours</b><small>Mon–Fri, 9:15 AM – 3:30 PM IST</small></div><button class="sw" data-k="marketOnly" aria-label="Only during market hours"></button></div>
+        <div class="trow"><div><b>Market hours only</b><small>Prices are checked automatically only Mon–Fri, 9:00 AM – 3:30 PM IST, to save battery. Outside these hours the last prices are shown.</small></div></div>
         <div class="trow"><div><b>Alert sound</b><small>Play a tone with each alert</small></div><button class="sw" data-k="sound" aria-label="Alert sound"></button></div>
         <div class="trow"><div><b>Vibrate</b><small>Vibrate with each alert</small></div><button class="sw" data-k="vibrate" aria-label="Vibrate"></button></div>
         <div class="trow"><div><b>Early warning</b><small id="nearSub">Heads-up when price is within 2% of alert</small></div><button class="sw" data-k="nearWarn" aria-label="Early warning"></button></div>
@@ -508,15 +518,15 @@ nav.bot button.on{color:var(--acc);font-weight:600}
 
       <button class="btn" id="testBtn">Send test notification</button>
       <button class="btn" id="chanBtn" style="margin-top:8px">Notification sound &amp; style settings</button>
-      <p style="font-size:11px;color:var(--mut);text-align:center;margin:16px 8px;line-height:1.5">Wealthora v1.9 · Prices may be delayed. Not investment advice.</p>
+      <p style="font-size:11px;color:var(--mut);text-align:center;margin:16px 8px;line-height:1.5">Wealthora v2.0 · Prices may be delayed. Not investment advice.</p>
     </section>
   </main>
 
   <nav class="bot">
     <button data-v="dashboard" class="on"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Dashboard</button>
+    <button data-v="watch"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l5-5 4 4 8-8"/><path d="M15 8h5v5"/></svg>Watchlist</button>
     <button data-v="port"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12A9 9 0 1 1 12 3v9z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/></svg>Portfolio</button>
     <button data-v="real"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19V5"/><path d="M4 19h16"/><path d="m8 15 3-4 3 2 5-6"/><path d="M15 7h4v4"/></svg>Realised</button>
-    <button data-v="watch"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l5-5 4 4 8-8"/><path d="M15 8h5v5"/></svg>Watchlist</button>
     <button data-v="my"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M12 11v5M9.5 13.5h5"/></svg>My Stocks</button>
     <button data-v="alerts"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>Alerts</button>
     <button data-v="history"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>History<span class="badge" id="histBadge"></span></button>
@@ -531,6 +541,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
   var S = null;            // latest state from the phone
   var view = 'dashboard';
   var dsort = 'near';       // dashboard order: near | az
+  var tsort = 'near';      // dashboard target list: near (smallest first) | az
   var wsort = 'up';         // watchlist order: up (gainers first) | down (losers first)
   var wtab = 'mine';        // watchlist section: mine | alerts
   var psort = 'pl';         // portfolio order: pl | tgt | value | az
@@ -758,9 +769,9 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     var bar = $('monBar');
     bar.className = 'mon' + (mon ? '' : ' off');
     if (mon) {
-      $('monText').textContent = S.marketOpen || !S.settings.marketOnly
+      $('monText').textContent = S.marketOpen
         ? 'Monitoring on · checks every ' + pollLabel()
-        : 'Monitoring on · resumes at market open';
+        : 'Monitoring on · market closed, resumes 9:00 AM (Mon–Fri)';
       $('monBtn').textContent = 'Stop';
     } else {
       $('monText').textContent = 'Monitoring is off. Alerts won\'t arrive.';
@@ -858,6 +869,47 @@ nav.bot button.on{color:var(--acc);font-weight:600}
   function kindColor(k) { return k === 'hit' ? '#F87171' : k === 'near' ? '#FCD34D' : k === 'paused' ? '#A5B4FC' : '#38BDF8'; }
 
   function renderDashboard() {
+    var el = $('dash'), html = '';
+    // ---- % target left (My Stocks / Portfolio) ----
+    var acs = accounts(), multi = acs.length > 1, tg = [], noT = [];
+    holdings().forEach(function (h, i) {
+      if (!h.sym || !(h.qty > 0)) return;
+      var q = S.quotes[h.sym];
+      var r = { i: i, sym: h.sym, acct: acctOf(h), buy: h.buy, target: h.target || 0, q: q };
+      if (!(r.target > 0)) { noT.push(r); return; }
+      if (!q) { r.left = null; tg.push(r); return; }
+      r.left = (r.target - q.price) / q.price * 100;
+      var span = r.target - r.buy;
+      r.prog = q.price >= r.target ? 100 : span > 0 ? Math.max(2, Math.min(100, (q.price - r.buy) / span * 100)) : 2;
+      tg.push(r);
+    });
+    tg.sort(function (a, b) {
+      if (tsort === 'az') return a.sym < b.sym ? -1 : a.sym > b.sym ? 1 : 0;
+      var x = a.left == null ? 1e9 : a.left, y = b.left == null ? 1e9 : b.left; return x - y;
+    });
+    html += '<div class="dlist"><div class="dhead"><b>% Target left</b><div class="seg" data-g="t">' +
+      '<button data-s="near" class="' + (tsort === 'near' ? 'on' : '') + '">Smallest</button><button data-s="az" class="' + (tsort === 'az' ? 'on' : '') + '">A–Z</button></div></div>' +
+      '<div class="hlnote"><i></i>Green = less than 5% left to target (or target reached)</div>';
+    if (!tg.length && !noT.length) {
+      html += '<div class="dempty" style="margin:6px 0">No stocks in your portfolio yet.<br><button id="goMy">Add stocks in My Stocks</button></div>';
+    }
+    tg.forEach(function (r) {
+      var hit = r.q && r.q.price >= r.target, hl = r.left != null && r.left < 5;
+      var col = hit ? '#34D399' : '#FCD34D';
+      html += '<button class="brow t' + (hl ? ' hl' : '') + '" data-h="' + r.i + '"><div class="top"><b>' + esc(r.sym) + '</b>' +
+        (multi ? '<span class="tag2" style="background:' + acctColor(r.acct) + '">' + esc(acctName(r.acct)) + '</span>' : '') +
+        '<div class="prices"><span>CMP <em>' + (r.q ? '₹' + fmt(r.q.price) : '—') + '</em></span><span class="buy">Target <em>₹' + fmt(r.target) + '</em></span></div></div>' +
+        '<div class="bar2"><div class="btrack"><div class="fill" style="left:0;width:' + (r.prog || 0).toFixed(1) + '%;background:' + col + '"></div></div>' +
+        '<div class="val" style="color:' + col + '">' + (r.left == null ? '—' : hit ? '✓ Hit' : r.left.toFixed(2) + '%') + '</div></div></button>';
+    });
+    noT.forEach(function (r) {
+      html += '<button class="brow t nt" data-h="' + r.i + '"><div class="top"><b>' + esc(r.sym) + '</b>' +
+        (multi ? '<span class="tag2" style="background:' + acctColor(r.acct) + '">' + esc(acctName(r.acct)) + '</span>' : '') +
+        '<div class="prices"><span>CMP <em>' + (r.q ? '₹' + fmt(r.q.price) : '—') + '</em></span><span class="buy">No target · tap to add</span></div></div></button>';
+    });
+    html += '</div>';
+
+    // ---- distance from buy price (alerts) ----
     var items = [];
     S.slots.forEach(function (s, i) {
       if (!s.sym || !(s.alert > 0)) return;
@@ -865,14 +917,9 @@ nav.bot button.on{color:var(--acc);font-weight:600}
       if (!inf.q) return;
       items.push({ i: i, sym: s.sym, name: inf.q.name || '', price: inf.q.price, alert: s.alert, d: inf.d, kind: inf.kind });
     });
-    var el = $('dash');
     if (!items.length) {
-      el.innerHTML = '<div class="dempty">No alerts with prices yet.<br>Add stocks and alert prices in the Alerts tab and they will appear here as a chart.<br><button id="goAlerts">Go to Alerts</button></div>';
-      $('goAlerts').onclick = function () { show('alerts'); };
-      return;
-    }
-    var html = '';
-    // distance bars
+      html += '<div class="dlist"><div class="dhead"><b>Distance from buy price</b></div><div class="dempty" style="margin:6px 0">No alerts with prices yet.<br><button id="goAlerts">Go to Alerts</button></div></div>';
+    } else {
     var list = items.slice();
     if (dsort === 'az') list.sort(function (a, b) { return a.sym < b.sym ? -1 : 1; });
     else list.sort(function (a, b) { return a.d - b.d; });
@@ -881,8 +928,9 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     var minNeg = Math.min(0, Math.min.apply(null, list.map(function (x) { return x.d; })));
     var negSpan = minNeg < 0 ? Math.max(2, Math.ceil(-minNeg)) : 0;
     var zeroAt = negSpan ? 18 : 3;           // % of track width used for "below alert"
-    html += '<div class="dlist"><div class="dhead"><b>Distance from buy price</b><div class="seg">' +
+    html += '<div class="dlist"><div class="dhead"><b>Distance from buy price</b><div class="seg" data-g="d">' +
       '<button data-s="near" class="' + (dsort === 'near' ? 'on' : '') + '">Closest</button><button data-s="az" class="' + (dsort === 'az' ? 'on' : '') + '">A–Z</button></div></div>' +
+      '<div class="hlnote"><i></i>Green = less than 5% above buy price (or below it)</div>' +
       '<div class="scale"><div class="sp"></div><div class="st">' +
       (negSpan ? '<span style="left:0;transform:none">−' + negSpan + '%</span>' : '') +
       '<span style="left:' + zeroAt + '%">buy</span>' +
@@ -892,19 +940,23 @@ nav.bot button.on{color:var(--acc);font-weight:600}
       var col = kindColor(x.kind), left, width;
       if (x.d >= 0) { left = zeroAt; width = Math.max(1.5, Math.min(1, x.d / maxPos) * (100 - zeroAt)); }
       else { width = Math.min(1, -x.d / negSpan) * zeroAt; left = zeroAt - width; }
-      html += '<button class="brow" data-i="' + x.i + '"><div class="top"><b>' + esc(x.sym) + '</b>' +
+      html += '<button class="brow' + (x.d < 5 ? ' hl' : '') + '" data-i="' + x.i + '"><div class="top"><b>' + esc(x.sym) + '</b>' +
         '<div class="prices"><span>CMP <em>₹' + fmt(x.price) + '</em></span><span class="buy">Buy <em>₹' + fmt(x.alert) + '</em></span></div></div>' +
         '<div class="bar2"><div class="btrack"><div class="fill" style="left:' + left.toFixed(1) + '%;width:' + width.toFixed(1) + '%;background:' + col + '"></div><div class="zero" style="left:calc(' + zeroAt + '% - 1px)"></div></div>' +
         '<div class="val" style="color:' + col + '">' + (x.d >= 0 ? '+' : '') + x.d.toFixed(2) + '%</div></div></button>';
     });
-    html += '</div><p style="font-size:11px;color:var(--mut);text-align:center;margin:14px 8px;line-height:1.5">CMP = current market price. Buy = your alert price. Bars show how far CMP is above (right) or below (left) the buy price. Tap a row to edit it.</p>';
+    html += '</div>';
+    }
+    html += '<p style="font-size:11px;color:var(--mut);text-align:center;margin:14px 8px;line-height:1.5">CMP = current market price. % Target left = how much the price still has to rise to reach your target (My Stocks). Buy = your alert price. Prices update Mon–Fri, 9:00 AM – 3:30 PM. Tap a row to edit it.</p>';
     el.innerHTML = html;
     Array.prototype.forEach.call(el.querySelectorAll('.seg button'), function (b) {
-      b.onclick = function () { dsort = b.dataset.s; renderDashboard(); };
+      b.onclick = function () { if (b.parentNode.dataset.g === 't') tsort = b.dataset.s; else dsort = b.dataset.s; renderDashboard(); };
     });
     Array.prototype.forEach.call(el.querySelectorAll('.brow'), function (b) {
-      b.onclick = function () { focusSlot(+b.dataset.i); };
+      b.onclick = function () { if (b.dataset.h != null) focusHolding(+b.dataset.h); else focusSlot(+b.dataset.i); };
     });
+    if ($('goAlerts')) $('goAlerts').onclick = function () { show('alerts'); };
+    if ($('goMy')) $('goMy').onclick = function () { show('my'); };
   }
 
   // ---------- trading accounts ----------
@@ -1780,7 +1832,8 @@ nav.bot button.on{color:var(--acc);font-weight:600}
   setInterval(function () {
     if (document.hidden || !S || autoRef) return;
     var now = Date.now(), last = (S.lastFetch && S.lastFetch.t) || 0;
-    var gap = (S.marketOpen || !S.settings.marketOnly) ? pollSec() * 1000 : 300000;
+    if (!S.marketOpen) return;               // no automatic price checks outside market hours
+    var gap = pollSec() * 1000;
     if (now - last >= gap + 3000 && now - autoAt >= gap) {
       autoAt = now; autoRef = true;
       A.refresh();
@@ -1788,7 +1841,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     }
   }, 3000);
   // first open: get prices straight away
-  if (S && (!S.lastFetch || !S.lastFetch.t || Date.now() - S.lastFetch.t > 60000)) {
+  if (S && (!S.lastFetch || !S.lastFetch.t || (S.marketOpen && Date.now() - S.lastFetch.t > 60000))) {
     $('refreshBtn').classList.add('spin');
     A.refresh();
   }
