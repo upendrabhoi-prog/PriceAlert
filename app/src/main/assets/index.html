@@ -387,6 +387,12 @@ nav.bot button.on{color:var(--acc);font-weight:600}
       </div>
 
       <div class="panel">
+        <h3>Background notification</h3>
+        <p>Android shows one silent notification while Wealthora checks prices in the background. It no longer changes after each check. To remove it completely, tap the button and switch it off. Your price and target alerts keep working.</p>
+        <button id="hideSvc" style="margin-top:10px;width:100%;height:44px;border-radius:12px;border:1px solid #1E3A5F;background:#0E2236;color:#7DD3FC;font-weight:700;font-size:14px">Turn off background notification</button>
+      </div>
+
+      <div class="panel">
         <h3>Home-screen widgets</h3>
         <p>Long-press an empty spot on your home screen → <b>Widgets</b> → scroll to <b>Wealthora</b>. Add <b>Wealthora Portfolio</b> (value and profit / loss) or <b>Wealthora Watchlist</b> (scrollable, green / red by today's move). Tap ↻ on a widget to refresh it.</p>
       </div>
@@ -427,7 +433,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
 
       <button class="btn" id="testBtn">Send test notification</button>
       <button class="btn" id="chanBtn" style="margin-top:8px">Notification sound &amp; style settings</button>
-      <p style="font-size:11px;color:var(--mut);text-align:center;margin:16px 8px;line-height:1.5">Wealthora v1.6 · Prices may be delayed. Not investment advice.</p>
+      <p style="font-size:11px;color:var(--mut);text-align:center;margin:16px 8px;line-height:1.5">Wealthora v1.7 · Prices may be delayed. Not investment advice.</p>
     </section>
   </main>
 
@@ -713,7 +719,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     $('swMon').className = 'sw' + (st.monitoring ? ' on' : '');
     $('swMon').setAttribute('aria-pressed', !!st.monitoring);
     $('monSub').textContent = st.monitoring
-      ? (S.running ? 'Running · a small notification stays visible while it works' : 'Starting…')
+      ? (S.running ? 'Running in the background' : 'Starting…')
       : 'Off · turn on to receive alerts';
     var lf = S.lastFetch || {};
     var src = lf.src || '';
@@ -1462,6 +1468,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     toast('Test notification sent');
   };
   $('chanBtn').onclick = function () { A.openChannelSettings(); };
+  $('hideSvc').onclick = function () { if (A.hideServiceNotification) A.hideServiceNotification(); else A.openChannelSettings(); };
   $('addAlert').onclick = function () {
     if (nCards >= MAXSLOTS) { toast('You have reached the maximum of ' + MAXSLOTS + ' alerts', true); return; }
     var i = nCards;
