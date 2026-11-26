@@ -10,6 +10,8 @@ import org.json.JSONObject;
 /** All app data, kept as JSON strings in SharedPreferences. */
 public final class Store {
     public static final int SLOTS = 50;
+    public static final int HSLOTS = 50;
+    public static final int MAX_SLOTS = 500;
     private static final int HISTORY_MAX = 300;
     private static final String[] DEFAULT_SYMBOLS = {
             "RELIANCE", "TCS", "INFY", "HDFCBANK", "ICICIBANK",
@@ -66,10 +68,48 @@ public final class Store {
     }
 
     public synchronized void setSlot(int i, String sym, double alert) {
-        if (i < 0 || i >= SLOTS) return;
+        if (i < 0 || i >= MAX_SLOTS) return;
         JSONArray a = slots();
+        while (a.length() <= i) a.put(slot("", 0));
         try { a.put(i, slot(sym, alert)); } catch (JSONException ignored) { }
         put("slots", a);
+    }
+
+    // ---------- my stocks (holdings) ----------
+    private static JSONObject holding(String sym, double buy, double qty, double target, String acct) {
+        JSONObject o = new JSONObject();
+        try {
+            o.put("sym", sym);
+            o.put("buy", buy);
+            o.put("qty", qty);
+            o.put("target", target);
+            o.put("acct", acct == null ? "" : acct);
+        } catch (JSONException ignored) { }
+        return o;
+    }
+
+    public synchronized JSONArray holdings() {
+        JSONArray a = arr("holdings");
+        while (a.length() < HSLOTS) a.put(holding("", 0, 0, 0, ""));
+        return a;
+    }
+
+    public synchronized void setHolding(int i, String sym, double buy, double qty, double target, String acct) {
+        if (i < 0 || i >= MAX_SLOTS) return;
+        JSONArray a = holdings();
+        while (a.length() <= i) a.put(holding("", 0, 0, 0, ""));
+        try { a.put(i, holding(sym, buy, qty, target, acct)); } catch (JSONException ignored) { }
+        put("holdings", a);
+    }
+
+    public synchronized JSONObject targetState() { return obj("targetState"); }
+
+    public synchronized void saveTargetState(JSONObject o) { put("targetState", o); }
+
+    public synchronized void resetTargetState(int i) {
+        JSONObject o = targetState();
+        o.remove(String.valueOf(i));
+        put("targetState", o);
     }
 
     // ---------- settings ----------
