@@ -74,6 +74,30 @@
                 android:resource="@xml/wl_watch" />
         </receiver>
 
+        <receiver
+            android:name=".DistWidget"
+            android:exported="false"
+            android:label="@string/w_dist">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/wl_dist" />
+        </receiver>
+
+        <receiver
+            android:name=".TargetWidget"
+            android:exported="false"
+            android:label="@string/w_target">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/wl_target" />
+        </receiver>
+
         <service
             android:name=".WatchService"
             android:exported="false"
