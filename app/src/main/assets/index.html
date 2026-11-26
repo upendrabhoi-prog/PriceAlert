@@ -278,6 +278,60 @@ nav.bot button.on{color:var(--acc);font-weight:600}
 .ghead small{font-family:var(--mono);font-size:12px;font-weight:700}
 .addmore{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:52px;margin-top:10px;border-radius:14px;border:1.5px dashed #2B5A86;background:#0E2236;color:#7DD3FC;font-weight:700;font-size:15px}
 .addmore:active{background:#12304D}
+
+.rsync{display:flex;align-items:center;gap:10px;background:#0E2236;border:1px solid #1E3A5F;border-radius:14px;padding:10px 12px;margin:8px 0 12px}
+.rsync .ic{width:34px;height:34px;border-radius:10px;background:#0F9D58;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.rsync .tx{flex:1;min-width:0}
+.rsync .tx b{display:block;font-size:13px}
+.rsync .tx small{display:block;font-size:11px;color:#7DD3FC;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rsync button{width:36px;height:36px;border-radius:10px;border:1px solid #1E3A5F;background:#12304D;color:#7DD3FC;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.rsync button.spin svg{animation:sp 1s linear infinite}
+.rseg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px}
+.rseg button{height:40px;border:0;border-radius:10px;background:transparent;color:var(--mut);font-weight:700;font-size:12px;line-height:1.1}
+.rseg button small{display:block;font-size:9.5px;font-weight:600;opacity:.8;margin-top:1px}
+.rseg button.on{background:var(--acc);color:#0A0F1C}
+.rcust{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}
+.rcust label{display:block;background:var(--card);border:1px solid var(--line2);border-radius:12px;padding:6px 10px}
+.rcust label span{display:block;font-size:10.5px;color:var(--mut);font-weight:600}
+.rcust input{width:100%;background:transparent;border:0;outline:none;font-family:var(--mono);font-size:14px;color:var(--tx);height:24px;color-scheme:dark}
+.rquick{display:flex;gap:6px;overflow-x:auto;margin-top:8px}
+.rquick button{flex-shrink:0;height:30px;border-radius:999px;border:1px solid var(--line2);background:transparent;color:var(--mut);font-size:11.5px;font-weight:600;padding:0 10px}
+.rrange{font-size:11.5px;color:var(--mut);margin:8px 2px 0;display:flex;align-items:center;gap:6px}
+.rrange b{color:var(--tx);font-family:var(--mono);font-weight:600}
+.rhero .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
+.rhero .stats div{background:rgba(10,15,28,.45);border-radius:12px;padding:9px 10px}
+.rhero .stats small{display:block;font-size:10.5px;color:var(--mut)}
+.rhero .stats b{display:block;font-family:var(--mono);font-size:12.5px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wl{display:flex;height:8px;border-radius:999px;overflow:hidden;background:#1E2A42;margin-top:12px}
+.wl i{display:block;height:100%}
+.wlt{display:flex;justify-content:space-between;font-size:11px;margin-top:5px;font-weight:700}
+.rchart svg{display:block;width:100%;height:auto}
+.rstk{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #1A2438}
+.rstk:last-child{border-bottom:0}
+.rstk .n{width:96px;flex-shrink:0}
+.rstk .n b{display:block;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rstk .n small{display:block;font-size:10px;color:var(--mut)}
+.rstk .bw{flex:1;display:flex;height:14px;position:relative}
+.rstk .bw .h{flex:1;display:flex}
+.rstk .bw .h.l{justify-content:flex-end;border-right:1px solid #3A4A66}
+.rstk .bw i{display:block;height:14px;border-radius:3px}
+.rstk .v{width:78px;flex-shrink:0;text-align:right;font-family:var(--mono);font-size:12px;font-weight:700}
+.rtr{border-radius:14px;padding:11px 13px;border:1px solid var(--line);background:var(--card);margin-bottom:8px}
+.rtr.g{background:rgba(16,185,129,.16);border-color:rgba(52,211,153,.45)}
+.rtr.r{background:rgba(239,68,68,.16);border-color:rgba(248,113,113,.45)}
+.rtr .a{display:flex;align-items:center;gap:8px}
+.rtr .a b{font-size:14.5px}
+.rtr .a .tg{font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:6px;color:#0A0F1C}
+.rtr .a .pv{margin-left:auto;font-family:var(--mono);font-weight:800;font-size:14.5px}
+.rtr .b{display:flex;align-items:center;gap:8px;margin-top:5px;font-size:11.5px;color:#C9D1E0}
+.rtr .b span{font-family:var(--mono)}
+.rtr .b .pc{margin-left:auto;font-family:var(--mono);font-weight:700}
+.g1{color:#6EE7B7}.r1{color:#FCA5A5}
+.gs input.full{width:100%;height:44px;border-radius:12px;border:1px solid var(--line2);background:var(--bg);padding:0 12px;font-size:13px;margin-top:10px}
+.gs .lbl{display:block;font-size:11px;color:var(--mut);font-weight:600;margin-top:12px}
+.gs .ok{margin-top:12px;font-size:12px;border-radius:10px;padding:10px 12px;background:#0B3B2E;color:#86EFAC;line-height:1.5}
+.gs .cols{margin-top:10px;font-size:11.5px;color:var(--mut);line-height:1.6}
+.gs .cols code{font-family:var(--mono);font-size:11px;background:#16233B;color:#7DD3FC;padding:1px 5px;border-radius:5px}
 .prow .more{display:none;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px;padding-top:10px;border-top:1px dashed rgba(230,234,242,.18)}
 .prow.open .more{display:grid}
 .prow .more small{display:block;font-size:10px;color:var(--mut)}
@@ -294,12 +348,15 @@ nav.bot button.on{color:var(--acc);font-weight:600}
   <header class="top" id="top">
     <div class="brand">
       <div class="logo">
-        <i><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0A0F1C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></i>
+        <i style="background:linear-gradient(135deg,#0B5D4B,#062A2A);overflow:hidden"><svg width="40" height="40" viewBox="0 0 108 108" aria-hidden="true"><defs><linearGradient id="lgG" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#F59E0B"/><stop offset="1" stop-color="#FDE68A"/></linearGradient><linearGradient id="lgB" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#34D399"/><stop offset="1" stop-color="#A7F3D0"/></linearGradient></defs><g transform="translate(-10 -6) scale(1.2)"><path d="M30,78h18a3,3 0 0 1 0,6h-18a3,3 0 0 1 0,-6z M30,71h18a3,3 0 0 1 0,6h-18a3,3 0 0 1 0,-6z" fill="url(#lgG)"/><path d="M52,66h8a2,2 0 0 1 2,2v16h-12v-16a2,2 0 0 1 2,-2z M66,56h8a2,2 0 0 1 2,2v26h-12v-26a2,2 0 0 1 2,-2z" fill="url(#lgB)"/><path d="M28,62L44,48L54,55L74,34" fill="none" stroke="url(#lgG)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M64,32L78,29L76,44Z" fill="#FDE68A" stroke="#FDE68A" stroke-width="2" stroke-linejoin="round"/></g></svg></i>
         <div><b>Wealthora</b><small id="subtitle">Portfolio &amp; price alerts</small></div>
       </div>
+      <div style="display:flex;gap:8px">
+      <button class="icbtn" id="setBtn" aria-label="Settings"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
       <button class="icbtn" id="refreshBtn" aria-label="Refresh prices now">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
       </button>
+      </div>
     </div>
     <div class="status"><span class="dot" id="mDot"></span><span id="mText">Loading…</span></div>
     <div class="search" id="searchBox">
@@ -314,6 +371,11 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     <section class="view on" id="v-dashboard">
       <div id="battWarn"></div>
       <div id="dash"></div>
+    </section>
+
+    <!-- REALISED -->
+    <section class="view" id="v-real">
+      <div id="real"></div>
     </section>
 
     <!-- PORTFOLIO -->
@@ -410,6 +472,19 @@ nav.bot button.on{color:var(--acc);font-weight:600}
         <div class="chips" id="nearChips"></div>
       </div>
 
+      <div class="panel gs">
+        <h3>Google Sheet · Realised trades</h3>
+        <p>Paste the link of your Google Sheet. The Realised tab reads your sold trades from it and checks it again for changes automatically.</p>
+        <input class="full" id="gsUrl" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://docs.google.com/spreadsheets/d/…" aria-label="Google Sheet link">
+        <span class="lbl">Sheet (tab) name</span>
+        <input class="full" id="gsTab" style="margin-top:6px" autocomplete="off" spellcheck="false" placeholder="Realised Trades" aria-label="Sheet tab name">
+        <span class="lbl">Check the sheet for changes every</span>
+        <div class="chips" id="gsChips" style="grid-template-columns:repeat(4,minmax(0,1fr));margin-top:6px"></div>
+        <button class="btn" id="gsTest" style="margin-top:12px;background:var(--acc);border-color:var(--acc);color:#0A0F1C">Connect &amp; check sheet</button>
+        <div id="gsStatus"></div>
+        <div class="cols">In Google Sheets tap <b>Share → General access → Anyone with the link → Viewer</b>, so the app can read it (no Google sign-in needed). The first row with these headings is used, in any order: <code>Stock Name</code> <code>Account</code> <code>Date of Selling</code> <code>Buy Price</code> <code>Sell Price</code> <code>Quantity</code> <code>Profit/Loss</code>. Dates as DD-MM-YYYY.</div>
+      </div>
+
       <div class="panel">
         <h3>Trading accounts</h3>
         <p>Add one entry for each demat / trading account. When you add a stock in My Stocks you choose its account, and the Portfolio shows each account separately and combined.</p>
@@ -433,18 +508,18 @@ nav.bot button.on{color:var(--acc);font-weight:600}
 
       <button class="btn" id="testBtn">Send test notification</button>
       <button class="btn" id="chanBtn" style="margin-top:8px">Notification sound &amp; style settings</button>
-      <p style="font-size:11px;color:var(--mut);text-align:center;margin:16px 8px;line-height:1.5">Wealthora v1.7 · Prices may be delayed. Not investment advice.</p>
+      <p style="font-size:11px;color:var(--mut);text-align:center;margin:16px 8px;line-height:1.5">Wealthora v1.8 · Prices may be delayed. Not investment advice.</p>
     </section>
   </main>
 
   <nav class="bot">
     <button data-v="dashboard" class="on"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Dashboard</button>
     <button data-v="port"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12A9 9 0 1 1 12 3v9z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/></svg>Portfolio</button>
+    <button data-v="real"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19V5"/><path d="M4 19h16"/><path d="m8 15 3-4 3 2 5-6"/><path d="M15 7h4v4"/></svg>Realised</button>
     <button data-v="watch"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l5-5 4 4 8-8"/><path d="M15 8h5v5"/></svg>Watchlist</button>
     <button data-v="my"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M12 11v5M9.5 13.5h5"/></svg>My Stocks</button>
     <button data-v="alerts"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>Alerts</button>
     <button data-v="history"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>History<span class="badge" id="histBadge"></span></button>
-    <button data-v="settings"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>Settings</button>
   </nav>
   <div class="toast" id="toast"></div>
 </div>
@@ -705,6 +780,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
   function renderSettings() {
     var st = S.settings;
     renderAccounts();
+    renderSheetSettings();
     chips($('repeatChips'), REPEAT, st.repeatMin, 'repeatMin');
     chips($('pollChips'), POLL, pollSec(), 'pollSec');
     chips($('nearChips'), NEAR, st.nearPct, 'nearPct');
@@ -926,6 +1002,214 @@ nav.bot button.on{color:var(--acc);font-weight:600}
         render();
       };
     });
+  }
+
+
+  // ---------- realised (Google Sheet) ----------
+  var rper = 'fy', racct = 'all', rsort = 'date', rdir = -1, rfrom = '', rto = '', rbusy = false;
+  var MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  function p2(n) { return (n < 10 ? '0' : '') + n; }
+  function isoD(d) { return d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate()); }
+  function nice(iso) { var a = iso.split('-'); return +a[2] + ' ' + MON[+a[1] - 1] + ' ' + a[0]; }
+  function fyStart(d) { return d.getMonth() >= 3 ? d.getFullYear() : d.getFullYear() - 1; }
+  function fyName(y) { return 'FY ' + y + '-' + String(y + 1).slice(2); }
+  function compact(v) {
+    var a = Math.abs(v), sg = v < 0 ? '−' : '';
+    if (a >= 1e7) return sg + (a / 1e7).toFixed(2) + 'Cr';
+    if (a >= 1e5) return sg + (a / 1e5).toFixed(2) + 'L';
+    if (a >= 1e3) return sg + (a / 1e3).toFixed(1) + 'k';
+    return sg + a.toFixed(0);
+  }
+  function rRange() {
+    var now = new Date(), y = fyStart(now);
+    if (rper === 'fy') return { f: y + '-04-01', t: (y + 1) + '-03-31', name: fyName(y) + ' (current)' };
+    if (rper === 'lfy') return { f: (y - 1) + '-04-01', t: y + '-03-31', name: fyName(y - 1) };
+    if (rper === 'all') return { f: '0000-01-01', t: '9999-12-31', name: 'All time' };
+    var f = rfrom || (y + '-04-01'), t = rto || isoD(now);
+    if (f > t) { var x = f; f = t; t = x; }
+    return { f: f, t: t, name: 'Custom range' };
+  }
+  function rAccts(rows) {
+    var seen = [], fromSet = accounts().map(function (a) { return a.name; });
+    rows.forEach(function (r) { if (seen.indexOf(r.acct) < 0) seen.push(r.acct); });
+    return seen;
+  }
+  function rTot(rows) {
+    var t = { n: rows.length, pl: 0, gp: 0, gl: 0, win: 0, loss: 0, cost: 0, sale: 0, best: null, worst: null };
+    rows.forEach(function (r) {
+      t.pl += r.pl; t.cost += r.buy * r.qty; t.sale += r.sell * r.qty;
+      if (r.pl >= 0) { t.gp += r.pl; t.win++; } else { t.gl += r.pl; t.loss++; }
+      if (!t.best || r.pl > t.best.pl) t.best = r;
+      if (!t.worst || r.pl < t.worst.pl) t.worst = r;
+    });
+    t.ret = t.cost ? t.pl / t.cost * 100 : 0;
+    return t;
+  }
+  function renderRealised() {
+    var el = $('real'), R = S.realised || {};
+    if (!R.url) {
+      el.innerHTML = '<div class="dempty" style="margin-top:12px">Connect your Google Sheet to see realised profit &amp; loss.<br>Paste the sheet link in Settings.<br><button id="rGo">Open Settings</button></div>';
+      $('rGo').onclick = function () { show('settings'); };
+      return;
+    }
+    if (!rbusy && Date.now() - (R.tried || 0) > (R.every || 15) * 60000) { rbusy = true; A.syncSheet(); }
+    var all = R.rows || [], rg = rRange(), acs = rAccts(all);
+    if (racct !== 'all' && acs.indexOf(racct) < 0) racct = 'all';
+    var inR = all.filter(function (r) { return r.date >= rg.f && r.date <= rg.t; });
+    var rows = racct === 'all' ? inR : inR.filter(function (r) { return r.acct === racct; });
+    var col = function (a) { var k = acs.indexOf(a); return ACOL[(k < 0 ? 0 : k) % ACOL.length]; };
+    var y = fyStart(new Date());
+    var h = '';
+    // sync status
+    h += '<div class="rsync"><div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 9h16M4 15h16M10 9v12"/></svg></div>' +
+      '<div class="tx"><b>Google Sheet · ' + esc(R.tab || 'Realised Trades') + '</b><small>' + (rbusy ? 'Checking the sheet…' : R.err ? '⚠ ' + esc(R.err) : R.t ? 'Synced ' + tm(R.t) + ' · ' + all.length + ' trades · checks every ' + (R.every || 15) + ' min' : 'Not synced yet') + '</small></div>' +
+      '<button id="rSync" class="' + (rbusy ? 'spin' : '') + '" aria-label="Check sheet now"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg></button></div>';
+    // period selector
+    var pb = function (k, a, b) { return '<button data-r="' + k + '" class="' + (rper === k ? 'on' : '') + '">' + a + '<small>' + b + '</small></button>'; };
+    h += '<div class="rseg">' + pb('fy', 'This FY', String(y).slice(2) + '-' + String(y + 1).slice(2)) + pb('lfy', 'Last FY', String(y - 1).slice(2) + '-' + String(y).slice(2)) + pb('all', 'All time', 'every trade') + pb('cus', 'Custom', 'pick dates') + '</div>';
+    if (rper === 'cus') {
+      h += '<div class="rcust"><label><span>From</span><input type="date" id="rFrom" value="' + rg.f + '"></label><label><span>To</span><input type="date" id="rTo" value="' + rg.t + '"></label></div>' +
+        '<div class="rquick"><button data-q="m">This month</button><button data-q="pm">Last month</button><button data-q="q">Last 3 months</button><button data-q="h">Last 6 months</button><button data-q="cy">Calendar ' + new Date().getFullYear() + '</button></div>';
+    }
+    h += '<div class="rrange"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>' +
+      (rper === 'all' ? '<b>All trades in the sheet</b>' : '<b>' + nice(rg.f) + '</b> to <b>' + nice(rg.t) + '</b>') + '</div>';
+    // account chips
+    if (acs.length > 1) {
+      h += '<div class="acchips" style="margin-top:10px"><button data-a="all" class="' + (racct === 'all' ? 'on' : '') + '">Consolidated</button>';
+      acs.forEach(function (a) { h += '<button data-a="' + esc(a) + '" class="' + (racct === a ? 'on' : '') + '">' + esc(a) + '</button>'; });
+      h += '</div>';
+    }
+    if (!rows.length) {
+      h += '<div class="dempty" style="margin-top:8px">No realised trades ' + (racct === 'all' ? '' : 'in ' + esc(racct) + ' ') + (rper === 'all' ? 'yet.' : 'between ' + nice(rg.f) + ' and ' + nice(rg.t) + '.') +
+        (rper === 'fy' ? '<br><button id="rLfy">Show last FY (' + fyName(y - 1) + ')</button>' : '') + '</div>';
+      el.innerHTML = h; bindReal(); return;
+    }
+    var t = rTot(rows), up = t.pl >= 0, c = up ? '#34D399' : '#F87171';
+    // hero
+    h += '<div class="phero rhero ' + (up ? 'g' : 'r') + '"><div class="lbl">REALISED P&amp;L · ' + (racct === 'all' ? (acs.length > 1 ? 'CONSOLIDATED' : esc(acs[0] || '')) : esc(racct)) + ' · ' + esc(rper === 'cus' ? 'CUSTOM' : rg.name.toUpperCase()) + '</div>' +
+      '<div class="big" style="color:' + c + '">' + signed(t.pl) + '</div>' +
+      '<div class="pnl" style="color:' + c + '"><span class="pchip" style="background:' + c + '">' + (t.ret >= 0 ? '+' : '') + t.ret.toFixed(2) + '%</span><span style="font-size:11.5px;color:var(--mut);font-family:inherit;font-weight:600">return on buy value · ' + t.n + ' trade' + (t.n === 1 ? '' : 's') + '</span></div>' +
+      '<div class="stats"><div><small>Total profit</small><b class="g1">' + signed(Math.round(t.gp)).replace('.00', '') + '</b></div><div><small>Total loss</small><b class="r1">' + signed(Math.round(t.gl)).replace('.00', '') + '</b></div><div><small>Win rate</small><b>' + Math.round(t.win / t.n * 100) + '%</b></div>' +
+      '<div><small>Buy value</small><b>₹' + compact(t.cost) + '</b></div><div><small>Sell value</small><b>₹' + compact(t.sale) + '</b></div><div><small>Avg / trade</small><b style="color:' + c + '">' + signed(Math.round(t.pl / t.n)).replace('.00', '') + '</b></div></div>' +
+      '<div class="wl"><i style="width:' + (t.win / t.n * 100) + '%;background:#34D399"></i><i style="width:' + (t.loss / t.n * 100) + '%;background:#F87171"></i></div>' +
+      '<div class="wlt"><span class="g1">' + t.win + ' profitable</span><span class="r1">' + t.loss + ' in loss</span></div></div>';
+    // per account
+    if (racct === 'all' && acs.length > 1) {
+      h += '<div class="dcard" style="margin-bottom:12px"><h4>By account · tap to open</h4><div class="acgrid" style="margin:0">';
+      acs.forEach(function (a) {
+        var at = rTot(inR.filter(function (r) { return r.acct === a; }));
+        var cc = at.pl >= 0 ? '#34D399' : '#F87171';
+        h += '<button class="accard" data-a="' + esc(a) + '"><span class="abar" style="background:' + col(a) + '"></span>' +
+          '<div class="an"><b>' + esc(a) + '</b><small>' + at.n + ' trade' + (at.n === 1 ? '' : 's') + (at.n ? ' · ' + Math.round(at.win / at.n * 100) + '% wins' : '') + '</small></div>' +
+          '<div class="av"><b style="color:' + (at.n ? cc : 'var(--mut)') + '">' + (at.n ? signed(at.pl) : '—') + '</b><small style="color:' + cc + '">' + (at.n ? (at.ret >= 0 ? '+' : '') + at.ret.toFixed(2) + '%' : 'no trades') + '</small></div></button>';
+      });
+      h += '</div></div>';
+    }
+    // monthly chart
+    var ms = [], d0, d1;
+    if (rper === 'all' || rper === 'cus') {
+      var ds = rows.map(function (r) { return r.date; }).sort();
+      d0 = (rper === 'cus' ? rg.f : ds[0]).slice(0, 7); d1 = (rper === 'cus' ? rg.t : ds[ds.length - 1]).slice(0, 7);
+    } else { d0 = rg.f.slice(0, 7); d1 = rg.t.slice(0, 7); }
+    var yy = +d0.slice(0, 4), mm = +d0.slice(5, 7);
+    while ((yy + '-' + p2(mm)) <= d1 && ms.length < 36) { ms.push(yy + '-' + p2(mm)); mm++; if (mm > 12) { mm = 1; yy++; } }
+    var mv = ms.map(function (m) { return rows.filter(function (r) { return r.date.slice(0, 7) === m; }).reduce(function (a, r) { return a + r.pl; }, 0); });
+    var mx = Math.max.apply(null, mv.map(Math.abs).concat([1]));
+    var W = 340, Hh = 170, top = 22, bot = 26, mid = top + (Hh - top - bot) / 2, half = (Hh - top - bot) / 2, bw = W / ms.length;
+    var svg = '<svg viewBox="0 0 ' + W + ' ' + Hh + '" role="img" aria-label="Realised profit and loss by month">' +
+      '<line x1="0" x2="' + W + '" y1="' + mid + '" y2="' + mid + '" stroke="#3A4A66" stroke-width="1"/>';
+    ms.forEach(function (m, k) {
+      var v = mv[k], hgt = Math.abs(v) / mx * half, x = k * bw + bw * 0.18, w = bw * 0.64;
+      if (v) svg += '<rect x="' + x.toFixed(1) + '" y="' + (v >= 0 ? mid - hgt : mid).toFixed(1) + '" width="' + w.toFixed(1) + '" height="' + Math.max(1.5, hgt).toFixed(1) + '" rx="2.5" fill="' + (v >= 0 ? '#34D399' : '#F87171') + '"/>' +
+        '<text x="' + (x + w / 2).toFixed(1) + '" y="' + (v >= 0 ? mid - hgt - 4 : mid + hgt + 11).toFixed(1) + '" text-anchor="middle" font-size="8.5" font-weight="700" fill="' + (v >= 0 ? '#6EE7B7' : '#FCA5A5') + '" font-family="monospace">' + compact(v) + '</text>';
+      if (ms.length <= 14 || k % 2 === 0) svg += '<text x="' + (k * bw + bw / 2).toFixed(1) + '" y="' + (Hh - 8) + '" text-anchor="middle" font-size="9" fill="#9AA4B8">' + MON[+m.slice(5) - 1].slice(0, ms.length > 8 ? 1 : 3) + '</text>';
+    });
+    svg += '</svg>';
+    h += '<div class="dcard rchart" style="margin-bottom:12px"><h4>Month by month · ' + nice(ms[0] + '-01').replace(/^1 /, '') + ' – ' + nice(ms[ms.length - 1] + '-01').replace(/^1 /, '') + '</h4>' + svg + '</div>';
+    // by stock
+    var bs = {};
+    rows.forEach(function (r) { var o = bs[r.stock] || (bs[r.stock] = { s: r.stock, pl: 0, n: 0 }); o.pl += r.pl; o.n++; });
+    var sl = Object.keys(bs).map(function (k) { return bs[k]; }).sort(function (a, b) { return b.pl - a.pl; });
+    var smx = Math.max.apply(null, sl.map(function (o) { return Math.abs(o.pl); }).concat([1]));
+    h += '<div class="dcard" style="margin-bottom:12px"><h4>By stock · ' + sl.length + ' stock' + (sl.length === 1 ? '' : 's') + '</h4>';
+    sl.forEach(function (o) {
+      var w = (Math.abs(o.pl) / smx * 100).toFixed(1) + '%';
+      h += '<div class="rstk"><div class="n"><b>' + esc(o.s) + '</b><small>' + o.n + ' trade' + (o.n === 1 ? '' : 's') + '</small></div>' +
+        '<div class="bw"><div class="h l">' + (o.pl < 0 ? '<i style="width:' + w + ';background:#F87171"></i>' : '') + '</div><div class="h">' + (o.pl >= 0 ? '<i style="width:' + w + ';background:#34D399"></i>' : '') + '</div></div>' +
+        '<div class="v ' + (o.pl >= 0 ? 'g1' : 'r1') + '">' + signed(o.pl).replace('.00', '') + '</div></div>';
+    });
+    h += '</div>';
+    // trades
+    var arrow = rdir < 0 ? ' ↓' : ' ↑';
+    var sb = function (k, l) { return '<button data-s="' + k + '" class="' + (rsort === k ? 'on' : '') + '">' + l + (rsort === k ? arrow : '') + '</button>'; };
+    h += '<div class="whead"><b>Trades (' + rows.length + ')</b></div><div class="psort"><span>Sort:</span>' + sb('date', 'Date') + sb('pl', 'P&amp;L') + sb('pct', 'Return %') + sb('az', 'A–Z') + '</div>';
+    var tr = rows.slice().sort(function (a, b) {
+      var x = rsort === 'date' ? (a.date < b.date ? -1 : a.date > b.date ? 1 : 0) : rsort === 'az' ? (a.stock < b.stock ? -1 : a.stock > b.stock ? 1 : 0)
+        : rsort === 'pl' ? a.pl - b.pl : (a.sell - a.buy) / a.buy - (b.sell - b.buy) / b.buy;
+      return x * rdir;
+    });
+    tr.forEach(function (r) {
+      var pc = (r.sell - r.buy) / r.buy * 100, g = r.pl >= 0;
+      h += '<div class="rtr ' + (g ? 'g' : 'r') + '"><div class="a"><b>' + esc(r.stock) + '</b><span class="tg" style="background:' + col(r.acct) + '">' + esc(r.acct) + '</span><span class="pv ' + (g ? 'g1' : 'r1') + '">' + signed(r.pl) + '</span></div>' +
+        '<div class="b"><span>' + nice(r.date) + '</span>·<span>₹' + fmt(r.buy) + ' → ₹' + fmt(r.sell) + ' × ' + r.qty + '</span><span class="pc ' + (g ? 'g1' : 'r1') + '">' + (pc >= 0 ? '+' : '') + pc.toFixed(2) + '%</span></div></div>';
+    });
+    h += '<p style="font-size:11px;color:var(--mut);text-align:center;margin:14px 8px;line-height:1.5">Financial year runs 1 April – 31 March. Totals use the Profit/Loss column of your sheet. Edit the sheet any time; the app picks up changes automatically.</p>';
+    el.innerHTML = h;
+    bindReal();
+  }
+  function bindReal() {
+    var el = $('real');
+    Array.prototype.forEach.call(el.querySelectorAll('.rseg button'), function (b) {
+      b.onclick = function () { rper = b.dataset.r; renderRealised(); };
+    });
+    Array.prototype.forEach.call(el.querySelectorAll('[data-a]'), function (b) {
+      b.onclick = function () { racct = b.dataset.a; renderRealised(); window.scrollTo(0, 0); };
+    });
+    Array.prototype.forEach.call(el.querySelectorAll('.psort button'), function (b) {
+      b.onclick = function () { var k = b.dataset.s; if (rsort === k) rdir = -rdir; else { rsort = k; rdir = k === 'az' ? 1 : -1; } renderRealised(); };
+    });
+    if ($('rFrom')) $('rFrom').onchange = function () { rfrom = this.value; renderRealised(); };
+    if ($('rTo')) $('rTo').onchange = function () { rto = this.value; renderRealised(); };
+    Array.prototype.forEach.call(el.querySelectorAll('.rquick button'), function (b) {
+      b.onclick = function () {
+        var n = new Date(), q = b.dataset.q, f, t = isoD(n);
+        if (q === 'm') f = n.getFullYear() + '-' + p2(n.getMonth() + 1) + '-01';
+        else if (q === 'pm') { var a = new Date(n.getFullYear(), n.getMonth() - 1, 1), z = new Date(n.getFullYear(), n.getMonth(), 0); f = isoD(a); t = isoD(z); }
+        else if (q === 'q') f = isoD(new Date(n.getFullYear(), n.getMonth() - 3, n.getDate()));
+        else if (q === 'h') f = isoD(new Date(n.getFullYear(), n.getMonth() - 6, n.getDate()));
+        else { f = n.getFullYear() + '-01-01'; t = n.getFullYear() + '-12-31'; }
+        rfrom = f; rto = t; renderRealised();
+      };
+    });
+    if ($('rLfy')) $('rLfy').onclick = function () { rper = 'lfy'; renderRealised(); };
+    if ($('rSync')) $('rSync').onclick = function () {
+      if (rbusy) return;
+      rbusy = true; renderRealised();
+      A.syncSheet();
+    };
+  }
+  function renderSheetSettings() {
+    var R = S.realised || {};
+    if (!$('gsUrl')) return;
+    if (document.activeElement !== $('gsUrl')) $('gsUrl').value = R.url || '';
+    if (document.activeElement !== $('gsTab')) $('gsTab').value = R.tab || 'Realised Trades';
+    var ev = [[5, '5 min'], [15, '15 min'], [30, '30 min'], [60, '1 hour']], cur = R.every || 15;
+    $('gsChips').innerHTML = ev.map(function (e) { return '<button class="chip' + (e[0] === cur ? ' on' : '') + '" data-e="' + e[0] + '">' + e[1] + '</button>'; }).join('');
+    Array.prototype.forEach.call($('gsChips').children, function (b) {
+      b.onclick = function () { R.every = +b.dataset.e; A.saveSettings(JSON.stringify({ sheetEvery: R.every })); renderSheetSettings(); toast('Sheet will be checked every ' + b.textContent); };
+    });
+    var acs = rAccts(R.rows || []);
+    $('gsStatus').innerHTML = rbusy ? '<div class="ok" style="background:#0E2236;color:#7DD3FC">Checking the sheet…</div>'
+      : R.url && R.err ? '<div class="ok" style="background:#3A1419;color:#FCA5A5">⚠ ' + esc(R.err) + '</div>'
+      : R.url && R.t ? '<div class="ok">✓ Connected · ' + (R.rows || []).length + ' trades in ' + acs.length + ' account' + (acs.length === 1 ? '' : 's') + (acs.length ? ' (' + acs.map(esc).join(', ') + ')' : '') + ' · last checked ' + tm(R.t) + '</div>' : '';
+    $('gsTest').onclick = function () {
+      var u = $('gsUrl').value.trim(), t = $('gsTab').value.trim() || 'Realised Trades';
+      if (!/docs\.google\.com\/spreadsheets\/d\//.test(u)) { toast('Paste the full Google Sheets link (docs.google.com/spreadsheets/d/…)', true); return; }
+      R.url = u; R.tab = t;
+      A.saveSettings(JSON.stringify({ sheetUrl: u, sheetTab: t }));
+      rbusy = true; renderSheetSettings();
+      A.syncSheet();
+    };
   }
 
   // ---------- watchlist ----------
@@ -1339,6 +1623,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     if (view === 'dashboard') renderDashboard();
     if (view === 'watch') renderWatch();
     if (view === 'port') renderPortfolio();
+    if (view === 'real') renderRealised();
     renderHoldings();
     renderHistory();
     renderBattWarn();
@@ -1383,14 +1668,14 @@ nav.bot button.on{color:var(--acc);font-weight:600}
   function show(v) {
     view = v;
     $('searchBox').style.display = v === 'alerts' ? 'flex' : 'none';
-    ['dashboard', 'port', 'watch', 'my', 'alerts', 'history', 'settings'].forEach(function (n) {
+    ['dashboard', 'port', 'real', 'watch', 'my', 'alerts', 'history', 'settings'].forEach(function (n) {
       $('v-' + n).className = 'view' + (n === v ? ' on' : '');
     });
     Array.prototype.forEach.call(document.querySelectorAll('nav.bot button'), function (b) {
       b.className = b.dataset.v === v ? 'on' : '';
     });
     window.scrollTo(0, 0);
-    if (S) { if (v === 'settings') renderSettings(); if (v === 'dashboard') renderDashboard(); if (v === 'watch') renderWatch(); if (v === 'port') renderPortfolio(); renderHistory(); }
+    if (S) { if (v === 'settings') renderSettings(); if (v === 'dashboard') renderDashboard(); if (v === 'watch') renderWatch(); if (v === 'port') renderPortfolio(); if (v === 'real') renderRealised(); renderHistory(); }
   }
 
   function setFilterUi() {
@@ -1421,6 +1706,11 @@ nav.bot button.on{color:var(--acc);font-weight:600}
       else toast('Couldn\'t get a price for ' + d.sym + '. Check the NSE symbol or your internet.', true);
       load();
     } else if (ev === 'updated') {
+      load();
+    } else if (ev === 'sheet') {
+      rbusy = false;
+      if (d.ok) toast(d.changed ? '✓ Sheet read · ' + d.n + ' trades' : 'Sheet checked · no changes');
+      else toast(d.err || 'Couldn\'t read the sheet', true);
       load();
     } else if (ev === 'refreshed') {
       $('refreshBtn').classList.remove('spin');
@@ -1468,6 +1758,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     toast('Test notification sent');
   };
   $('chanBtn').onclick = function () { A.openChannelSettings(); };
+  $('setBtn').onclick = function () { show('settings'); };
   $('hideSvc').onclick = function () { if (A.hideServiceNotification) A.hideServiceNotification(); else A.openChannelSettings(); };
   $('addAlert').onclick = function () {
     if (nCards >= MAXSLOTS) { toast('You have reached the maximum of ' + MAXSLOTS + ' alerts', true); return; }
