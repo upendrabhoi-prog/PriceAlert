@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/w_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/w_bg"
+    android:orientation="vertical"
+    android:padding="12dp">
+
+    <LinearLayout
+        android:id="@+id/w_head"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/w_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Watchlist"
+                android:textColor="#FFE6EAF2"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:singleLine="true" />
+            <TextView
+                android:id="@+id/w_sub"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Wealthora"
+                android:textColor="#FF94A3B8"
+                android:textSize="11sp"
+                android:singleLine="true" />
+        </LinearLayout>
+        <TextView
+            android:id="@+id/w_refresh"
+            android:layout_width="34dp"
+            android:layout_height="30dp"
+            android:background="@drawable/w_btn"
+            android:gravity="center"
+            android:text="↻"
+            android:textColor="#FF7DD3FC"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_weight="1">
+        <ListView
+            android:id="@+id/w_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:scrollbars="none" />
+        <TextView
+            android:id="@+id/w_empty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="Add stocks in Wealthora (My Stocks or Alerts) to see them here."
+            android:textColor="#FF94A3B8"
+            android:textSize="12sp" />
+    </FrameLayout>
+</LinearLayout>
