@@ -28,18 +28,18 @@ jobs:
       - name: Build the APK
         run: |
           gradle assembleDebug --no-daemon --stacktrace
-          cp app/build/outputs/apk/debug/app-debug.apk PriceAlert.apk
+          cp app/build/outputs/apk/debug/app-debug.apk Wealthora.apk
 
       - name: Save APK on this run
         uses: actions/upload-artifact@v4
         with:
-          name: PriceAlert-apk
-          path: PriceAlert.apk
+          name: Wealthora-apk
+          path: Wealthora.apk
 
       - name: Publish APK on the Releases page
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.4.${{ github.run_number }}
-          name: PriceAlert v1.4.${{ github.run_number }}
-          body: Download PriceAlert.apk below and open it on your Android phone to install.
-          files: PriceAlert.apk
+          tag_name: v1.5.${{ github.run_number }}
+          name: Wealthora v1.5.${{ github.run_number }}
+          body: Download Wealthora.apk below and open it on your Android phone to install.
+          files: Wealthora.apk
