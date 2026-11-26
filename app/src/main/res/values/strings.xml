@@ -5,4 +5,8 @@
     <string name="w_watch">Wealthora Watchlist</string>
     <string name="wd_port">Portfolio value, total and today\'s profit / loss</string>
     <string name="wd_watch">Your stocks coloured by today\'s move, scrollable</string>
+    <string name="w_dist">Wealthora Distance from buy price</string>
+    <string name="w_target" formatted="false">Wealthora % Target left</string>
+    <string name="wd_dist">Top 10 stocks closest to their buy (alert) price</string>
+    <string name="wd_target" formatted="false">% left to target from current price, smallest first</string>
 </resources>
