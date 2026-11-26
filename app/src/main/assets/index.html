@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
-<title>PriceAlert</title>
+<title>Wealthora</title>
 <style>
 :root{--bg:#0A0F1C;--card:#111829;--line:#1E2A42;--line2:#23304A;--tx:#E6EAF2;--mut:#9AA4B8;--acc:#38BDF8;--ok:#34D399;--okt:#6EE7B7;--warn:#FCD34D;--bad:#FCA5A5;--mono:ui-monospace,"Roboto Mono",monospace}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -113,8 +113,8 @@ main{flex:1;padding:0 14px 96px}
 .hbody b{font-size:14px}.hbody small{font-size:11px;color:var(--mut)}
 .hbody .p{font-family:var(--mono);font-size:12px;color:#C9D1E0;margin-top:3px}
 .emptyh{text-align:center;color:var(--mut);padding:48px 20px;font-size:13px;line-height:1.5}
-nav.bot{position:fixed;left:0;right:0;bottom:0;z-index:6;border-top:1px solid var(--line);background:#0D1424;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding:6px 4px calc(10px + env(safe-area-inset-bottom))}
-nav.bot button{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;border:0;background:transparent;color:var(--mut);font-size:11px;position:relative}
+nav.bot{position:fixed;left:0;right:0;bottom:0;z-index:6;border-top:1px solid var(--line);background:#0D1424;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));padding:6px 2px calc(10px + env(safe-area-inset-bottom))}
+nav.bot button{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;border:0;background:transparent;color:var(--mut);font-size:9.5px;letter-spacing:-.01em;white-space:nowrap;position:relative;min-width:0}
 nav.bot button.on{color:var(--acc);font-weight:600}
 .badge{position:absolute;top:2px;left:calc(50% + 6px);min-width:16px;height:16px;border-radius:8px;background:#EF4444;color:#fff;font-size:10px;font-weight:700;display:none;align-items:center;justify-content:center;padding:0 4px}
 .toast{position:fixed;left:16px;right:16px;bottom:84px;z-index:9;background:#1F2A44;border:1px solid #2F3D5C;color:var(--tx);border-radius:12px;padding:12px 14px;font-size:13px;opacity:0;transform:translateY(10px);transition:all .25s;pointer-events:none}
@@ -195,6 +195,93 @@ nav.bot button.on{color:var(--acc);font-weight:600}
 .wrow .pc small{display:block;font-size:10px;font-weight:700;opacity:.8;margin-top:1px}
 .wrow .pc{flex-shrink:0;min-width:78px;text-align:center;border-radius:10px;padding:7px 6px;font-family:var(--mono);font-size:13px;font-weight:800;color:#0A0F1C;background:#64748B}
 .wrow.up .pc{background:#34D399}.wrow.dn .pc{background:#F87171}
+.wtabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px;margin:8px 0 12px}
+.wtabs button{height:40px;border:0;border-radius:10px;background:transparent;color:var(--mut);font-weight:700;font-size:13px}
+.wtabs button.on{background:var(--acc);color:#0A0F1C}
+.hcard .r2{gap:6px}
+.hcard .ap{padding:0 8px}
+.hcard .ap.qty{flex:0 0 92px}
+.hcard .ap.tg span{color:#FCD34D}
+.tgline{display:flex;align-items:center;gap:8px}
+.tgline .bar i{background:#FCD34D}
+.tgline .dist{min-width:0}
+.tgline .dist.hit{color:#86EFAC;font-weight:700}
+.tag.tgt{background:#3D3112;color:#FCD34D}
+.tag.tghit{background:#14532D;color:#86EFAC}
+.pl{font-size:11px;font-family:var(--mono);font-weight:700}
+.pl.g{color:#6EE7B7}.pl.r{color:#FCA5A5}
+.phero{border-radius:20px;padding:18px;margin:8px 0 12px;border:1px solid #1E3A5F;background:linear-gradient(150deg,#0F2A4A 0%,#111829 70%)}
+.phero.g{background:linear-gradient(150deg,#0B3B2E 0%,#111829 72%);border-color:#1F6F55}
+.phero.r{background:linear-gradient(150deg,#4A1620 0%,#111829 72%);border-color:#7A2A35}
+.phero .lbl{font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--mut)}
+.phero .big{font-size:30px;font-weight:800;font-family:var(--mono);margin-top:4px;letter-spacing:-.02em}
+.phero .pnl{display:flex;align-items:center;gap:8px;margin-top:6px;font-family:var(--mono);font-weight:700;font-size:15px}
+.phero .pnl .pchip{font-size:12px;padding:3px 8px;border-radius:999px;color:#0A0F1C}
+.phero .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px}
+.phero .grid div{background:rgba(10,15,28,.45);border-radius:12px;padding:10px 12px}
+.phero .grid small{display:block;font-size:11px;color:var(--mut)}
+.phero .grid b{display:block;font-family:var(--mono);font-size:15px;margin-top:2px}
+.pbar{display:flex;height:12px;border-radius:999px;overflow:hidden;background:#1E2A42;margin:10px 0 6px}
+.pbar i{display:block;height:100%}
+.alloc{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:11px;color:var(--mut)}
+.alloc span{display:flex;align-items:center;gap:5px}
+.alloc i{width:8px;height:8px;border-radius:2px;display:inline-block}
+.prow{width:100%;text-align:left;color:inherit;border-radius:14px;padding:12px 14px;border:1px solid var(--line);background:var(--card);cursor:pointer;display:block}
+.prow.g{background:rgba(16,185,129,.22);border-color:rgba(52,211,153,.6)}
+.prow.r{background:rgba(239,68,68,.22);border-color:rgba(248,113,113,.6)}
+.prow .l1{display:flex;align-items:center;gap:10px}
+.prow .l1 .nm{flex:1;min-width:0}
+.prow .l1 .nm b{display:block;font-size:15px}
+.prow .l1 .nm small{display:block;font-size:11px;color:#C9D1E0;font-family:var(--mono)}
+.prow .val{text-align:right}
+.prow .val b{display:block;font-family:var(--mono);font-size:15px}
+.prow .val small{display:block;font-size:11px;color:#C9D1E0}
+.prow .pp{flex-shrink:0;min-width:82px;text-align:center;border-radius:10px;padding:6px;font-family:var(--mono);font-weight:800;font-size:13px;color:#0A0F1C;background:#64748B}
+.prow.g .pp{background:#34D399}.prow.r .pp{background:#F87171}
+.prow .pp small{display:block;font-size:10px;opacity:.85}
+.prow .tl{display:flex;align-items:center;gap:8px;margin-top:9px;font-size:11px;color:#E6EAF2}
+.prow .tl .tb{flex:1;height:6px;border-radius:999px;background:rgba(10,15,28,.55);overflow:hidden}
+.prow .tl .tb i{display:block;height:6px;border-radius:999px;background:#FCD34D}
+.prow .tl b{font-family:var(--mono);font-size:11px;white-space:nowrap}
+.prow .tl .lab{color:#FCD34D;font-weight:700;white-space:nowrap}
+.prow .tl.hit .lab,.prow .tl.hit b{color:#86EFAC}
+.prow .tl.none{color:var(--mut)}
+.psort{display:flex;align-items:center;gap:6px;margin:0 2px 10px;overflow-x:auto}
+.psort span{font-size:11px;color:var(--mut);white-space:nowrap}
+.psort button{flex-shrink:0;height:32px;border-radius:999px;border:1px solid var(--line2);background:transparent;color:var(--mut);font-size:12px;font-weight:600;padding:0 11px;white-space:nowrap}
+.psort button.on{background:#16233B;color:#7DD3FC;border-color:#1E3A5F}
+.acchips{display:flex;gap:6px;overflow-x:auto;margin:8px 0 12px;padding-bottom:2px}
+.acchips button{flex-shrink:0;height:36px;border-radius:999px;border:1px solid var(--line2);background:var(--card);color:var(--mut);font-size:12.5px;font-weight:600;padding:0 14px;white-space:nowrap}
+.acchips button.on{background:var(--acc);border-color:var(--acc);color:#0A0F1C}
+.acsel{margin-top:6px;margin-left:24px;max-width:180px;height:30px;border-radius:8px;border:1px solid #1E3A5F;background:#0E2236;color:#7DD3FC;font-size:12px;font-weight:600;padding:0 8px}
+.acrow{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #1A2438}
+.acrow:last-child{border-bottom:0}
+.acrow .dot2{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.acrow input{flex:1;min-width:0;height:40px;border-radius:10px;border:1px solid var(--line2);background:var(--bg);padding:0 10px;font-size:14px;font-weight:600}
+.acrow small{font-size:11px;color:var(--mut);white-space:nowrap}
+.acrow button{width:40px;height:40px;border-radius:10px;border:1px solid #5B1F27;background:#2A1216;color:#FCA5A5;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.acadd{display:flex;gap:8px;margin-top:10px}
+.acadd input{flex:1;min-width:0;height:44px;border-radius:12px;border:1px dashed #1E3A5F;background:var(--bg);padding:0 12px;font-size:14px}
+.acadd button{height:44px;border-radius:12px;border:0;background:var(--acc);color:#0A0F1C;font-weight:700;padding:0 16px}
+.acgrid{display:grid;gap:8px;margin-bottom:14px}
+.accard{display:flex;align-items:center;gap:10px;width:100%;text-align:left;color:inherit;border-radius:14px;padding:12px 14px;border:1px solid var(--line);background:var(--card);cursor:pointer}
+.accard .abar{width:5px;align-self:stretch;border-radius:4px;flex-shrink:0}
+.accard .an{flex:1;min-width:0}
+.accard .an b{display:block;font-size:14px}
+.accard .an small{display:block;font-size:11px;color:var(--mut);white-space:nowrap}
+.accard .av{text-align:right}
+.accard .av b{display:block;font-family:var(--mono);font-size:14px}
+.accard .av small{display:block;font-family:var(--mono);font-size:11px;font-weight:700}
+.ghead{display:flex;align-items:center;gap:8px;margin:16px 2px 8px}
+.ghead i{width:10px;height:10px;border-radius:3px}
+.ghead b{font-size:14px;flex:1}
+.ghead small{font-family:var(--mono);font-size:12px;font-weight:700}
+.addmore{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:52px;margin-top:10px;border-radius:14px;border:1.5px dashed #2B5A86;background:#0E2236;color:#7DD3FC;font-weight:700;font-size:15px}
+.addmore:active{background:#12304D}
+.prow .more{display:none;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px;padding-top:10px;border-top:1px dashed rgba(230,234,242,.18)}
+.prow.open .more{display:grid}
+.prow .more small{display:block;font-size:10px;color:var(--mut)}
+.prow .more b{display:block;font-family:var(--mono);font-size:12px;margin-top:1px}
 .dempty{text-align:center;color:var(--mut);font-size:13px;line-height:1.5;padding:40px 16px}
 .dempty button{margin-top:12px;border:0;border-radius:10px;height:40px;padding:0 16px;background:var(--acc);color:#0A0F1C;font-weight:700}
 .filter{display:flex;gap:6px}
@@ -208,7 +295,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     <div class="brand">
       <div class="logo">
         <i><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0A0F1C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></i>
-        <div><b>PriceAlert</b><small id="subtitle">NSE stock alerts</small></div>
+        <div><b>Wealthora</b><small id="subtitle">Portfolio &amp; price alerts</small></div>
       </div>
       <button class="icbtn" id="refreshBtn" aria-label="Refresh prices now">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
@@ -228,9 +315,23 @@ nav.bot button.on{color:var(--acc);font-weight:600}
       <div id="dash"></div>
     </section>
 
+    <!-- PORTFOLIO -->
+    <section class="view" id="v-port">
+      <div id="port"></div>
+    </section>
+
     <!-- WATCHLIST -->
     <section class="view" id="v-watch">
       <div id="watch"></div>
+    </section>
+
+    <!-- MY STOCKS -->
+    <section class="view" id="v-my">
+      <div class="sect" style="margin-top:8px"><b>My stocks</b><small id="myCount"></small></div>
+      <div class="acchips" id="myAcct"></div>
+      <div class="list" id="hlist"></div>
+      <button class="addmore" id="addStock"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add stock</button>
+      <p style="font-size:11px;color:var(--mut);text-align:center;margin:16px 8px;line-height:1.5">Enter the NSE symbol, your buy price and quantity, then tap Add. Add a target price to get a notification when the price reaches or goes above it (repeated at your "Repeat alert after" setting). These stocks make up your Portfolio and the "My stocks" section of the Watchlist.</p>
     </section>
 
     <!-- ALERTS -->
@@ -242,7 +343,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
       </div>
       <div class="mon" id="monBar"><span id="monText"></span><button id="monBtn"></button></div>
       <div class="sect">
-        <b>My alerts (50 slots)</b>
+        <b id="alHead">My alerts</b>
         <div class="filter" id="filter">
           <button data-f="all" class="on">All</button>
           <button data-f="active">Active</button>
@@ -250,8 +351,9 @@ nav.bot button.on{color:var(--acc);font-weight:600}
         </div>
       </div>
       <div class="list" id="list"></div>
+      <button class="addmore" id="addAlert"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add alert</button>
       <div class="nores" id="noRes">No alerts match your search.</div>
-      <p style="font-size:11px;color:var(--mut);text-align:center;margin:16px 8px;line-height:1.5">Type the NSE symbol (e.g. SBIN, TATASTEEL, M&amp;M) or an index (NIFTY, BANKNIFTY, FINNIFTY, NIFTYIT, SENSEX, MIDCAP100, MIDCAP50), enter your alert price and tap Set. Leave the price empty to just watch it.</p>
+      <p style="font-size:11px;color:var(--mut);text-align:center;margin:16px 8px;line-height:1.5">Type the NSE symbol (e.g. SBIN, TATASTEEL, M&amp;M) or an index (NIFTY, BANKNIFTY, FINNIFTY, NIFTYIT, SENSEX, MIDCAP100, MIDCAP50), enter your alert price and tap Set. Leave the price empty to just watch it. Need more? Tap “Add alert” at the bottom.</p>
     </section>
 
     <!-- HISTORY -->
@@ -297,6 +399,13 @@ nav.bot button.on{color:var(--acc);font-weight:600}
       </div>
 
       <div class="panel">
+        <h3>Trading accounts</h3>
+        <p>Add one entry for each demat / trading account. When you add a stock in My Stocks you choose its account, and the Portfolio shows each account separately and combined.</p>
+        <div id="acctList"></div>
+        <div class="acadd"><input id="acctName" maxlength="24" placeholder="New account name (e.g. Zerodha)" aria-label="New account name"><button id="acctAdd">Add</button></div>
+      </div>
+
+      <div class="panel">
         <h3>Price source</h3>
         <div class="src"><em>1</em><span>NSE India</span><small id="srcNse">primary</small></div>
         <div class="src"><em class="g">2</em><span>Google Finance</span><small id="srcG">fallback</small></div>
@@ -312,13 +421,15 @@ nav.bot button.on{color:var(--acc);font-weight:600}
 
       <button class="btn" id="testBtn">Send test notification</button>
       <button class="btn" id="chanBtn" style="margin-top:8px">Notification sound &amp; style settings</button>
-      <p style="font-size:11px;color:var(--mut);text-align:center;margin:16px 8px;line-height:1.5">PriceAlert v1.0 · Prices may be delayed. Not investment advice.</p>
+      <p style="font-size:11px;color:var(--mut);text-align:center;margin:16px 8px;line-height:1.5">Wealthora v1.5 · Prices may be delayed. Not investment advice.</p>
     </section>
   </main>
 
   <nav class="bot">
     <button data-v="dashboard" class="on"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Dashboard</button>
+    <button data-v="port"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12A9 9 0 1 1 12 3v9z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/></svg>Portfolio</button>
     <button data-v="watch"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l5-5 4 4 8-8"/><path d="M15 8h5v5"/></svg>Watchlist</button>
+    <button data-v="my"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M12 11v5M9.5 13.5h5"/></svg>My Stocks</button>
     <button data-v="alerts"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>Alerts</button>
     <button data-v="history"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>History<span class="badge" id="histBadge"></span></button>
     <button data-v="settings"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>Settings</button>
@@ -334,6 +445,15 @@ nav.bot button.on{color:var(--acc);font-weight:600}
   var view = 'dashboard';
   var dsort = 'near';       // dashboard order: near | az
   var wsort = 'up';         // watchlist order: up (gainers first) | down (losers first)
+  var wtab = 'mine';        // watchlist section: mine | alerts
+  var psort = 'pl';         // portfolio order: pl | tgt | value | az
+  var pdir = -1;            // -1 = high to low, 1 = low to high
+  var popen = {};           // portfolio rows expanded
+  var hdirty = {}, hbusy = {};
+  var HSLOTS = 50;
+  var pview = 'all';         // portfolio: 'all' or an account id
+  var myAcct = 'all';        // My Stocks filter
+  var ACOL = ['#38BDF8', '#A78BFA', '#F472B6', '#FBBF24', '#34D399', '#FB923C', '#94A3B8', '#2DD4BF'];
   var filter = 'all';
   var query = '';           // search text
   var SLOTS = 50;
@@ -376,9 +496,12 @@ nav.bot button.on{color:var(--acc);font-weight:600}
 
   // ---------- build the 50 cards once ----------
   var ICON_X = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>';
-  function buildCards() {
+  var nCards = 0, nHold = 0, MAXSLOTS = 500;
+  function ensureCards(n) { n = Math.min(n, MAXSLOTS); if (n > nCards) { buildCards(nCards, n); nCards = n; } }
+  function ensureHoldings(n) { n = Math.min(n, MAXSLOTS); if (n > nHold) { buildHoldings(nHold, n); nHold = n; } }
+  function buildCards(from, to) {
     var html = '';
-    for (var i = 0; i < SLOTS; i++) {
+    for (var i = from; i < to; i++) {
       html += '<div class="card empty" id="c' + i + '" data-i="' + i + '">' +
         '<div class="r1"><div class="symbox"><div class="symrow"><span class="num">' + (i + 1) + '</span>' +
         '<input class="sym" maxlength="20" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="Stock or index (e.g. SBIN, NIFTY)" aria-label="Stock symbol for slot ' + (i + 1) + '">' +
@@ -388,9 +511,10 @@ nav.bot button.on{color:var(--acc);font-weight:600}
         '<button class="set">Set</button><button class="clr" aria-label="Clear slot ' + (i + 1) + '">' + ICON_X + '</button></div>' +
         '<div class="r3"><div class="bar"><i></i></div><span class="dist"></span></div></div>';
     }
-    $('list').innerHTML = html;
-    Array.prototype.forEach.call(document.querySelectorAll('.card'), function (c) {
+    $('list').insertAdjacentHTML('beforeend', html);
+    Array.prototype.forEach.call(document.querySelectorAll('#list .card'), function (c) {
       var i = +c.dataset.i;
+      if (i < from) return;
       var sym = c.querySelector('.sym'), ap = c.querySelector('.apv');
       sym.addEventListener('input', function () {
         var p = sym.selectionStart;
@@ -437,7 +561,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
   }
 
   function clearSlot(i) {
-    var s = S.slots[i];
+    var s = S.slots[i] || { sym: '' };
     if (!s.sym && !dirty[i]) return;
     if (s.sym && !confirm('Remove ' + s.sym + ' from slot ' + (i + 1) + '?')) return;
     var c = $('c' + i);
@@ -526,6 +650,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
       if (show) shown++;
     });
     $('noRes').style.display = shown ? 'none' : 'block';
+    if ($('alHead')) $('alHead').textContent = 'My alerts (' + S.slots.filter(function (x) { return x.sym; }).length + ' set · ' + nCards + ' slots)';
     $('nWatch').textContent = nW;
     $('nNear').textContent = nN;
     $('nHit').textContent = nH;
@@ -565,6 +690,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
 
   function renderSettings() {
     var st = S.settings;
+    renderAccounts();
     chips($('repeatChips'), REPEAT, st.repeatMin, 'repeatMin');
     chips($('pollChips'), POLL, st.pollMin, 'pollMin');
     chips($('nearChips'), NEAR, st.nearPct, 'nearPct');
@@ -614,7 +740,14 @@ nav.bot button.on{color:var(--acc);font-weight:600}
         html += '<div class="hgroup">' + (k === today ? 'TODAY' : k === yest ? 'YESTERDAY' : esc(k).toUpperCase()) + '</div>';
         last = k;
       }
-      var hit = x.kind === 'hit';
+      var hit = x.kind === 'hit', tg = x.kind === 'target';
+      if (tg) {
+        html += '<div class="hitem"><div class="hic" style="background:#14532D;color:#86EFAC"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg></div>' +
+          '<div class="hbody"><div class="t"><b>' + esc(x.sym) + '</b><small>' + tm(x.t) + '</small></div>' +
+          '<div class="p">₹' + fmt(x.price) + ' ≥ target ₹' + fmt(x.alert) + '</div>' +
+          '<small>' + (x.n > 1 ? 'Target reminder #' + x.n : 'Target reached') + ' · via ' + esc(x.src) + '</small></div></div>';
+        return;
+      }
       html += '<div class="hitem"><div class="hic' + (hit ? '' : ' n') + '">' +
         (hit ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>'
              : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 8v5"/><path d="M12 16.5v.5"/><circle cx="12" cy="12" r="9"/></svg>') +
@@ -728,59 +861,452 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     });
   }
 
+  // ---------- trading accounts ----------
+  function accounts() {
+    var a = S && S.settings && S.settings.accounts;
+    return a && a.length ? a : [{ id: 'a1', name: 'My account' }];
+  }
+  function acctOf(h) {
+    var a = accounts();
+    for (var k = 0; k < a.length; k++) if (a[k].id === h.acct) return a[k].id;
+    return a[0].id;                       // stocks saved before accounts existed go to the first account
+  }
+  function acctName(id) { var a = accounts(); for (var k = 0; k < a.length; k++) if (a[k].id === id) return a[k].name; return a[0].name; }
+  function acctColor(id) { var a = accounts(); for (var k = 0; k < a.length; k++) if (a[k].id === id) return ACOL[k % ACOL.length]; return ACOL[0]; }
+  function saveAccounts(list) {
+    S.settings.accounts = list;
+    A.saveSettings(JSON.stringify({ accounts: list }));
+  }
+  function renderAccounts() {
+    var a = accounts(), hs = holdings();
+    var html = '';
+    a.forEach(function (x, k) {
+      var n = hs.filter(function (h) { return h.sym && acctOf(h) === x.id; }).length;
+      html += '<div class="acrow"><span class="dot2" style="background:' + ACOL[k % ACOL.length] + '"></span>' +
+        '<input value="' + esc(x.name) + '" data-id="' + x.id + '" maxlength="24" aria-label="Account name">' +
+        '<small>' + n + ' stock' + (n === 1 ? '' : 's') + '</small>' +
+        '<button data-del="' + x.id + '" aria-label="Remove account ' + esc(x.name) + '">' + ICON_X + '</button></div>';
+    });
+    $('acctList').innerHTML = html;
+    Array.prototype.forEach.call($('acctList').querySelectorAll('input'), function (inp) {
+      inp.addEventListener('change', function () {
+        var nm = inp.value.trim();
+        if (!nm) { renderAccounts(); return; }
+        saveAccounts(accounts().map(function (x) { return x.id === inp.dataset.id ? { id: x.id, name: nm } : x; }));
+        toast('Account renamed to ' + nm);
+      });
+    });
+    Array.prototype.forEach.call($('acctList').querySelectorAll('button[data-del]'), function (b) {
+      b.onclick = function () {
+        var id = b.dataset.del, list = accounts();
+        if (list.length === 1) { toast('Keep at least one account', true); return; }
+        var n = holdings().filter(function (h) { return h.sym && acctOf(h) === id; }).length;
+        if (!confirm('Remove account "' + acctName(id) + '"?' + (n ? '\n\nIts ' + n + ' stock(s) in My Stocks will also be removed.' : ''))) return;
+        holdings().forEach(function (h, i) {
+          if (h.sym && acctOf(h) === id) { A.saveHolding(i, '', '0', '0', '0', ''); S.holdings[i] = { sym: '', buy: 0, qty: 0, target: 0, acct: '' }; }
+        });
+        saveAccounts(list.filter(function (x) { return x.id !== id; }));
+        if (pview === id) pview = 'all';
+        if (myAcct === id) myAcct = 'all';
+        toast('Account removed');
+        render();
+      };
+    });
+  }
+
   // ---------- watchlist ----------
+  function holdings() { return (S && S.holdings) || []; }
   function renderWatch() {
     var items = [];
-    S.slots.forEach(function (s, i) {
-      if (!s.sym || !(s.alert > 0)) return;
-      var q = S.quotes[s.sym];
-      items.push({ i: i, sym: s.sym, name: q && q.name ? q.name : '', q: q, alert: s.alert,
-        p: q && q.hasChg ? q.pchg : null });
-    });
-    var el = $('watch');
-    if (!items.length) {
-      el.innerHTML = '<div class="dempty">Your watchlist is empty.<br>Every stock or index that has an alert price appears here automatically.<br><button id="goAlerts2">Go to Alerts</button></div>';
-      $('goAlerts2').onclick = function () { show('alerts'); };
-      return;
+    if (wtab === 'mine') {
+      var seen = {};
+      holdings().forEach(function (h, i) {
+        if (!h.sym || !(h.qty > 0)) return;
+        if (seen[h.sym]) {                 // same stock in two accounts: show once, average buy price
+          var m = seen[h.sym];
+          m.buy = (m.buy * m.qty + h.buy * h.qty) / (m.qty + h.qty); m.qty += h.qty;
+          return;
+        }
+        var q = S.quotes[h.sym];
+        seen[h.sym] = { i: i, sym: h.sym, name: q && q.name ? q.name : '', q: q, buy: h.buy, qty: h.qty, lbl: 'Buy',
+          p: q && q.hasChg ? q.pchg : null };
+        items.push(seen[h.sym]);
+      });
+    } else {
+      S.slots.forEach(function (s, i) {
+        if (!s.sym || !(s.alert > 0)) return;
+        var q = S.quotes[s.sym];
+        items.push({ i: i, sym: s.sym, name: q && q.name ? q.name : '', q: q, buy: s.alert, lbl: 'Alert',
+          p: q && q.hasChg ? q.pchg : null });
+      });
     }
-    var up = 0, dn = 0, fl = 0;
-    items.forEach(function (x) { if (x.p == null || x.p === 0) fl++; else if (x.p > 0) up++; else dn++; });
-    items.sort(function (a, b) {
-      var pa = a.p == null ? -1e9 : a.p, pb = b.p == null ? -1e9 : b.p;
-      if (wsort === 'down') { pa = a.p == null ? 1e9 : a.p; pb = b.p == null ? 1e9 : b.p; return pa - pb; }
-      return pb - pa;
-    });
-    var n = items.length;
-    var html = '<div class="wsum"><div class="t"><b>Today\'s move</b><span>vs previous close</span></div>' +
-      '<div class="breadth"><i style="width:' + (up / n * 100) + '%;background:#34D399"></i><i style="width:' + (fl / n * 100) + '%;background:#64748B"></i><i style="width:' + (dn / n * 100) + '%;background:#F87171"></i></div>' +
-      '<div class="lg"><span class="g">▲ ' + up + ' up</span><span class="n">' + (fl ? fl + ' flat / no data' : '') + '</span><span class="r">▼ ' + dn + ' down</span></div></div>' +
-      '<div class="whead"><b>Watchlist (' + n + ')</b><div class="seg">' +
-      '<button data-w="up" class="' + (wsort === 'up' ? 'on' : '') + '">% Change ↑</button><button data-w="down" class="' + (wsort === 'down' ? 'on' : '') + '">% Change ↓</button></div></div><div class="wlist">';
-    items.forEach(function (x) {
-      var cls = x.p == null || x.p === 0 ? '' : x.p > 0 ? ' up' : ' dn';
-      var pct = x.p == null ? '—' : (x.p > 0 ? '+' : '') + x.p.toFixed(2) + '%';
-      var chg = x.q && x.q.hasChg ? (x.q.chg >= 0 ? '+' : '') + fmt(x.q.chg) : '';
-      html += '<button class="wrow' + cls + '" data-i="' + x.i + '"><div class="nm"><b>' + esc(x.sym) + '</b><small>' + esc(x.name) + '</small></div>' +
-        '<div class="pr"><b>' + (x.q ? '₹' + fmt(x.q.price) : '—') + '</b><small>Buy <em>₹' + fmt(x.alert) + '</em></small></div>' +
-        '<div class="pc">' + pct + (chg ? '<small>' + chg + '</small>' : '') + '</div></button>';
-    });
-    html += '</div><p style="font-size:11px;color:var(--mut);text-align:center;margin:14px 8px;line-height:1.5">Green = trading above yesterday\'s close. Red = trading below it. Price = current market price (CMP), Buy = your alert price. Tap a row to edit its alert.</p>';
+    var nMine = holdings().filter(function (h) { return h.sym && h.qty > 0; }).length;
+    var nAl = S.slots.filter(function (s) { return s.sym && s.alert > 0; }).length;
+    var el = $('watch');
+    var html = '<div class="wtabs"><button data-t="mine" class="' + (wtab === 'mine' ? 'on' : '') + '">My stocks (' + nMine + ')</button>' +
+      '<button data-t="alerts" class="' + (wtab === 'alerts' ? 'on' : '') + '">Alert stocks (' + nAl + ')</button></div>';
+    if (!items.length) {
+      html += wtab === 'mine'
+        ? '<div class="dempty">No stocks in My Stocks yet.<br>Add your holdings in the My Stocks tab and they will appear here.<br><button id="wGo">Go to My Stocks</button></div>'
+        : '<div class="dempty">No alert stocks yet.<br>Every stock or index that has an alert price appears here.<br><button id="wGo">Go to Alerts</button></div>';
+    } else {
+      var up = 0, dn = 0, fl = 0;
+      items.forEach(function (x) { if (x.p == null || x.p === 0) fl++; else if (x.p > 0) up++; else dn++; });
+      items.sort(function (a, b) {
+        var pa = a.p == null ? -1e9 : a.p, pb = b.p == null ? -1e9 : b.p;
+        if (wsort === 'down') { pa = a.p == null ? 1e9 : a.p; pb = b.p == null ? 1e9 : b.p; return pa - pb; }
+        return pb - pa;
+      });
+      var n = items.length;
+      html += '<div class="wsum"><div class="t"><b>Today\'s move</b><span>vs previous close</span></div>' +
+        '<div class="breadth"><i style="width:' + (up / n * 100) + '%;background:#34D399"></i><i style="width:' + (fl / n * 100) + '%;background:#64748B"></i><i style="width:' + (dn / n * 100) + '%;background:#F87171"></i></div>' +
+        '<div class="lg"><span class="g">▲ ' + up + ' up</span><span class="n">' + (fl ? fl + ' flat / no data' : '') + '</span><span class="r">▼ ' + dn + ' down</span></div></div>' +
+        '<div class="whead"><b>' + (wtab === 'mine' ? 'My stocks' : 'Alert stocks') + ' (' + n + ')</b><div class="seg">' +
+        '<button data-w="up" class="' + (wsort === 'up' ? 'on' : '') + '">% Change ↑</button><button data-w="down" class="' + (wsort === 'down' ? 'on' : '') + '">% Change ↓</button></div></div><div class="wlist">';
+      items.forEach(function (x) {
+        var cls = x.p == null || x.p === 0 ? '' : x.p > 0 ? ' up' : ' dn';
+        var pct = x.p == null ? '—' : (x.p > 0 ? '+' : '') + x.p.toFixed(2) + '%';
+        var chg = x.q && x.q.hasChg ? (x.q.chg >= 0 ? '+' : '') + fmt(x.q.chg) : '';
+        html += '<button class="wrow' + cls + '" data-i="' + x.i + '"><div class="nm"><b>' + esc(x.sym) + '</b><small>' + esc(x.name) + '</small></div>' +
+          '<div class="pr"><b>' + (x.q ? '₹' + fmt(x.q.price) : '—') + '</b><small>' + x.lbl + ' <em>₹' + fmt(x.buy) + '</em></small></div>' +
+          '<div class="pc">' + pct + (chg ? '<small>' + chg + '</small>' : '') + '</div></button>';
+      });
+      html += '</div><p style="font-size:11px;color:var(--mut);text-align:center;margin:14px 8px;line-height:1.5">Green = trading above yesterday\'s close. Red = trading below it. ' +
+        (wtab === 'mine' ? 'Buy = your purchase price.' : 'Alert = your alert price.') + ' Tap a row to edit it.</p>';
+    }
     el.innerHTML = html;
+    Array.prototype.forEach.call(el.querySelectorAll('.wtabs button'), function (b) {
+      b.onclick = function () { wtab = b.dataset.t; renderWatch(); };
+    });
+    if ($('wGo')) $('wGo').onclick = function () { show(wtab === 'mine' ? 'my' : 'alerts'); };
     Array.prototype.forEach.call(el.querySelectorAll('.seg button'), function (b) {
       b.onclick = function () { wsort = b.dataset.w; renderWatch(); };
     });
     Array.prototype.forEach.call(el.querySelectorAll('.wrow'), function (b) {
-      b.onclick = function () { focusSlot(+b.dataset.i); };
+      b.onclick = function () { if (wtab === 'mine') focusHolding(+b.dataset.i); else focusSlot(+b.dataset.i); };
+    });
+  }
+
+  // ---------- my stocks ----------
+  function buildHoldings(from, to) {
+    var html = '';
+    for (var i = from; i < to; i++) {
+      html += '<div class="card hcard empty" id="h' + i + '" data-i="' + i + '">' +
+        '<div class="r1"><div class="symbox"><div class="symrow"><span class="num">' + (i + 1) + '</span>' +
+        '<input class="sym" maxlength="20" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="Stock (e.g. SBIN)" aria-label="Stock symbol for holding ' + (i + 1) + '">' +
+        '</div><div class="name"></div><select class="acsel" aria-label="Account for holding ' + (i + 1) + '"></select></div>' +
+        '<div class="px"><div class="ltp">—</div><div class="pl"></div></div></div>' +
+        '<div class="r2"><label class="ap"><span>Buy ₹</span><input class="hb" inputmode="decimal" placeholder="0.00" aria-label="Buy price for holding ' + (i + 1) + '"></label>' +
+        '<label class="ap qty"><span>Qty</span><input class="hq" inputmode="numeric" placeholder="0" aria-label="Quantity for holding ' + (i + 1) + '"></label></div>' +
+        '<div class="r2"><label class="ap tg"><span>Target ₹</span><input class="ht" inputmode="decimal" placeholder="optional" aria-label="Target price for holding ' + (i + 1) + '"></label>' +
+        '<button class="set">Add</button><button class="clr" aria-label="Clear holding ' + (i + 1) + '">' + ICON_X + '</button></div>' +
+        '<div class="tgline" style="display:none"><div class="bar"><i></i></div><span class="dist"></span></div></div>';
+    }
+    $('hlist').insertAdjacentHTML('beforeend', html);
+    Array.prototype.forEach.call(document.querySelectorAll('#hlist .hcard'), function (c) {
+      var i = +c.dataset.i;
+      if (i < from) return;
+      var sym = c.querySelector('.sym');
+      sym.addEventListener('input', function () {
+        var p = sym.selectionStart;
+        sym.value = sym.value.toUpperCase().replace(/\s+/g, '');
+        try { sym.setSelectionRange(p, p); } catch (e) {}
+        hDirty(i);
+      });
+      c.querySelector('.hb').addEventListener('input', function () { hDirty(i); });
+      c.querySelector('.hq').addEventListener('input', function () { hDirty(i); });
+      c.querySelector('.ht').addEventListener('input', function () { hDirty(i); });
+      c.querySelector('.acsel').addEventListener('change', function () { hDirty(i); });
+      c.querySelector('.set').addEventListener('click', function () { saveHolding(i); });
+      c.querySelector('.clr').addEventListener('click', function () { clearHolding(i); });
+    });
+  }
+  function hDirty(i) {
+    hdirty[i] = true;
+    var b = $('h' + i).querySelector('.set');
+    b.className = 'set dirty';
+    b.textContent = 'Add';
+  }
+  function saveHolding(i) {
+    var c = $('h' + i);
+    var sym = c.querySelector('.sym').value.trim().toUpperCase();
+    var buy = c.querySelector('.hb').value.trim().replace(/,/g, '');
+    var qty = c.querySelector('.hq').value.trim().replace(/,/g, '');
+    var tgt = c.querySelector('.ht').value.trim().replace(/,/g, '');
+    var acct = c.querySelector('.acsel').value;
+    if (!sym) { toast('Type a stock symbol first', true); return; }
+    if (!/^[A-Z0-9&\-_.]{1,20}$/.test(sym)) { toast('Use the NSE symbol, e.g. SBIN or M&M', true); return; }
+    if (!(+buy > 0)) { toast('Enter your buy price', true); return; }
+    if (!(+qty > 0) || Math.floor(+qty) !== +qty) { toast('Enter a whole-number quantity', true); return; }
+    if (tgt && !(+tgt > 0)) { toast('Enter a valid target price, or leave it empty', true); return; }
+    var dupe = -1;
+    holdings().forEach(function (h, k) { if (k !== i && h.sym === sym && acctOf(h) === acct) dupe = k; });
+    if (dupe >= 0) { toast(sym + ' is already in ' + acctName(acct) + ' (slot ' + (dupe + 1) + ')', true); return; }
+    hbusy[i] = true;
+    var b = c.querySelector('.set');
+    b.disabled = true;
+    b.textContent = 'Checking…';
+    A.saveHolding(i, sym, buy, qty, tgt || '0', acct);
+    S.holdings[i] = { sym: sym, buy: +buy, qty: +qty, target: +tgt || 0, acct: acct };
+    delete hdirty[i];
+  }
+  function clearHolding(i) {
+    var h = holdings()[i] || { sym: '' };
+    if (!h.sym && !hdirty[i]) return;
+    if (h.sym && !confirm('Remove ' + h.sym + ' from My Stocks?')) return;
+    var c = $('h' + i);
+    c.querySelector('.sym').value = ''; c.querySelector('.hb').value = ''; c.querySelector('.hq').value = ''; c.querySelector('.ht').value = '';
+    delete hdirty[i];
+    A.saveHolding(i, '', '0', '0', '0', '');
+    S.holdings[i] = { sym: '', buy: 0, qty: 0, target: 0, acct: '' };
+    render();
+  }
+  function renderHoldings() {
+    var hs = holdings(), used = 0, acs = accounts();
+    if (myAcct !== 'all' && !acs.some(function (x) { return x.id === myAcct; })) myAcct = 'all';
+    var opts = acs.map(function (x) { return '<option value="' + x.id + '">' + esc(x.name) + '</option>'; }).join('');
+    // filter chips
+    var ch = '<button data-a="all" class="' + (myAcct === 'all' ? 'on' : '') + '">All (' + hs.filter(function (h) { return h.sym; }).length + ')</button>';
+    acs.forEach(function (x) {
+      var n = hs.filter(function (h) { return h.sym && acctOf(h) === x.id; }).length;
+      ch += '<button data-a="' + x.id + '" class="' + (myAcct === x.id ? 'on' : '') + '">' + esc(x.name) + ' (' + n + ')</button>';
+    });
+    if ($('myAcct')) {
+      $('myAcct').innerHTML = acs.length > 1 ? ch : '';
+      Array.prototype.forEach.call($('myAcct').querySelectorAll('button'), function (b) {
+        b.onclick = function () { myAcct = b.dataset.a; renderHoldings(); };
+      });
+    }
+    hs.forEach(function (h, i) {
+      var c = $('h' + i);
+      if (!c) return;
+      if (h.sym) used++;
+      var sym = c.querySelector('.sym'), hb = c.querySelector('.hb'), hq = c.querySelector('.hq'), ht = c.querySelector('.ht');
+      var act = document.activeElement;
+      if (!hdirty[i] && act !== sym && act !== hb && act !== hq && act !== ht) {
+        sym.value = h.sym || ''; hb.value = h.buy > 0 ? h.buy : ''; hq.value = h.qty > 0 ? h.qty : ''; ht.value = h.target > 0 ? h.target : '';
+      }
+      var sel = c.querySelector('.acsel');
+      if (sel.dataset.opts !== opts) { var keep = sel.value; sel.innerHTML = opts; sel.dataset.opts = opts; if (keep) sel.value = keep; }
+      if (!hdirty[i] && act !== sel) sel.value = h.sym ? acctOf(h) : (myAcct !== 'all' ? myAcct : acs[0].id);
+      sel.style.display = acs.length > 1 || h.sym ? '' : 'none';
+      c.style.display = (myAcct === 'all' || !h.sym || acctOf(h) === myAcct) ? '' : 'none';
+      var q = h.sym ? S.quotes[h.sym] : null;
+      c.className = 'card hcard' + (!h.sym ? ' empty' : '');
+      c.querySelector('.name').textContent = q && q.name ? q.name : (h.sym ? '' : 'Empty slot');
+      c.querySelector('.ltp').textContent = q ? '₹' + fmt(q.price) : '—';
+      var pl = c.querySelector('.pl');
+      if (q && h.buy > 0 && h.qty > 0) {
+        var v = (q.price - h.buy) * h.qty, pc = (q.price - h.buy) / h.buy * 100;
+        pl.textContent = (v >= 0 ? '+₹' : '−₹') + fmt(Math.abs(v)) + ' (' + (pc >= 0 ? '+' : '') + pc.toFixed(2) + '%)';
+        pl.className = 'pl ' + (v >= 0 ? 'g' : 'r');
+      } else { pl.textContent = ''; pl.className = 'pl'; }
+      // target progress: from buy price (0%) to target (100%)
+      var tl = c.querySelector('.tgline');
+      if (h.sym && h.target > 0) {
+        if (q) {
+          tl.style.display = 'flex';
+          var span = h.target - h.buy, prog = span > 0 ? (q.price - h.buy) / span * 100 : (q.price >= h.target ? 100 : 0);
+          tl.querySelector('.bar i').style.width = Math.max(2, Math.min(100, prog)).toFixed(0) + '%';
+          tl.querySelector('.bar i').style.background = q.price >= h.target ? '#34D399' : '#FCD34D';
+          var away = (h.target - q.price) / q.price * 100;
+          var dEl = tl.querySelector('.dist');
+          dEl.textContent = q.price >= h.target ? '✓ Target ₹' + fmt(h.target) + ' reached' : away.toFixed(2) + '% to target ₹' + fmt(h.target);
+          dEl.className = 'dist' + (q.price >= h.target ? ' hit' : '');
+        } else tl.style.display = 'none';
+      } else { tl.style.display = 'none'; }
+      var b = c.querySelector('.set');
+      if (!hbusy[i]) {
+        b.disabled = false;
+        if (hdirty[i]) { b.className = 'set dirty'; b.textContent = 'Add'; }
+        else if (h.sym && h.qty > 0) { b.className = 'set saved'; b.textContent = 'Added ✓'; }
+        else { b.className = 'set'; b.textContent = 'Add'; }
+      }
+    });
+    if ($('myCount')) $('myCount').textContent = used + ' stock' + (used === 1 ? '' : 's') + ' · ' + nHold + ' slots';
+  }
+  function focusHolding(i) {
+    show('my');
+    var c = $('h' + i);
+    if (!c) return;
+    c.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    c.classList.add('flash');
+    setTimeout(function () { c.classList.remove('flash'); }, 2200);
+  }
+
+  // ---------- portfolio ----------
+  var PAL = ['#38BDF8', '#A78BFA', '#F472B6', '#FBBF24', '#34D399', '#FB923C', '#94A3B8'];
+  function money(v) { return (v < 0 ? '−₹' : '₹') + fmt(Math.abs(v)); }
+  function signed(v) { return (v >= 0 ? '+₹' : '−₹') + fmt(Math.abs(v)); }
+  function targetLine(r) {
+    if (!(r.target > 0)) return '<div class="tl none">No target set · add one in My Stocks</div>';
+    if (!r.q) return '<div class="tl"><span class="lab">Target ₹' + fmt(r.target) + '</span><span>waiting for price</span></div>';
+    var hit = r.q.price >= r.target;
+    var left = (r.target - r.q.price) / r.q.price * 100;
+    var span = r.target - r.buy, prog = hit ? 100 : span > 0 ? Math.max(2, Math.min(100, (r.q.price - r.buy) / span * 100)) : 2;
+    return '<div class="tl' + (hit ? ' hit' : '') + '"><span class="lab">' + (hit ? '✓ Target hit' : 'Target ₹' + fmt(r.target)) + '</span>' +
+      '<div class="tb"><i style="width:' + prog.toFixed(0) + '%' + (hit ? ';background:#34D399' : '') + '"></i></div>' +
+      '<b>' + (hit ? '₹' + fmt(r.target) + ' reached' : left.toFixed(2) + '% left') + '</b></div>';
+  }
+  function sumRows(rows) {
+    var t = { inv: 0, cur: 0, day: 0, n: rows.length, priced: 0 };
+    rows.forEach(function (r) { if (r.q) { t.inv += r.inv; t.cur += r.cur; t.day += r.day; t.priced++; } });
+    t.pl = t.cur - t.inv; t.plp = t.inv ? t.pl / t.inv * 100 : 0;
+    var base = t.cur - t.day; t.dayp = base ? t.day / base * 100 : 0;
+    return t;
+  }
+  function heroCard(t, label) {
+    var cls = t.pl > 0 ? 'g' : t.pl < 0 ? 'r' : '';
+    var col = t.pl >= 0 ? '#34D399' : '#F87171';
+    return '<div class="phero ' + cls + '"><div class="lbl">' + label + '</div><div class="big">' + money(t.cur) + '</div>' +
+      '<div class="pnl" style="color:' + col + '">' + signed(t.pl) + '<span class="pchip" style="background:' + col + '">' + (t.plp >= 0 ? '+' : '') + t.plp.toFixed(2) + '%</span><span style="font-size:11px;color:var(--mut);font-family:inherit;font-weight:600">overall</span></div>' +
+      '<div class="grid"><div><small>Total invested</small><b>' + money(t.inv) + '</b></div>' +
+      '<div><small>Current value</small><b>' + money(t.cur) + '</b></div>' +
+      '<div><small>Total P&amp;L</small><b style="color:' + col + '">' + signed(t.pl) + '</b></div>' +
+      '<div><small>Today\'s P&amp;L</small><b style="color:' + (t.day >= 0 ? '#34D399' : '#F87171') + '">' + signed(t.day) + ' <span style="font-size:11px">(' + (t.dayp >= 0 ? '+' : '') + t.dayp.toFixed(2) + '%)</span></b></div></div></div>';
+  }
+  function holdingRow(r, total) {
+    var c = r.pl == null ? '' : r.pl > 0 ? ' g' : r.pl < 0 ? ' r' : '';
+    return '<button class="prow' + c + (popen[r.i] ? ' open' : '') + '" data-i="' + r.i + '"><div class="l1">' +
+      '<div class="nm"><b>' + esc(r.sym) + '</b><small>' + r.qty + ' × ₹' + fmt(r.buy) + '</small></div>' +
+      '<div class="val"><b>' + (r.q ? '₹' + fmt(r.q.price) : '—') + '</b><small>' + (r.cur != null ? money(r.cur) : '') + '</small></div>' +
+      '<div class="pp">' + (r.plp == null ? '—' : (r.plp >= 0 ? '+' : '') + r.plp.toFixed(2) + '%') + '<small>' + (r.pl == null ? '' : signed(r.pl)) + '</small></div></div>' +
+      targetLine(r) +
+      '<div class="more"><div><small>Invested</small><b>' + money(r.inv) + '</b></div><div><small>Current</small><b>' + (r.cur != null ? money(r.cur) : '—') + '</b></div>' +
+      '<div><small>Today</small><b>' + (r.q && r.q.hasChg ? signed(r.day) : '—') + '</b></div>' +
+      '<div><small>Day change</small><b>' + (r.q && r.q.hasChg ? (r.q.pchg >= 0 ? '+' : '') + r.q.pchg.toFixed(2) + '%' : '—') + '</b></div>' +
+      '<div><small>Weight</small><b>' + (r.cur && total ? (r.cur / total * 100).toFixed(1) + '%' : '—') + '</b></div>' +
+      '<div><small>Account</small><b style="font-family:inherit;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(acctName(r.acct)) + '</b></div></div></button>';
+  }
+  function sortRows(list) {
+    var key = psort === 'tgt' ? 'tleft' : psort === 'value' ? 'cur' : 'plp';
+    if (psort === 'az') return list.sort(function (a, b) { return (a.sym < b.sym ? -1 : 1) * pdir; });
+    return list.sort(function (a, b) {
+      var x = a[key], y = b[key];
+      if (x == null && y == null) return 0;
+      if (x == null) return 1;
+      if (y == null) return -1;
+      return (x - y) * pdir;
+    });
+  }
+  function renderPortfolio() {
+    var all = [], acs = accounts();
+    if (pview !== 'all' && !acs.some(function (x) { return x.id === pview; })) pview = 'all';
+    holdings().forEach(function (h, i) {
+      if (!h.sym || !(h.qty > 0) || !(h.buy > 0)) return;
+      var q = S.quotes[h.sym];
+      var r = { i: i, sym: h.sym, qty: h.qty, buy: h.buy, target: h.target || 0, acct: acctOf(h), q: q, name: q && q.name ? q.name : '' };
+      r.inv = h.buy * h.qty;
+      if (q) {
+        r.cur = q.price * h.qty; r.pl = r.cur - r.inv; r.plp = r.pl / r.inv * 100;
+        r.day = q.hasChg ? q.chg * h.qty : 0;
+        if (r.target > 0) r.tleft = (r.target - q.price) / q.price * 100;
+      }
+      all.push(r);
+    });
+    var el = $('port');
+    if (!all.length) {
+      el.innerHTML = '<div class="dempty">Your portfolio is empty.<br>Add your stocks with buy price and quantity in the My Stocks tab.<br><button id="pGo">Go to My Stocks</button></div>';
+      $('pGo').onclick = function () { show('my'); };
+      return;
+    }
+    var html = '';
+    // account switcher
+    if (acs.length > 1) {
+      html += '<div class="acchips"><button data-v="all" class="' + (pview === 'all' ? 'on' : '') + '">Consolidated</button>';
+      acs.forEach(function (x) { html += '<button data-v="' + x.id + '" class="' + (pview === x.id ? 'on' : '') + '">' + esc(x.name) + '</button>'; });
+      html += '</div>';
+    }
+    var rows = pview === 'all' ? all : all.filter(function (r) { return r.acct === pview; });
+    var t = sumRows(rows);
+    html += heroCard(t, pview === 'all' ? (acs.length > 1 ? 'CONSOLIDATED · ALL ' + acs.length + ' ACCOUNTS' : 'CURRENT VALUE') : esc(acctName(pview)).toUpperCase() + ' · CURRENT VALUE');
+
+    // per-account summary (consolidated view only)
+    if (pview === 'all' && acs.length > 1) {
+      html += '<div class="dcard" style="margin-bottom:12px"><h4>Accounts · share of current value</h4><div class="pbar">';
+      var per = acs.map(function (x, k) { var rr = all.filter(function (r) { return r.acct === x.id; }); return { x: x, k: k, t: sumRows(rr) }; });
+      per.forEach(function (p) { if (p.t.cur) html += '<i style="width:' + (p.t.cur / t.cur * 100).toFixed(2) + '%;background:' + ACOL[p.k % ACOL.length] + '"></i>'; });
+      html += '</div><div class="acgrid" style="margin:10px 0 0">';
+      per.forEach(function (p) {
+        var col = p.t.pl >= 0 ? '#34D399' : '#F87171';
+        html += '<button class="accard" data-v="' + p.x.id + '"><span class="abar" style="background:' + ACOL[p.k % ACOL.length] + '"></span>' +
+          '<div class="an"><b>' + esc(p.x.name) + '</b><small>' + p.t.n + ' stock' + (p.t.n === 1 ? '' : 's') + '</small><small>Invested ' + money(p.t.inv) + '</small></div>' +
+          '<div class="av"><b>' + money(p.t.cur) + '</b><small style="color:' + col + '">' + signed(p.t.pl) + ' (' + (p.t.plp >= 0 ? '+' : '') + p.t.plp.toFixed(2) + '%)</small></div></button>';
+      });
+      html += '</div></div>';
+    } else {
+      // allocation by stock for a single account
+      var alloc = rows.filter(function (r) { return r.cur; }).sort(function (a, b) { return b.cur - a.cur; });
+      var top = alloc.slice(0, 6), rest = alloc.slice(6).reduce(function (a, r) { return a + r.cur; }, 0);
+      if (alloc.length) {
+        html += '<div class="dcard" style="margin-bottom:12px"><h4>Allocation by current value</h4><div class="pbar">';
+        top.forEach(function (r, k) { html += '<i style="width:' + (r.cur / t.cur * 100).toFixed(2) + '%;background:' + PAL[k] + '"></i>'; });
+        if (rest) html += '<i style="width:' + (rest / t.cur * 100).toFixed(2) + '%;background:' + PAL[6] + '"></i>';
+        html += '</div><div class="alloc">';
+        top.forEach(function (r, k) { html += '<span><i style="background:' + PAL[k] + '"></i>' + esc(r.sym) + ' ' + (r.cur / t.cur * 100).toFixed(1) + '%</span>'; });
+        if (rest) html += '<span><i style="background:' + PAL[6] + '"></i>Others ' + (rest / t.cur * 100).toFixed(1) + '%</span>';
+        html += '</div></div>';
+      }
+    }
+
+    // sort bar
+    var win = rows.filter(function (r) { return r.pl > 0; }).length, lose = rows.filter(function (r) { return r.pl < 0; }).length;
+    var arrow = pdir < 0 ? ' ↓' : ' ↑';
+    var sb = function (k, label) { return '<button data-p="' + k + '" class="' + (psort === k ? 'on' : '') + '">' + label + (psort === k ? arrow : '') + '</button>'; };
+    html += '<div class="whead"><b>Holdings (' + rows.length + ') · <span style="color:#6EE7B7">' + win + ' ▲</span> <span style="color:#FCA5A5">' + lose + ' ▼</span></b></div>' +
+      '<div class="psort"><span>Sort:</span>' + sb('pl', 'P&amp;L %') + sb('tgt', 'Target left %') + sb('value', 'Value') + sb('az', 'A–Z') + '</div>' +
+      '<div class="psorthint" style="font-size:11px;color:var(--mut);margin:-4px 2px 10px">' +
+      (psort === 'pl' ? (pdir < 0 ? 'Biggest profit first' : 'Biggest loss first')
+        : psort === 'tgt' ? (pdir > 0 ? 'Closest to target first (targets already hit at the top)' : 'Furthest from target first')
+        : psort === 'value' ? (pdir < 0 ? 'Largest holding first' : 'Smallest holding first')
+        : (pdir > 0 ? 'A to Z' : 'Z to A')) + ' · tap again to reverse</div>';
+
+    if (pview === 'all' && acs.length > 1) {
+      // grouped account-wise
+      acs.forEach(function (x, k) {
+        var rr = sortRows(rows.filter(function (r) { return r.acct === x.id; }));
+        if (!rr.length) return;
+        var gt = sumRows(rr), col = gt.pl >= 0 ? '#34D399' : '#F87171';
+        html += '<div class="ghead"><i style="background:' + ACOL[k % ACOL.length] + '"></i><b>' + esc(x.name) + ' (' + rr.length + ')</b>' +
+          '<small style="color:' + col + '">' + signed(gt.pl) + ' · ' + (gt.plp >= 0 ? '+' : '') + gt.plp.toFixed(2) + '%</small></div><div class="wlist">';
+        rr.forEach(function (r) { html += holdingRow(r, t.cur); });
+        html += '</div>';
+      });
+    } else {
+      html += '<div class="wlist">';
+      sortRows(rows.slice()).forEach(function (r) { html += holdingRow(r, t.cur); });
+      html += '</div>';
+    }
+    html += '<p style="font-size:11px;color:var(--mut);text-align:center;margin:14px 8px;line-height:1.5">Green = in profit, red = in loss, compared with your buy price. The yellow bar shows progress from your buy price to your target, with the % still left to go. Tap a holding for more detail. ' +
+      (t.priced < rows.length ? (rows.length - t.priced) + ' holding(s) are waiting for a price and are not in the totals yet.' : '') + '</p>';
+    el.innerHTML = html;
+    Array.prototype.forEach.call(el.querySelectorAll('.acchips button, .accard'), function (b) {
+      b.onclick = function () { pview = b.dataset.v; renderPortfolio(); window.scrollTo(0, 0); };
+    });
+    Array.prototype.forEach.call(el.querySelectorAll('.psort button'), function (b) {
+      b.onclick = function () {
+        var k = b.dataset.p;
+        if (psort === k) pdir = -pdir;
+        else { psort = k; pdir = (k === 'tgt' || k === 'az') ? 1 : -1; }
+        renderPortfolio();
+      };
+    });
+    Array.prototype.forEach.call(el.querySelectorAll('.prow'), function (b) {
+      b.onclick = function () { var i = +b.dataset.i; popen[i] = !popen[i]; b.classList.toggle('open'); };
     });
   }
 
   function render() {
     if (!S) return;
+    ensureCards(S.slots.length);
+    ensureHoldings(holdings().length);
     renderStatus();
     renderCards();
     if (view === 'settings') renderSettings();
     if (view === 'dashboard') renderDashboard();
     if (view === 'watch') renderWatch();
+    if (view === 'port') renderPortfolio();
+    renderHoldings();
     renderHistory();
     var f = A.takeFocusSlot();
     if (f >= 0) focusSlot(f);
@@ -821,14 +1347,14 @@ nav.bot button.on{color:var(--acc);font-weight:600}
   function show(v) {
     view = v;
     $('searchBox').style.display = v === 'alerts' ? 'flex' : 'none';
-    ['dashboard', 'watch', 'alerts', 'history', 'settings'].forEach(function (n) {
+    ['dashboard', 'port', 'watch', 'my', 'alerts', 'history', 'settings'].forEach(function (n) {
       $('v-' + n).className = 'view' + (n === v ? ' on' : '');
     });
     Array.prototype.forEach.call(document.querySelectorAll('nav.bot button'), function (b) {
       b.className = b.dataset.v === v ? 'on' : '';
     });
     window.scrollTo(0, 0);
-    if (S) { if (v === 'settings') renderSettings(); if (v === 'dashboard') renderDashboard(); if (v === 'watch') renderWatch(); renderHistory(); }
+    if (S) { if (v === 'settings') renderSettings(); if (v === 'dashboard') renderDashboard(); if (v === 'watch') renderWatch(); if (v === 'port') renderPortfolio(); renderHistory(); }
   }
 
   function setFilterUi() {
@@ -844,6 +1370,14 @@ nav.bot button.on{color:var(--acc);font-weight:600}
   window.onNative = function (ev, data) {
     var d = {};
     try { d = data ? JSON.parse(data) : {}; } catch (e) {}
+    if (ev === 'holding') {
+      delete hbusy[d.i];
+      if (!d.sym) toast('Removed from My Stocks');
+      else if (d.ok) toast(d.sym + (d.price ? ' ₹' + fmt(d.price) : '') + ' added to My Stocks' + (d.target > 0 ? ' · target ₹' + fmt(d.target) : ''));
+      else toast('Saved ' + d.sym + ', but couldn\'t get its price yet. Check the symbol.', true);
+      load();
+      return;
+    }
     if (ev === 'slot') {
       delete busy[d.i];
       if (!d.sym) toast('Slot ' + (d.i + 1) + ' cleared');
@@ -866,7 +1400,8 @@ nav.bot button.on{color:var(--acc);font-weight:600}
   };
 
   // ---------- wire up ----------
-  buildCards();
+  ensureCards(SLOTS);
+  ensureHoldings(HSLOTS);
   $('refreshBtn').onclick = function () {
     $('refreshBtn').classList.add('spin');
     A.refresh();
@@ -894,6 +1429,43 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     toast('Test notification sent');
   };
   $('chanBtn').onclick = function () { A.openChannelSettings(); };
+  $('addAlert').onclick = function () {
+    if (nCards >= MAXSLOTS) { toast('You have reached the maximum of ' + MAXSLOTS + ' alerts', true); return; }
+    var i = nCards;
+    while (S.slots.length <= i) S.slots.push({ sym: '', alert: 0, setAt: 0 });
+    ensureCards(i + 1);
+    filter = 'all'; query = ''; $('q').value = ''; $('qClear').style.display = 'none';
+    setFilterUi();
+    renderCards();
+    var c = $('c' + i);
+    c.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    c.classList.add('flash');
+    setTimeout(function () { c.classList.remove('flash'); c.querySelector('.sym').focus(); }, 500);
+  };
+  $('addStock').onclick = function () {
+    if (nHold >= MAXSLOTS) { toast('You have reached the maximum of ' + MAXSLOTS + ' stocks', true); return; }
+    var i = nHold;
+    if (!S.holdings) S.holdings = [];
+    while (S.holdings.length <= i) S.holdings.push({ sym: '', buy: 0, qty: 0, target: 0, acct: '' });
+    ensureHoldings(i + 1);
+    renderHoldings();
+    var c = $('h' + i);
+    c.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    c.classList.add('flash');
+    setTimeout(function () { c.classList.remove('flash'); c.querySelector('.sym').focus(); }, 500);
+  };
+  $('acctAdd').onclick = function () {
+    var nm = $('acctName').value.trim();
+    if (!nm) { toast('Type a name for the account', true); return; }
+    var list = accounts().slice();
+    if (list.some(function (x) { return x.name.toLowerCase() === nm.toLowerCase(); })) { toast('You already have an account called ' + nm, true); return; }
+    if (!(S.settings.accounts && S.settings.accounts.length)) list = [{ id: 'a1', name: list[0].name }];
+    list.push({ id: 'a' + Date.now().toString(36), name: nm });
+    saveAccounts(list);
+    $('acctName').value = '';
+    toast('Account ' + nm + ' added');
+    render();
+  };
   $('q').addEventListener('input', function () {
     query = $('q').value.trim().toUpperCase();
     $('qClear').style.display = query ? 'flex' : 'none';
