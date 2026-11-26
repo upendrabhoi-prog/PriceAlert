@@ -61,7 +61,7 @@ public class PriceService extends Service {
         thread.start();
         handler = new Handler(thread.getLooper());
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "PriceAlert:check");
+        wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Wealthora:check");
         wakeLock.setReferenceCounted(false);
         running = this;
     }
