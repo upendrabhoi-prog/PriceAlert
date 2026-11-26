@@ -23,13 +23,33 @@ public class Bridge {
     private final WebView web;
     private final ExecutorService bg = Executors.newSingleThreadExecutor();
     volatile int focusSlot = -1;
+    volatile String openTab = "";
+    /** The bridge of the screen that is open right now, if any. */
+    static volatile Bridge current;
 
     Bridge(MainActivity act, WebView web) {
         this.act = act;
         this.web = web;
+        current = this;
     }
 
-    void shutdown() { bg.shutdownNow(); }
+    void shutdown() {
+        if (current == this) current = null;
+        bg.shutdownNow();
+    }
+
+    /** Tells the open screen (if any) that new prices were saved, so every tab refreshes. */
+    static void notifyUpdated() {
+        Bridge b = current;
+        if (b != null) b.emit("updated", "");
+    }
+
+    @JavascriptInterface
+    public String takeTab() {
+        String t = openTab;
+        openTab = "";
+        return t == null ? "" : t;
+    }
 
     /** Calls window.onNative(event, data) in the page. */
     void emit(String event, String data) {
@@ -168,6 +188,9 @@ public class Bridge {
                 try { r.put("err", String.valueOf(e.getMessage())); } catch (JSONException ignored) { }
             }
             emit("refreshed", r.toString());
+            if (Store.get(ctx()).monitoring() && PriceService.running == null) {
+                act.runOnUiThread(() -> PriceService.start(act));
+            }
         });
     }
 

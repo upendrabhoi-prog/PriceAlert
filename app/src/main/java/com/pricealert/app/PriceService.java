@@ -64,6 +64,7 @@ public class PriceService extends Service {
         wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Wealthora:check");
         wakeLock.setReferenceCounted(false);
         running = this;
+        WatchJob.schedule(this);
     }
 
     @Override
@@ -99,10 +100,10 @@ public class PriceService extends Service {
         }
         long now = System.currentTimeMillis();
         boolean marketOnly = store.settings().optBoolean("marketOnly", true);
-        long pollMs = Math.max(1, store.settings().optInt("pollMin", 1)) * 60_000L;
+        long pollMs = store.pollMs();
 
         if (!marketOnly || Market.isOpen(now)) {
-            wakeLock.acquire(pollMs * 3);
+            wakeLock.acquire(Math.max(120_000L, pollMs * 3));
             try {
                 Checker.Result r = Checker.run(this, true);
                 String text = r.asked == 0
@@ -113,7 +114,8 @@ public class PriceService extends Service {
             } catch (Exception e) {
                 Notifier.updateMonitor(this, "Last check failed: " + e.getMessage());
             }
-            handler.postDelayed(tick, pollMs);
+            long spent = System.currentTimeMillis() - now;
+            handler.postDelayed(tick, Math.max(3_000L, pollMs - spent));
         } else {
             if (wakeLock.isHeld()) wakeLock.release();
             long open = Market.nextOpen(now);

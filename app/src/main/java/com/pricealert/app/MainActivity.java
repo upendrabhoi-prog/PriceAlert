@@ -62,6 +62,7 @@ public class MainActivity extends Activity {
             requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1);
         }
         if (Store.get(this).monitoring() && PriceService.running == null) PriceService.start(this);
+        WatchJob.schedule(this);
     }
 
     @Override
@@ -78,11 +79,17 @@ public class MainActivity extends Activity {
             bridge.focusSlot = slot;
             i.removeExtra("slot");
         }
+        String tab = i.getStringExtra("tab");
+        if (tab != null) {
+            bridge.openTab = tab;
+            i.removeExtra("tab");
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        if (Store.get(this).monitoring() && PriceService.running == null) PriceService.start(this);
         bridge.emit("resume", "");
     }
 

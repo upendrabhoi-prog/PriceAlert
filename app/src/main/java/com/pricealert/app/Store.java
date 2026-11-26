@@ -118,12 +118,13 @@ public final class Store {
         try {
             if (!s.has("repeatMin")) s.put("repeatMin", 5);
             if (!s.has("pollMin")) s.put("pollMin", 1);
+            if (!s.has("pollSec")) s.put("pollSec", Math.max(15, s.optInt("pollMin", 1) * 60));
             if (!s.has("marketOnly")) s.put("marketOnly", true);
             if (!s.has("sound")) s.put("sound", true);
             if (!s.has("vibrate")) s.put("vibrate", true);
             if (!s.has("nearWarn")) s.put("nearWarn", true);
             if (!s.has("nearPct")) s.put("nearPct", 2);
-            if (!s.has("monitoring")) s.put("monitoring", false);
+            if (!s.has("monitoring")) s.put("monitoring", true);
         } catch (JSONException ignored) { }
         return s;
     }
@@ -139,6 +140,9 @@ public final class Store {
         }
         put("settings", s);
     }
+
+    /** How often prices are checked, in milliseconds (15 seconds or more). */
+    public synchronized long pollMs() { return Math.max(15, settings().optInt("pollSec", 60)) * 1000L; }
 
     public synchronized boolean monitoring() { return settings().optBoolean("monitoring", false); }
 

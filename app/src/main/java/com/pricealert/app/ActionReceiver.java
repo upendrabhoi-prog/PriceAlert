@@ -10,6 +10,7 @@ public class ActionReceiver extends BroadcastReceiver {
     public static final String ACTION_PAUSE = "com.pricealert.app.PAUSE";
     public static final String ACTION_STOP = "com.pricealert.app.STOP_MONITOR";
     public static final String ACTION_KICK = "com.pricealert.app.KICK";
+    public static final String ACTION_REFRESH = "com.pricealert.app.WIDGET_REFRESH";
 
     @Override
     public void onReceive(Context c, Intent intent) {
@@ -36,6 +37,12 @@ public class ActionReceiver extends BroadcastReceiver {
         } else if (ACTION_STOP.equals(a)) {
             Store.get(c).setMonitoring(false);
             PriceService.stop(c);
+        } else if (ACTION_REFRESH.equals(a)) {
+            final PendingResult pr = goAsync();
+            new Thread(() -> {
+                try { Checker.run(c, true); } catch (Exception ignored) { }
+                finally { pr.finish(); }
+            }, "widget-refresh").start();
         } else if (ACTION_KICK.equals(a)) {
             if (!Store.get(c).monitoring()) return;
             if (PriceService.running != null) PriceService.kick();

@@ -240,28 +240,49 @@ public final class PriceFetcher {
     }
 
     /** Fetch every symbol it can; symbols it can't price are left out of the map. */
+    /** Fetches several stocks at once so a full list finishes within a 15-second check. */
+    private static final java.util.concurrent.ExecutorService POOL =
+            java.util.concurrent.Executors.newFixedThreadPool(6, r -> {
+                Thread t = new Thread(r, "price-fetch");
+                t.setDaemon(true);
+                return t;
+            });
+
+    private static Quote one(String s, List<String> errors) {
+        Quote q = null;
+        String[] idx = INDICES.get(s);
+        if (idx == null) {
+            try { q = nse(s); } catch (Exception e) { errors.add("NSE " + s + ": " + e.getMessage()); }
+        }
+        String gCode = idx == null ? s + ":NSE" : idx[0];
+        if (q == null && gCode != null) {
+            try { q = google(gCode, s); } catch (Exception e) { errors.add("Google " + s + ": " + e.getMessage()); }
+        }
+        if (q == null) {
+            try { q = yahoo(idx == null ? s + ".NS" : idx[1], s); } catch (Exception e) { errors.add("Yahoo " + s + ": " + e.getMessage()); }
+        }
+        if (q != null && idx != null) q.name = idx[2];
+        if (q == null) errors.add(s + ": symbol not found");
+        return q;
+    }
+
     public static Map<String, Quote> fetchAll(Collection<String> symbols) {
         Set<String> want = new LinkedHashSet<>(symbols);
         Map<String, Quote> out = new HashMap<>();
-        List<String> errors = new ArrayList<>();
-        for (String s : want) {
-            Quote q = null;
-            String[] idx = INDICES.get(s);
-            if (idx == null) {
-                try { q = nse(s); } catch (Exception e) { errors.add("NSE " + s + ": " + e.getMessage()); }
+        List<String> errors = java.util.Collections.synchronizedList(new ArrayList<>());
+        if (want.isEmpty()) { lastError = ""; return out; }
+        warmNse(false);
+        Map<String, java.util.concurrent.Future<Quote>> jobs = new HashMap<>();
+        for (String s : want) jobs.put(s, POOL.submit(() -> one(s, errors)));
+        for (Map.Entry<String, java.util.concurrent.Future<Quote>> e : jobs.entrySet()) {
+            try {
+                Quote q = e.getValue().get(60, java.util.concurrent.TimeUnit.SECONDS);
+                if (q != null) out.put(e.getKey(), q);
+            } catch (Exception ex) {
+                errors.add(e.getKey() + ": timed out");
             }
-            String gCode = idx == null ? s + ":NSE" : idx[0];
-            if (q == null && gCode != null) {
-                try { q = google(gCode, s); } catch (Exception e) { errors.add("Google " + s + ": " + e.getMessage()); }
-            }
-            if (q == null) {
-                try { q = yahoo(idx == null ? s + ".NS" : idx[1], s); } catch (Exception e) { errors.add("Yahoo " + s + ": " + e.getMessage()); }
-            }
-            if (q != null && idx != null) q.name = idx[2];
-            if (q != null) out.put(s, q);
-            else if (errors.isEmpty()) errors.add(s + ": symbol not found");
         }
-        lastError = errors.isEmpty() ? "" : errors.get(0);
+        synchronized (errors) { lastError = errors.isEmpty() ? "" : errors.get(0); }
         return out;
     }
 }

@@ -8,6 +8,7 @@ import android.content.Intent;
 public class BootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context c, Intent intent) {
+        WatchJob.schedule(c);
         if (Store.get(c).monitoring()) PriceService.start(c);
     }
 }

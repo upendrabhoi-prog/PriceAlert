@@ -80,6 +80,8 @@ public final class Checker {
             evaluate(ctx, store, slots, got, now);
             evaluateTargets(ctx, store, holds, got, now);
         }
+        try { Widgets.updateAll(ctx); } catch (Exception ignored) { }
+        Bridge.notifyUpdated();
         return r;
     }
 
