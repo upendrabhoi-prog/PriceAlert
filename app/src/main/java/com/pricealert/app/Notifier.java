@@ -28,7 +28,7 @@ public final class Notifier {
         NotificationManager m = nm(c);
         NotificationChannel mon = new NotificationChannel(CH_MONITOR, "Background monitoring",
                 NotificationManager.IMPORTANCE_LOW);
-        mon.setDescription("Shown while PriceAlert is watching prices");
+        mon.setDescription("Shown while Wealthora is watching prices");
         mon.setShowBadge(false);
         m.createNotificationChannel(mon);
 
@@ -124,8 +124,31 @@ public final class Notifier {
         post(c, 2000 + slot, slot, q.sym, title, text);
     }
 
+    public static void targetHit(Context c, int holdingSlot, PriceFetcher.Quote q, double target, int count) {
+        double above = (q.price - target) / target * 100.0;
+        String title = q.sym + " reached your target";
+        String text = "Now " + rupees(q.price) + " — at or above your target of " + rupees(target)
+                + String.format(Locale.US, " (+%.2f%%).", above)
+                + (count > 1 ? " Reminder #" + count + "." : "")
+                + " Source: " + q.src + ".";
+        int id = 4000 + holdingSlot;
+        Notification n = new Notification.Builder(c, alertChannel(c))
+                .setSmallIcon(R.drawable.ic_stat_alert)
+                .setColor(0xFF34D399)
+                .setContentTitle(title)
+                .setContentText(text)
+                .setStyle(new Notification.BigTextStyle().bigText(text))
+                .setCategory(Notification.CATEGORY_REMINDER)
+                .setAutoCancel(true)
+                .setShowWhen(true)
+                .setContentIntent(openApp(c, -1, id))
+                .addAction(action(c, "Pause today", pause(c, q.sym, id + 900)))
+                .build();
+        try { nm(c).notify(id, n); } catch (SecurityException ignored) { }
+    }
+
     public static void test(Context c) {
-        post(c, 3000, -1, "TEST", "PriceAlert test",
+        post(c, 3000, -1, "TEST", "Wealthora test",
                 "Notifications are working. You'll get alerts like this when a stock reaches your price.");
     }
 
@@ -137,7 +160,7 @@ public final class Notifier {
         return new Notification.Builder(c, CH_MONITOR)
                 .setSmallIcon(R.drawable.ic_stat_alert)
                 .setColor(COLOR)
-                .setContentTitle("PriceAlert is watching your stocks")
+                .setContentTitle("Wealthora is watching your stocks")
                 .setContentText(text)
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
