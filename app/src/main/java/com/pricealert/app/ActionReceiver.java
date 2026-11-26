@@ -26,6 +26,13 @@ public class ActionReceiver extends BroadcastReceiver {
                 nm.cancel(2000 + slot);
             }
             nm.cancel(3000);
+            if (sym != null) {
+                org.json.JSONArray hs = Store.get(c).holdings();
+                for (int k = 0; k < hs.length(); k++) {
+                    org.json.JSONObject h = hs.optJSONObject(k);
+                    if (h != null && sym.equals(h.optString("sym"))) nm.cancel(4000 + k);
+                }
+            }
         } else if (ACTION_STOP.equals(a)) {
             Store.get(c).setMonitoring(false);
             PriceService.stop(c);
