@@ -10,8 +10,8 @@ android {
         applicationId "com.pricealert.app"
         minSdk 26
         targetSdk 36
-        versionCode 12
-        versionName "2.1"
+        versionCode 13
+        versionName "2.2"
     }
 
     // One permanent signing key (the key file itself is kept only as a GitHub secret), so every new version installs
