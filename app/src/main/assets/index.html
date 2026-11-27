@@ -180,6 +180,38 @@ nav.bot button.on{color:var(--acc);font-weight:600}
 .brow.t .top .prices{flex-basis:100%;justify-content:flex-start;margin-left:0}
 .brow.nt{opacity:.6}
 .dlist+.dlist{margin-top:14px}
+.bk .last{display:flex;align-items:center;gap:10px;background:#0E2236;border:1px solid #1E3A5F;border-radius:12px;padding:10px 12px;margin-top:10px}
+.bk .last .ic{width:34px;height:34px;border-radius:10px;background:#12304D;display:flex;align-items:center;justify-content:center;color:#7DD3FC;flex-shrink:0}
+.bk .last b{display:block;font-size:13px}.bk .last small{display:block;font-size:11px;color:var(--mut)}
+.bk .last.due{background:#2A2110;border-color:#7A5A12}.bk .last.due .ic{background:#3D3112;color:#FCD34D}.bk .last.due small{color:#FCD34D}
+.bk .btns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+.bk .btns button{height:46px;border-radius:12px;border:1px solid #1E3A5F;background:#0E2236;color:#7DD3FC;font-weight:700;font-size:13.5px;display:flex;align-items:center;justify-content:center;gap:7px}
+.bk .btns button.pri{background:var(--acc);border-color:var(--acc);color:#0A0F1C}
+.bk .inc{margin-top:10px;font-size:11.5px;color:var(--mut);line-height:1.6}
+.modal{position:fixed;inset:0;z-index:30;background:rgba(3,6,14,.72);display:flex;align-items:flex-end;justify-content:center}
+.modal .box{width:100%;max-width:520px;background:#111829;border:1px solid var(--line);border-radius:22px 22px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom))}
+.modal h3{margin:0 0 4px;font-size:18px}.modal p{margin:0;color:var(--mut);font-size:13px;line-height:1.5}
+.modal .cnt{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:14px 0}
+.modal .cnt div{background:#0E2236;border-radius:12px;padding:10px;text-align:center}
+.modal .cnt b{display:block;font-family:var(--mono);font-size:20px;color:#7DD3FC}.modal .cnt small{font-size:11px;color:var(--mut)}
+.modal .warn{background:#2A2110;border:1px solid #7A5A12;color:#FCD34D;border-radius:12px;padding:10px 12px;font-size:12px;line-height:1.5}
+.modal .act{display:grid;grid-template-columns:1fr 1.4fr;gap:8px;margin-top:14px}
+.modal .act button{height:48px;border-radius:12px;font-weight:700;font-size:14px;border:1px solid var(--line2);background:transparent;color:var(--tx)}
+.modal .act button.pri{background:var(--acc);border-color:var(--acc);color:#0A0F1C}
+.bkban{display:flex;align-items:center;gap:10px;border-radius:14px;padding:12px;margin:8px 0 12px}
+.bkban .tx{flex:1;font-size:12.5px;line-height:1.45}.bkban .tx b{display:block;font-size:13.5px;margin-bottom:2px}
+.bkban button{flex-shrink:0;height:36px;border-radius:10px;border:0;font-weight:700;padding:0 12px;font-size:12.5px}
+.secsel{margin-top:6px;margin-left:24px;max-width:180px;height:30px;border-radius:8px;border:1px solid #3B2F63;background:#1C1733;color:#C4B5FD;font-size:12px;font-weight:600;padding:0 8px}
+.secsel.need{border-color:#F59E0B;color:#FCD34D;background:#2A2110}
+.secchips{display:flex;gap:6px;overflow-x:auto;margin:0 0 12px;padding-bottom:2px}
+.secchips button{flex-shrink:0;height:34px;border-radius:999px;border:1px solid var(--line2);background:var(--card);color:var(--mut);font-size:12.5px;font-weight:600;padding:0 12px;white-space:nowrap;display:flex;align-items:center;gap:6px}
+.secchips button i{width:8px;height:8px;border-radius:2px;display:inline-block}
+.secchips button.on{background:#C4B5FD;border-color:#C4B5FD;color:#0A0F1C}
+.sechead{display:flex;align-items:center;gap:8px;margin:14px 2px 8px}
+.sechead i{width:10px;height:10px;border-radius:3px}
+.sechead b{font-size:14px;flex:1}
+.sechead small{font-family:var(--mono);font-size:12px;font-weight:700}
+.sechead .cnt{font-family:inherit;font-weight:600;color:var(--mut);font-size:11px;margin-right:6px}
 .hlnote{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--mut);margin:-2px 0 8px}
 .hlnote i{width:10px;height:10px;border-radius:3px;background:rgba(16,185,129,.45);border:1px solid #34D399}
 .wsum{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:8px 0 12px}
@@ -380,6 +412,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     <!-- DASHBOARD -->
     <section class="view on" id="v-dashboard">
       <div id="battWarn"></div>
+      <div id="bkBan"></div>
       <div id="dash"></div>
     </section>
 
@@ -445,6 +478,20 @@ nav.bot button.on{color:var(--acc);font-weight:600}
         </div>
       </div>
 
+      <div class="panel bk">
+        <h3>Backup &amp; restore</h3>
+        <p>Save all your alerts, My Stocks entries, accounts, sectors and settings to one small file. Restore it after reinstalling the app or on a new phone.</p>
+        <div id="bkLast"></div>
+        <div class="btns">
+          <button class="pri" id="bkSave"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 15v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/></svg>Back up now</button>
+          <button id="bkRestore"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 15v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/></svg>Restore</button>
+        </div>
+        <div class="btns" style="grid-template-columns:1fr"><button id="bkShare"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>Send backup to Google Drive, WhatsApp or email</button></div>
+        <span class="lbl" style="display:block;font-size:11px;color:var(--mut);font-weight:600;margin-top:14px">Remind me to back up</span>
+        <div class="chips" id="bkChips" style="grid-template-columns:repeat(4,minmax(0,1fr));margin-top:6px"></div>
+        <div class="inc">"Back up now" opens your phone's save screen: choose <b>Downloads</b> on the phone or <b>Google Drive</b>. "Restore" lets you pick the backup file from either place. The file is named like <b>Wealthora-backup-27-Nov-2026.json</b>.</div>
+      </div>
+
       <div class="panel">
         <h3>Repeat alert after</h3>
         <p>If the price is still at or below your alert price, you'll be notified again after this gap.</p>
@@ -503,6 +550,13 @@ nav.bot button.on{color:var(--acc);font-weight:600}
       </div>
 
       <div class="panel">
+        <h3>Sectors</h3>
+        <p>Groups for your alert stocks. When you add a stock in Alerts you pick its sector, and Watchlist → Alert stocks shows the stocks sector-wise. Rename, add or remove sectors any time.</p>
+        <div id="secList"></div>
+        <div class="acadd"><input id="secName" maxlength="20" placeholder="New sector (e.g. Pharma, Auto)" aria-label="New sector name"><button id="secAdd">Add</button></div>
+      </div>
+
+      <div class="panel">
         <h3>Price source</h3>
         <div class="src"><em>1</em><span>NSE India</span><small id="srcNse">primary</small></div>
         <div class="src"><em class="g">2</em><span>Google Finance</span><small id="srcG">fallback</small></div>
@@ -518,7 +572,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
 
       <button class="btn" id="testBtn">Send test notification</button>
       <button class="btn" id="chanBtn" style="margin-top:8px">Notification sound &amp; style settings</button>
-      <p style="font-size:11px;color:var(--mut);text-align:center;margin:16px 8px;line-height:1.5">Wealthora v2.0 · Prices may be delayed. Not investment advice.</p>
+      <p style="font-size:11px;color:var(--mut);text-align:center;margin:16px 8px;line-height:1.5">Wealthora v2.1 · Prices may be delayed. Not investment advice.</p>
     </section>
   </main>
 
@@ -605,7 +659,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
       html += '<div class="card empty" id="c' + i + '" data-i="' + i + '">' +
         '<div class="r1"><div class="symbox"><div class="symrow"><span class="num">' + (i + 1) + '</span>' +
         '<input class="sym" maxlength="20" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="Stock or index (e.g. SBIN, NIFTY)" aria-label="Stock symbol for slot ' + (i + 1) + '">' +
-        '<button class="tag idle" tabindex="-1">EMPTY</button></div><div class="name"></div></div>' +
+        '<button class="tag idle" tabindex="-1">EMPTY</button></div><div class="name"></div><select class="secsel" aria-label="Sector for slot ' + (i + 1) + '"></select></div>' +
         '<div class="px"><div class="ltp">—</div><div class="chg"></div></div></div>' +
         '<div class="r2"><label class="ap"><span>Alert ₹</span><input class="apv" inputmode="decimal" placeholder="0.00" aria-label="Alert price for slot ' + (i + 1) + '"></label>' +
         '<button class="set">Set</button><button class="clr" aria-label="Clear slot ' + (i + 1) + '">' + ICON_X + '</button></div>' +
@@ -623,6 +677,15 @@ nav.bot button.on{color:var(--acc);font-weight:600}
         markDirty(i);
       });
       ap.addEventListener('input', function () { markDirty(i); });
+      c.querySelector('.secsel').addEventListener('change', function () {
+        var v = this.value, s0 = S.slots[i] || {};
+        this.classList.toggle('need', !v);
+        if (s0.sym && !dirty[i] && v) {                // saved stock: change its sector straight away
+          s0.sector = v === 'none' ? '' : v;
+          A.setSlotSector(i, s0.sector);
+          toast(s0.sym + ' → ' + (v === 'none' ? 'No sector' : secName(v)));
+        } else markDirty(i);
+      });
       ap.addEventListener('keydown', function (e) { if (e.key === 'Enter') { ap.blur(); save(i); } });
       sym.addEventListener('keydown', function (e) { if (e.key === 'Enter') ap.focus(); });
       c.querySelector('.set').addEventListener('click', function () { save(i); });
@@ -651,12 +714,16 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     var dupe = -1;
     if (sym) S.slots.forEach(function (s, k) { if (k !== i && s.sym === sym) dupe = k; });
     if (dupe >= 0) { toast(sym + ' is already in slot ' + (dupe + 1), true); return; }
+    var secEl = c.querySelector('.secsel'), sec = secEl.value;
+    if (sym && !sec) { secEl.classList.add('need'); toast('Choose a sector for ' + sym + ' (it groups the stock in the Watchlist)', true); secEl.focus(); return; }
+    sec = sec === 'none' ? '' : sec;
     busy[i] = true;
     var b = c.querySelector('.set');
     b.disabled = true;
     b.textContent = 'Checking…';
     A.saveSlot(i, sym, raw || '0');
-    S.slots[i] = { sym: sym, alert: +raw || 0, setAt: Date.now() };
+    A.setSlotSector(i, sym ? sec : '');
+    S.slots[i] = { sym: sym, alert: +raw || 0, setAt: Date.now(), sector: sym ? sec : '' };
     delete dirty[i];
   }
 
@@ -669,7 +736,8 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     c.querySelector('.apv').value = '';
     delete dirty[i];
     A.saveSlot(i, '', '0');
-    S.slots[i] = { sym: '', alert: 0, setAt: 0 };
+    A.setSlotSector(i, '');
+    S.slots[i] = { sym: '', alert: 0, setAt: 0, sector: '' };
     render();
   }
 
@@ -698,6 +766,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
 
   function renderCards() {
     var nW = 0, nN = 0, nH = 0, shown = 0;
+    var secOpts = '<option value="">Choose sector…</option>' + sectors().map(function (x) { return '<option value="' + x.id + '">' + esc(x.name) + '</option>'; }).join('') + '<option value="none">No sector</option>';
     S.slots.forEach(function (s, i) {
       var c = $('c' + i);
       if (!c) return;
@@ -709,6 +778,12 @@ nav.bot button.on{color:var(--acc);font-weight:600}
       if (!dirty[i] && document.activeElement !== sym && document.activeElement !== ap) {
         sym.value = s.sym || '';
         ap.value = s.alert > 0 ? s.alert : '';
+      }
+      var ss = c.querySelector('.secsel');
+      if (ss.dataset.opts !== secOpts) { var kv = ss.value; ss.innerHTML = secOpts; ss.dataset.opts = secOpts; if (kv) ss.value = kv; }
+      if (!dirty[i] && document.activeElement !== ss) {
+        ss.value = s.sym ? (s.sector && sectors().some(function (x) { return x.id === s.sector; }) ? s.sector : 'none') : '';
+        ss.classList.remove('need');
       }
       c.className = 'card' + (inf.kind === 'hit' ? ' hit' : inf.kind === 'near' ? ' near' : '') + (!s.sym ? ' empty' : '') + (c.classList.contains('flash') ? ' flash' : '');
       var tag = c.querySelector('.tag');
@@ -790,7 +865,9 @@ nav.bot button.on{color:var(--acc);font-weight:600}
 
   function renderSettings() {
     var st = S.settings;
+    renderBackup();
     renderAccounts();
+    renderSectors();
     renderSheetSettings();
     chips($('repeatChips'), REPEAT, st.repeatMin, 'repeatMin');
     chips($('pollChips'), POLL, pollSec(), 'pollSec');
@@ -957,6 +1034,101 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     });
     if ($('goAlerts')) $('goAlerts').onclick = function () { show('alerts'); };
     if ($('goMy')) $('goMy').onclick = function () { show('my'); };
+  }
+
+
+  // ---------- backup & restore ----------
+  var BKE = [['off', 'Off'], ['week', 'Weekly'], ['month', 'Monthly'], ['3m', '3 months']];
+  var BKD = { week: 7, month: 30, '3m': 91 };
+  function bkInfo() { return (S && S.backup) || {}; }
+  function bkDue() {
+    var b = bkInfo(), ev = b.every || 'month';
+    if (ev === 'off' || !hasData()) return false;
+    return !b.last || Date.now() - b.last > BKD[ev] * 86400000;
+  }
+  function hasData() { return S.slots.some(function (x) { return x.sym; }) || holdings().some(function (h) { return h.sym; }); }
+  function longDate(ms) { var d = new Date(ms); return d.getDate() + ' ' + MON[d.getMonth()] + ' ' + d.getFullYear(); }
+  function renderBackup() {
+    if (!$('bkLast')) return;
+    var b = bkInfo(), due = bkDue();
+    $('bkLast').innerHTML = '<div class="last' + (due ? ' due' : '') + '"><div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v13H4V7"/><path d="M2 3h20v4H2z"/><path d="M10 12h4"/></svg></div><div>' +
+      (b.last ? '<b>Last backup: ' + longDate(b.last) + '</b><small>' + esc(b.where || 'Saved file') + (due ? ' · a new backup is due' : '') + '</small>'
+        : '<b>No backup yet</b><small>' + (hasData() ? 'Back up now so you never have to re-enter your stocks' : 'Restore a backup if you had one') + '</small>') + '</div></div>';
+    var cur = b.every || 'month';
+    $('bkChips').innerHTML = BKE.map(function (e) { return '<button class="chip' + (e[0] === cur ? ' on' : '') + '" data-e="' + e[0] + '">' + e[1] + '</button>'; }).join('');
+    Array.prototype.forEach.call($('bkChips').children, function (x) {
+      x.onclick = function () { S.backup = S.backup || {}; S.backup.every = x.dataset.e; A.saveSettings(JSON.stringify({ backupEvery: x.dataset.e })); renderBackup(); renderBackupBanner();
+        toast(x.dataset.e === 'off' ? 'Backup reminders off' : 'You\'ll be reminded ' + x.textContent.toLowerCase().replace('3 months', 'every 3 months')); };
+    });
+  }
+  function renderBackupBanner() {
+    var el = $('bkBan');
+    if (!el) return;
+    if (!hasData() && !bkInfo().last) {
+      el.innerHTML = '<div class="bkban" style="background:#0E2236;border:1px solid #1E3A5F"><div class="tx"><b>Reinstalled the app?</b>Restore your alerts and stocks from a backup file instead of typing them again.</div>' +
+        '<button style="background:var(--acc);color:#0A0F1C" id="banRestore">Restore</button></div>';
+      $('banRestore').onclick = function () { A.backupRestore(); };
+    } else if (bkDue()) {
+      var b = bkInfo();
+      el.innerHTML = '<div class="bkban" style="background:#2A2110;border:1px solid #7A5A12"><div class="tx" style="color:#FCD34D"><b>Time to back up</b>' +
+        (b.last ? 'Last backup was ' + longDate(b.last) + '.' : 'You haven\'t backed up yet.') + ' It takes a few seconds.</div>' +
+        '<button style="background:#FCD34D;color:#0A0F1C" id="banBackup">Back up</button></div>';
+      $('banBackup').onclick = function () { A.backupSave(); };
+    } else el.innerHTML = '';
+  }
+  function showRestore(d) {
+    var m = document.createElement('div');
+    m.className = 'modal';
+    m.innerHTML = '<div class="box" role="dialog" aria-label="Restore backup"><h3>Restore this backup?</h3><p>' + esc(d.name || 'Backup file') + '<br>Made on ' + longDate(d.made) + (d.device ? ' · ' + esc(d.device) : '') + '</p>' +
+      '<div class="cnt"><div><b>' + d.alerts + '</b><small>alerts</small></div><div><b>' + d.stocks + '</b><small>My Stocks</small></div><div><b>' + d.accounts + '</b><small>accounts</small></div>' +
+      '<div><b>' + d.sectors + '</b><small>sectors</small></div><div><b>' + (d.targets || 0) + '</b><small>targets</small></div><div><b>' + (d.sheet ? '✓' : '—') + '</b><small>sheet link</small></div></div>' +
+      (hasData() ? '<div class="warn">This replaces the alerts and stocks now in the app.</div>' : '') +
+      '<div class="act"><button id="rsNo">Cancel</button><button class="pri" id="rsYes">Restore</button></div></div>';
+    document.body.appendChild(m);
+    $('rsNo').onclick = function () { m.remove(); };
+    $('rsYes').onclick = function () { m.remove(); A.backupApply(d.token); };
+  }
+
+  // ---------- sectors (watchlist groups for alert stocks) ----------
+  var SCOL = ['#C4B5FD', '#38BDF8', '#34D399', '#FBBF24', '#F472B6', '#FB923C', '#2DD4BF', '#94A3B8'];
+  var wsec = 'all';
+  function sectors() {
+    var a = S && S.settings && S.settings.sectors;
+    return a && a.length ? a : [{ id: 's1', name: 'Nifty' }, { id: 's2', name: 'Bank' }, { id: 's3', name: 'IT' }, { id: 's4', name: 'FMCG' }];
+  }
+  function secOf(s) { var id = s.sector; return id && sectors().some(function (x) { return x.id === id; }) ? id : 'none'; }
+  function secName(id) { var a = sectors(); for (var k = 0; k < a.length; k++) if (a[k].id === id) return a[k].name; return 'No sector'; }
+  function secColor(id) { var a = sectors(); for (var k = 0; k < a.length; k++) if (a[k].id === id) return SCOL[k % SCOL.length]; return '#64748B'; }
+  function saveSectors(list) { S.settings.sectors = list; A.saveSettings(JSON.stringify({ sectors: list })); }
+  function renderSectors() {
+    if (!$('secList')) return;
+    var a = sectors(), html = '';
+    a.forEach(function (x, k) {
+      var n = S.slots.filter(function (s) { return s.sym && secOf(s) === x.id; }).length;
+      html += '<div class="acrow"><span class="dot2" style="background:' + SCOL[k % SCOL.length] + '"></span>' +
+        '<input value="' + esc(x.name) + '" data-id="' + x.id + '" maxlength="20" aria-label="Sector name">' +
+        '<small>' + n + ' stock' + (n === 1 ? '' : 's') + '</small>' +
+        '<button data-del="' + x.id + '" aria-label="Remove sector ' + esc(x.name) + '">' + ICON_X + '</button></div>';
+    });
+    $('secList').innerHTML = html;
+    Array.prototype.forEach.call($('secList').querySelectorAll('input'), function (inp) {
+      inp.addEventListener('change', function () {
+        var nm = inp.value.trim();
+        if (!nm) { renderSectors(); return; }
+        saveSectors(sectors().map(function (x) { return x.id === inp.dataset.id ? { id: x.id, name: nm } : x; }));
+        toast('Sector renamed to ' + nm); render();
+      });
+    });
+    Array.prototype.forEach.call($('secList').querySelectorAll('button[data-del]'), function (b) {
+      b.onclick = function () {
+        var id = b.dataset.del, list = sectors();
+        var n = S.slots.filter(function (s) { return s.sym && secOf(s) === id; }).length;
+        if (!confirm('Remove sector "' + secName(id) + '"?' + (n ? '\n\nIts ' + n + ' stock(s) stay in Alerts and move to "No sector".' : ''))) return;
+        saveSectors(list.filter(function (x) { return x.id !== id; }));
+        if (wsec === id) wsec = 'all';
+        toast('Sector removed'); render();
+      };
+    });
   }
 
   // ---------- trading accounts ----------
@@ -1245,15 +1417,31 @@ nav.bot button.on{color:var(--acc);font-weight:600}
         if (!s.sym || !(s.alert > 0)) return;
         var q = S.quotes[s.sym];
         items.push({ i: i, sym: s.sym, name: q && q.name ? q.name : '', q: q, buy: s.alert, lbl: 'Alert',
-          p: q && q.hasChg ? q.pchg : null });
+          p: q && q.hasChg ? q.pchg : null, sec: secOf(s) });
       });
+    }
+    // sector chips (Alert stocks only)
+    var chipHtml = '';
+    if (wtab === 'alerts' && items.length) {
+      var secs = sectors().map(function (x) { return x.id; }).concat(['none']);
+      if (wsec !== 'all' && secs.indexOf(wsec) < 0) wsec = 'all';
+      chipHtml = '<div class="secchips"><button data-sec="all" class="' + (wsec === 'all' ? 'on' : '') + '">All (' + items.length + ')</button>';
+      secs.forEach(function (id) {
+        var n = items.filter(function (x) { return x.sec === id; }).length;
+        if (id === 'none' && !n) return;
+        chipHtml += '<button data-sec="' + id + '" class="' + (wsec === id ? 'on' : '') + '"><i style="background:' + secColor(id) + '"></i>' + esc(secName(id)) + ' (' + n + ')</button>';
+      });
+      chipHtml += '</div>';
+      if (wsec !== 'all') items = items.filter(function (x) { return x.sec === wsec; });
     }
     var nMine = holdings().filter(function (h) { return h.sym && h.qty > 0; }).length;
     var nAl = S.slots.filter(function (s) { return s.sym && s.alert > 0; }).length;
     var el = $('watch');
     var html = '<div class="wtabs"><button data-t="mine" class="' + (wtab === 'mine' ? 'on' : '') + '">My stocks (' + nMine + ')</button>' +
-      '<button data-t="alerts" class="' + (wtab === 'alerts' ? 'on' : '') + '">Alert stocks (' + nAl + ')</button></div>';
-    if (!items.length) {
+      '<button data-t="alerts" class="' + (wtab === 'alerts' ? 'on' : '') + '">Alert stocks (' + nAl + ')</button></div>' + chipHtml;
+    if (!items.length && chipHtml) {
+      html += '<div class="dempty">No alert stocks in ' + esc(secName(wsec)) + ' yet.<br>Pick this sector when you add a stock in Alerts.<br><button id="wGo">Go to Alerts</button></div>';
+    } else if (!items.length) {
       html += wtab === 'mine'
         ? '<div class="dempty">No stocks in My Stocks yet.<br>Add your holdings in the My Stocks tab and they will appear here.<br><button id="wGo">Go to My Stocks</button></div>'
         : '<div class="dempty">No alert stocks yet.<br>Every stock or index that has an alert price appears here.<br><button id="wGo">Go to Alerts</button></div>';
@@ -1269,22 +1457,37 @@ nav.bot button.on{color:var(--acc);font-weight:600}
       html += '<div class="wsum"><div class="t"><b>Today\'s move</b><span>vs previous close</span></div>' +
         '<div class="breadth"><i style="width:' + (up / n * 100) + '%;background:#34D399"></i><i style="width:' + (fl / n * 100) + '%;background:#64748B"></i><i style="width:' + (dn / n * 100) + '%;background:#F87171"></i></div>' +
         '<div class="lg"><span class="g">▲ ' + up + ' up</span><span class="n">' + (fl ? fl + ' flat / no data' : '') + '</span><span class="r">▼ ' + dn + ' down</span></div></div>' +
-        '<div class="whead"><b>' + (wtab === 'mine' ? 'My stocks' : 'Alert stocks') + ' (' + n + ')</b><div class="seg">' +
+        '<div class="whead"><b>' + (wtab === 'mine' ? 'My stocks' : wsec === 'all' ? 'Alert stocks' : esc(secName(wsec))) + ' (' + n + ')</b><div class="seg">' +
         '<button data-w="up" class="' + (wsort === 'up' ? 'on' : '') + '">% Change ↑</button><button data-w="down" class="' + (wsort === 'down' ? 'on' : '') + '">% Change ↓</button></div></div><div class="wlist">';
-      items.forEach(function (x) {
+      var row = function (x) {
         var cls = x.p == null || x.p === 0 ? '' : x.p > 0 ? ' up' : ' dn';
         var pct = x.p == null ? '—' : (x.p > 0 ? '+' : '') + x.p.toFixed(2) + '%';
         var chg = x.q && x.q.hasChg ? (x.q.chg >= 0 ? '+' : '') + fmt(x.q.chg) : '';
-        html += '<button class="wrow' + cls + '" data-i="' + x.i + '"><div class="nm"><b>' + esc(x.sym) + '</b><small>' + esc(x.name) + '</small></div>' +
+        return '<button class="wrow' + cls + '" data-i="' + x.i + '"><div class="nm"><b>' + esc(x.sym) + '</b><small>' + esc(x.name) + '</small></div>' +
           '<div class="pr"><b>' + (x.q ? '₹' + fmt(x.q.price) : '—') + '</b><small>' + x.lbl + ' <em>₹' + fmt(x.buy) + '</em></small></div>' +
           '<div class="pc">' + pct + (chg ? '<small>' + chg + '</small>' : '') + '</div></button>';
-      });
+      };
+      if (wtab === 'alerts' && wsec === 'all') {
+        // grouped sector-wise, each sector sorted by % change
+        sectors().map(function (x) { return x.id; }).concat(['none']).forEach(function (id) {
+          var g = items.filter(function (x) { return x.sec === id; });
+          if (!g.length) return;
+          var withP = g.filter(function (x) { return x.p != null; });
+          var avg = withP.length ? withP.reduce(function (a, x) { return a + x.p; }, 0) / withP.length : null;
+          html += '</div><div class="sechead"><i style="background:' + secColor(id) + '"></i><b>' + esc(secName(id)) + '</b><span class="cnt">' + g.length + ' stock' + (g.length === 1 ? '' : 's') + '</span>' +
+            (avg == null ? '' : '<small style="color:' + (avg >= 0 ? '#34D399' : '#F87171') + '">avg ' + (avg >= 0 ? '+' : '') + avg.toFixed(2) + '%</small>') + '</div><div class="wlist">';
+          g.forEach(function (x) { html += row(x); });
+        });
+      } else items.forEach(function (x) { html += row(x); });
       html += '</div><p style="font-size:11px;color:var(--mut);text-align:center;margin:14px 8px;line-height:1.5">Green = trading above yesterday\'s close. Red = trading below it. ' +
         (wtab === 'mine' ? 'Buy = your purchase price.' : 'Alert = your alert price.') + ' Tap a row to edit it.</p>';
     }
     el.innerHTML = html;
     Array.prototype.forEach.call(el.querySelectorAll('.wtabs button'), function (b) {
       b.onclick = function () { wtab = b.dataset.t; renderWatch(); };
+    });
+    Array.prototype.forEach.call(el.querySelectorAll('.secchips button'), function (b) {
+      b.onclick = function () { wsec = b.dataset.sec; renderWatch(); };
     });
     if ($('wGo')) $('wGo').onclick = function () { show(wtab === 'mine' ? 'my' : 'alerts'); };
     Array.prototype.forEach.call(el.querySelectorAll('.seg button'), function (b) {
@@ -1637,8 +1840,10 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     renderHoldings();
     renderHistory();
     renderBattWarn();
+    renderBackupBanner();
     var tb = A.takeTab ? A.takeTab() : '';
-    if (tb) show(tb);
+    if (tb === 'backup') { show('settings'); A.backupSave(); }   // from the backup reminder
+    else if (tb) show(tb);
     var f = A.takeFocusSlot();
     if (f >= 0) focusSlot(f);
   }
@@ -1717,6 +1922,15 @@ nav.bot button.on{color:var(--acc);font-weight:600}
       load();
     } else if (ev === 'updated') {
       load();
+    } else if (ev === 'backup') {
+      if (d.ok) toast('✓ Backup saved' + (d.where ? ' to ' + d.where : ''));
+      else if (d.err) toast(d.err, true);
+      load();
+    } else if (ev === 'restorePreview') {
+      if (d.ok) showRestore(d); else toast(d.err || 'That file is not a Wealthora backup', true);
+    } else if (ev === 'restored') {
+      toast('✓ Restored ' + d.alerts + ' alerts and ' + d.stocks + ' stocks');
+      load();
     } else if (ev === 'sheet') {
       rbusy = false;
       if (d.ok) toast(d.changed ? '✓ Sheet read · ' + d.n + ' trades' : 'Sheet checked · no changes');
@@ -1794,6 +2008,20 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     c.scrollIntoView({ behavior: 'smooth', block: 'center' });
     c.classList.add('flash');
     setTimeout(function () { c.classList.remove('flash'); c.querySelector('.sym').focus(); }, 500);
+  };
+  $('bkSave').onclick = function () { A.backupSave(); };
+  $('bkRestore').onclick = function () { A.backupRestore(); };
+  $('bkShare').onclick = function () { A.backupShare(); };
+  $('secAdd').onclick = function () {
+    var nm = $('secName').value.trim();
+    if (!nm) { toast('Type a name for the sector', true); return; }
+    var list = sectors().slice();
+    if (list.some(function (x) { return x.name.toLowerCase() === nm.toLowerCase(); })) { toast('You already have a sector called ' + nm, true); return; }
+    list.push({ id: 's' + Date.now().toString(36), name: nm });
+    saveSectors(list);
+    $('secName').value = '';
+    toast('Sector ' + nm + ' added');
+    render();
   };
   $('acctAdd').onclick = function () {
     var nm = $('acctName').value.trim();
