@@ -321,6 +321,35 @@ nav.bot button.on{color:var(--acc);font-weight:600}
 .addmore{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:52px;margin-top:10px;border-radius:14px;border:1.5px dashed #2B5A86;background:#0E2236;color:#7DD3FC;font-weight:700;font-size:15px}
 .addmore:active{background:#12304D}
 
+.radd{background:#0F1A2E;border:1px solid #1E3A5F;border-radius:16px;padding:12px;margin:8px 0 12px}
+.radd .hd{display:flex;align-items:center;gap:10px}
+.radd .hd .ic{width:34px;height:34px;border-radius:10px;background:#0F9D58;color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px;font-weight:700}
+.radd .hd .tx{flex:1;min-width:0}.radd .hd b{display:block;font-size:14px}.radd .hd small{display:block;font-size:11px;color:var(--mut)}
+.radd .hd button{height:34px;border-radius:10px;border:0;background:var(--acc);color:#0A0F1C;font-weight:700;font-size:12.5px;padding:0 12px}
+.radd .hd button.x{background:transparent;border:1px solid var(--line2);color:var(--mut)}
+.radd .g{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}
+.radd .f{display:block;background:var(--card);border:1px solid var(--line2);border-radius:12px;padding:6px 10px;min-width:0}
+.radd .f.w{grid-column:1/-1}
+.radd .f span{display:block;font-size:10.5px;color:var(--mut);font-weight:600;letter-spacing:.2px}
+.radd .f select,.radd .f input{width:100%;background:transparent;border:0;color:var(--tx);font-size:15px;font-weight:600;padding:3px 0;outline:none;font-family:inherit;color-scheme:dark}
+.radd .f input.m{font-family:var(--mono)}
+.radd .f.need{border-color:#F59E0B}
+.radd .f .hint{font-size:10.5px;color:#7DD3FC;font-weight:500}
+.radd .dt{display:flex;align-items:center;gap:8px}
+.radd .dt{position:relative}.radd .dt .dv{flex:1;font-size:15px;padding:3px 0;white-space:nowrap}
+.radd .dt input{position:absolute;inset:0;opacity:0;width:100%;height:100%;padding:0}
+.radd .dt .cal{width:34px;height:34px;border-radius:9px;background:#12304D;color:#7DD3FC;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:0}
+.radd .qd{display:flex;gap:6px;margin-top:6px}
+.radd .qd button{flex:1;height:30px;border-radius:999px;border:1px solid var(--line2);background:transparent;color:var(--mut);font-size:12px;font-weight:600}
+.radd .qd button.on{background:#C4B5FD;border-color:#C4B5FD;color:#0A0F1C}
+.radd .pv{display:flex;align-items:center;justify-content:space-between;border-radius:12px;padding:10px 12px;margin-top:10px;font-size:12px}
+.radd .pv b{font-family:var(--mono);font-size:18px}
+.radd .sv{width:100%;height:48px;border-radius:12px;border:0;background:#0F9D58;color:#fff;font-weight:700;font-size:15px;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:8px}
+.radd .sv[disabled]{opacity:.55}
+.radd .nt{font-size:11px;color:var(--mut);text-align:center;margin-top:8px;line-height:1.5}
+.gsw{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
+.gsw ol{margin:6px 0 0;padding-left:18px;font-size:12px;color:var(--mut);line-height:1.7}
+.gsw ol b{color:var(--tx)}
 .rsync{display:flex;align-items:center;gap:10px;background:#0E2236;border:1px solid #1E3A5F;border-radius:14px;padding:10px 12px;margin:8px 0 12px}
 .rsync .ic{width:34px;height:34px;border-radius:10px;background:#0F9D58;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .rsync .tx{flex:1;min-width:0}
@@ -418,6 +447,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
 
     <!-- REALISED -->
     <section class="view" id="v-real">
+      <div id="rAdd"></div>
       <div id="real"></div>
     </section>
 
@@ -539,6 +569,20 @@ nav.bot button.on{color:var(--acc);font-weight:600}
         <div class="chips" id="gsChips" style="grid-template-columns:repeat(4,minmax(0,1fr));margin-top:6px"></div>
         <button class="btn" id="gsTest" style="margin-top:12px;background:var(--acc);border-color:var(--acc);color:#0A0F1C">Connect &amp; check sheet</button>
         <div id="gsStatus"></div>
+        <div class="gsw">
+          <h3 style="font-size:14px;margin:0 0 2px">Add trades from the app (one-time setup)</h3>
+          <p>To let the Realised tab write new sales into your sheet, add a small helper to the sheet once:</p>
+          <ol>
+            <li>Open the sheet on a computer → <b>Extensions → Apps Script</b>.</li>
+            <li>Delete what's there, paste the helper (<b>Copy helper</b> below), tap <b>Save</b>.</li>
+            <li><b>Deploy → New deployment → Web app</b>. Execute as: <b>Me</b>. Who has access: <b>Anyone</b>. Deploy and allow access.</li>
+            <li>Copy the <b>Web app URL</b> and paste it here.</li>
+          </ol>
+          <div class="btns" style="display:grid;grid-template-columns:1fr;gap:8px;margin-top:10px"><button class="btn" id="gsCopy">Copy helper</button></div>
+          <input class="full" id="gsWrite" style="margin-top:8px" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://script.google.com/macros/s/…/exec" aria-label="Web app URL">
+          <button class="btn" id="gsWriteSave" style="margin-top:8px">Save &amp; test</button>
+          <div id="gsWStatus"></div>
+        </div>
         <div class="cols">In Google Sheets tap <b>Share → General access → Anyone with the link → Viewer</b>, so the app can read it (no Google sign-in needed). The first row with these headings is used, in any order: <code>Stock Name</code> <code>Account</code> <code>Date of Selling</code> <code>Buy Price</code> <code>Sell Price</code> <code>Quantity</code> <code>Profit/Loss</code>. Dates as DD-MM-YYYY.</div>
       </div>
 
@@ -572,7 +616,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
 
       <button class="btn" id="testBtn">Send test notification</button>
       <button class="btn" id="chanBtn" style="margin-top:8px">Notification sound &amp; style settings</button>
-      <p style="font-size:11px;color:var(--mut);text-align:center;margin:16px 8px;line-height:1.5">Wealthora v2.2 · Prices may be delayed. Not investment advice.</p>
+      <p style="font-size:11px;color:var(--mut);text-align:center;margin:16px 8px;line-height:1.5">Wealthora v2.3 · Prices may be delayed. Not investment advice.</p>
     </section>
   </main>
 
@@ -869,6 +913,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     renderAccounts();
     renderSectors();
     renderSheetSettings();
+    renderSheetWrite();
     chips($('repeatChips'), REPEAT, st.repeatMin, 'repeatMin');
     chips($('pollChips'), POLL, pollSec(), 'pollSec');
     chips($('nearChips'), NEAR, st.nearPct, 'nearPct');
@@ -1262,7 +1307,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     if (!rows.length) {
       h += '<div class="dempty" style="margin-top:8px">No realised trades ' + (racct === 'all' ? '' : 'in ' + esc(racct) + ' ') + (rper === 'all' ? 'yet.' : 'between ' + nice(rg.f) + ' and ' + nice(rg.t) + '.') +
         (rper === 'fy' ? '<br><button id="rLfy">Show last FY (' + fyName(y - 1) + ')</button>' : '') + '</div>';
-      el.innerHTML = h; bindReal(); return;
+      el.innerHTML = h; bindReal(); renderRAdd(); return;
     }
     var t = rTot(rows), up = t.pl >= 0, c = up ? '#34D399' : '#F87171';
     // hero
@@ -1285,27 +1330,6 @@ nav.bot button.on{color:var(--acc);font-weight:600}
       });
       h += '</div></div>';
     }
-    // monthly chart
-    var ms = [], d0, d1;
-    if (rper === 'all' || rper === 'cus') {
-      var ds = rows.map(function (r) { return r.date; }).sort();
-      d0 = (rper === 'cus' ? rg.f : ds[0]).slice(0, 7); d1 = (rper === 'cus' ? rg.t : ds[ds.length - 1]).slice(0, 7);
-    } else { d0 = rg.f.slice(0, 7); d1 = rg.t.slice(0, 7); }
-    var yy = +d0.slice(0, 4), mm = +d0.slice(5, 7);
-    while ((yy + '-' + p2(mm)) <= d1 && ms.length < 36) { ms.push(yy + '-' + p2(mm)); mm++; if (mm > 12) { mm = 1; yy++; } }
-    var mv = ms.map(function (m) { return rows.filter(function (r) { return r.date.slice(0, 7) === m; }).reduce(function (a, r) { return a + r.pl; }, 0); });
-    var mx = Math.max.apply(null, mv.map(Math.abs).concat([1]));
-    var W = 340, Hh = 170, top = 22, bot = 26, mid = top + (Hh - top - bot) / 2, half = (Hh - top - bot) / 2, bw = W / ms.length;
-    var svg = '<svg viewBox="0 0 ' + W + ' ' + Hh + '" role="img" aria-label="Realised profit and loss by month">' +
-      '<line x1="0" x2="' + W + '" y1="' + mid + '" y2="' + mid + '" stroke="#3A4A66" stroke-width="1"/>';
-    ms.forEach(function (m, k) {
-      var v = mv[k], hgt = Math.abs(v) / mx * half, x = k * bw + bw * 0.18, w = bw * 0.64;
-      if (v) svg += '<rect x="' + x.toFixed(1) + '" y="' + (v >= 0 ? mid - hgt : mid).toFixed(1) + '" width="' + w.toFixed(1) + '" height="' + Math.max(1.5, hgt).toFixed(1) + '" rx="2.5" fill="' + (v >= 0 ? '#34D399' : '#F87171') + '"/>' +
-        '<text x="' + (x + w / 2).toFixed(1) + '" y="' + (v >= 0 ? mid - hgt - 4 : mid + hgt + 11).toFixed(1) + '" text-anchor="middle" font-size="8.5" font-weight="700" fill="' + (v >= 0 ? '#6EE7B7' : '#FCA5A5') + '" font-family="monospace">' + compact(v) + '</text>';
-      if (ms.length <= 14 || k % 2 === 0) svg += '<text x="' + (k * bw + bw / 2).toFixed(1) + '" y="' + (Hh - 8) + '" text-anchor="middle" font-size="9" fill="#9AA4B8">' + MON[+m.slice(5) - 1].slice(0, ms.length > 8 ? 1 : 3) + '</text>';
-    });
-    svg += '</svg>';
-    h += '<div class="dcard rchart" style="margin-bottom:12px"><h4>Month by month · ' + nice(ms[0] + '-01').replace(/^1 /, '') + ' – ' + nice(ms[ms.length - 1] + '-01').replace(/^1 /, '') + '</h4>' + svg + '</div>';
     // by stock
     var bs = {};
     rows.forEach(function (r) { var o = bs[r.stock] || (bs[r.stock] = { s: r.stock, pl: 0, n: 0 }); o.pl += r.pl; o.n++; });
@@ -1336,6 +1360,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     h += '<p style="font-size:11px;color:var(--mut);text-align:center;margin:14px 8px;line-height:1.5">Financial year runs 1 April – 31 March. Totals use the Profit/Loss column of your sheet. Edit the sheet any time; the app picks up changes automatically.</p>';
     el.innerHTML = h;
     bindReal();
+    renderRAdd();
   }
   function bindReal() {
     var el = $('real');
@@ -1366,6 +1391,96 @@ nav.bot button.on{color:var(--acc);font-weight:600}
       if (rbusy) return;
       rbusy = true; renderRealised();
       A.syncSheet();
+    };
+  }
+  // ---------- add a sale (writes a row to the sheet) ----------
+  var ra = { open: false, i: -1, acct: '', date: '', buy: '', sell: '', qty: '', busy: false, qd: 'today' };
+  function raHold() { return holdings().map(function (h, i) { return { h: h, i: i }; }).filter(function (x) { return x.h.sym && x.h.qty > 0; }); }
+  function raOpen(i) {
+    var R = S.realised || {};
+    ra.open = true; ra.i = -1; ra.acct = accounts()[0].id; ra.date = isoD(new Date()); ra.qd = 'today'; ra.buy = ra.sell = ra.qty = '';
+    if (i != null && i >= 0) raPick(i);
+    renderRAdd();
+  }
+  function raPick(i) {
+    var h = holdings()[i]; ra.i = i;
+    if (!h) return;
+    ra.acct = acctOf(h); ra.buy = h.buy ? String(h.buy) : ''; ra.qty = h.qty ? String(h.qty) : '';
+    var q = S.quotes[h.sym]; ra.sell = q && q.price ? String(q.price) : '';
+  }
+  function nextSr() {
+    var rows = (S.realised || {}).rows || [], m = 0;
+    rows.forEach(function (r) { if (r.sr > m) m = r.sr; });
+    return (m || rows.length) + 1;
+  }
+  function renderRAdd() {
+    var el = $('rAdd'), R = S.realised || {};
+    if (!el) return;
+    var fo = document.activeElement;
+    if (fo && el.contains(fo) && fo.tagName === 'INPUT' && fo.type !== 'date') return;   // don't disturb typing
+    if (!R.url) { el.innerHTML = ''; return; }
+    var hd = '<div class="hd"><div class="ic">+</div><div class="tx"><b>Add a sale</b><small>' + (ra.open ? 'Will be Sr. No. ' + nextSr() + ' in ' + esc(R.tab || 'Realised Trades') : 'Record a sold stock straight into your Google Sheet') + '</small></div>' +
+      (ra.open ? '<button class="x" id="raClose">Close</button>' : '<button id="raOpenB">Add sale</button>') + '</div>';
+    if (!ra.open) { el.innerHTML = '<div class="radd">' + hd + '</div>'; $('raOpenB').onclick = function () { raOpen(); }; return; }
+    var hs = raHold();
+    var so = '<option value="-1">Choose from your portfolio…</option>' + hs.map(function (x) {
+      return '<option value="' + x.i + '"' + (x.i === ra.i ? ' selected' : '') + '>' + esc(x.h.sym) + ' · ' + esc(acctName(acctOf(x.h))) + ' · ' + x.h.qty + ' sh</option>';
+    }).join('');
+    var ao = accounts().map(function (a) { return '<option value="' + a.id + '"' + (a.id === ra.acct ? ' selected' : '') + '>' + esc(a.name) + '</option>'; }).join('');
+    var h = ra.i >= 0 ? holdings()[ra.i] : null, q = h ? S.quotes[h.sym] : null;
+    var qd = function (k, l) { return '<button data-qd="' + k + '" class="' + (ra.qd === k ? 'on' : '') + '">' + l + '</button>'; };
+    var g = '<div class="g">' +
+      '<label class="f w' + (ra.i < 0 ? ' need' : '') + '"><span>STOCK · from your portfolio</span><select id="raStock">' + so + '</select>' + (h ? '<div class="hint">Bought at ₹' + fmt(h.buy) + ' · holding ' + h.qty + ' shares' + (q ? ' · now ₹' + fmt(q.price) : '') + '</div>' : '') + '</label>' +
+      '<label class="f"><span>ACCOUNT</span><select id="raAcct">' + ao + '</select></label>' +
+      '<label class="f"><span>DATE OF SELLING</span><div class="dt"><b class="dv">' + (ra.date ? nice(ra.date) : 'Pick date') + '</b><span class="cal" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span>' +
+        '<input type="date" id="raDate" value="' + ra.date + '" max="' + isoD(new Date()) + '" aria-label="Date of selling"></div></label>' +
+      '<div class="f w" style="padding:6px"><div class="qd" style="margin:0">' + qd('today', 'Today') + qd('yday', 'Yesterday') + qd('pick', 'Pick a date…') + '</div></div>' +
+      '<label class="f"><span>BUY PRICE ₹</span><input class="m" id="raBuy" inputmode="decimal" value="' + esc(ra.buy) + '" placeholder="0.00"></label>' +
+      '<label class="f"><span>SELL PRICE ₹</span><input class="m" id="raSell" inputmode="decimal" value="' + esc(ra.sell) + '" placeholder="0.00"></label>' +
+      '<label class="f w"><span>QUANTITY SOLD</span><input class="m" id="raQty" inputmode="numeric" value="' + esc(ra.qty) + '" placeholder="0"></label></div>';
+    var b = +ra.buy, sl = +ra.sell, n = +ra.qty, ok = ra.i >= 0 && b > 0 && sl > 0 && n > 0 && ra.date;
+    var pl = ok ? (sl - b) * n : 0, pc = ok ? (sl - b) / b * 100 : 0, up = pl >= 0;
+    var pv = ok ? '<div class="pv" style="background:' + (up ? '#0E2A22' : '#2E1418') + ';border:1px solid ' + (up ? '#1F5C45' : '#6B2530') + '"><div><span style="color:var(--mut)">Profit / Loss</span><br><b style="color:' + (up ? '#34D399' : '#F87171') + '">' + signed(pl) + '</b></div><div style="text-align:right"><span style="color:var(--mut)">Return</span><br><b style="font-size:15px;color:' + (up ? '#34D399' : '#F87171') + '">' + (pc >= 0 ? '+' : '') + pc.toFixed(2) + '%</b></div></div>' : '';
+    var canW = !!R.writeUrl;
+    var btn = canW ? '<button class="sv" id="raSave"' + (ok && !ra.busy ? '' : ' disabled') + '>' + (ra.busy ? 'Saving to sheet…' : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 9h16M4 15h16M10 9v12"/></svg>Save to Google Sheet') + '</button>' +
+      '<div class="nt">Added below your last entry as Sr. No. ' + nextSr() + ', with Profit/Loss calculated.</div>'
+      : '<button class="sv" id="raSetup" style="background:#F59E0B;color:#0A0F1C">Finish the one-time sheet setup</button><div class="nt">The app can read your sheet; writing needs a small helper added to the sheet once (2 minutes).</div>';
+    el.innerHTML = '<div class="radd">' + hd + g + pv + btn + '</div>';
+    $('raClose').onclick = function () { ra.open = false; renderRAdd(); };
+    $('raStock').onchange = function () { var v = +this.value; if (v >= 0) raPick(v); else ra.i = -1; renderRAdd(); };
+    $('raAcct').onchange = function () { ra.acct = this.value; };
+    $('raDate').onchange = function () { ra.date = this.value; var t = isoD(new Date()), y = isoD(new Date(Date.now() - 864e5)); ra.qd = ra.date === t ? 'today' : ra.date === y ? 'yday' : 'pick'; renderRAdd(); };
+    var openCal = function () { var d = $('raDate'); try { d.showPicker(); } catch (e) { d.focus(); d.click(); } };
+    $('raDate').onclick = function (e) { e.preventDefault(); openCal(); };
+    Array.prototype.forEach.call(el.querySelectorAll('[data-qd]'), function (x) {
+      x.onclick = function () { var k = x.dataset.qd; if (k === 'pick') { openCal(); return; } ra.qd = k; ra.date = isoD(new Date(Date.now() - (k === 'yday' ? 864e5 : 0))); renderRAdd(); };
+    });
+    ['Buy', 'Sell', 'Qty'].forEach(function (k) {
+      var inp = $('ra' + k);
+      inp.oninput = function () { ra[k.toLowerCase()] = inp.value.replace(/[^0-9.]/g, ''); };
+      inp.onchange = function () { renderRAdd(); };
+    });
+    if ($('raSetup')) $('raSetup').onclick = function () { show('settings'); setTimeout(function () { $('gsWrite').scrollIntoView({ block: 'center' }); }, 100); };
+    if ($('raSave')) $('raSave').onclick = function () {
+      ra.busy = true; renderRAdd();
+      A.addRealised(JSON.stringify({ stock: h.sym, acct: acctName(ra.acct), date: ra.date, buy: b, sell: sl, qty: n }));
+    };
+  }
+  var HELPER = "// Wealthora helper: lets the Wealthora app add sold trades to this sheet.\n// Deploy: Deploy > New deployment > Web app. Execute as: Me. Who has access: Anyone.\nfunction doGet(e) {\n  var out;\n  try { out = run_(e && e.parameter ? e.parameter : {}); }\n  catch (err) { out = { ok: false, err: String(err && err.message ? err.message : err) }; }\n  return ContentService.createTextOutput(JSON.stringify(out)).setMimeType(ContentService.MimeType.JSON);\n}\n\nfunction run_(p) {\n  var tab = p.tab || 'Realised Trades';\n  var sh = SpreadsheetApp.getActive().getSheetByName(tab);\n  if (!sh) return { ok: false, err: 'No tab named \"' + tab + '\" in this sheet' };\n  var v = sh.getDataRange().getValues();\n  var hr = -1, c = null;\n  for (var i = 0; i < Math.min(v.length, 15) && hr < 0; i++) {\n    var m = {};\n    for (var k = 0; k < v[i].length; k++) {\n      var h = String(v[i][k]).toLowerCase().replace(/\\n/g, ' ');\n      if (!h) continue;\n      if (h.indexOf('date') >= 0) { if (m.date == null) m.date = k; }\n      else if (/profit|p&l|p\\/l|loss/.test(h)) { if (m.pl == null) m.pl = k; }\n      else if (/stock|symbol|scrip|company/.test(h)) { if (m.stock == null) m.stock = k; }\n      else if (/account|broker|demat/.test(h)) { if (m.acct == null) m.acct = k; }\n      else if (h.indexOf('buy') >= 0) { if (m.buy == null) m.buy = k; }\n      else if (/sell|sale/.test(h)) { if (m.sell == null) m.sell = k; }\n      else if (/qty|quantity|shares/.test(h)) { if (m.qty == null) m.qty = k; }\n      else if (/\\bsr\\b|serial|\\bs\\.? ?no\\b/.test(h)) { if (m.sr == null) m.sr = k; }\n    }\n    if (m.stock != null && m.date != null) { hr = i; c = m; }\n  }\n  if (hr < 0) return { ok: false, err: 'Could not find the headings (Stock Name, Date of Selling...) in \"' + tab + '\"' };\n  var last = hr, maxSr = 0;\n  for (var r = hr + 1; r < v.length; r++) {\n    if (String(v[r][c.stock]).trim() !== '') {\n      last = r;\n      if (c.sr != null) { var n = parseFloat(v[r][c.sr]); if (!isNaN(n) && n > maxSr) maxSr = n; }\n    }\n  }\n  if (p.action === 'test') return { ok: true, last: maxSr, rows: last - hr };\n  if (p.action !== 'add') return { ok: false, err: 'Unknown action' };\n\n  var stock = String(p.stock || '').trim().toUpperCase();\n  var buy = parseFloat(p.buy), sell = parseFloat(p.sell), qty = parseFloat(p.qty);\n  var dm = /^(\\d{4})-(\\d{2})-(\\d{2})$/.exec(p.date || '');\n  if (!stock || !dm || isNaN(buy) || isNaN(sell) || isNaN(qty) || qty <= 0) return { ok: false, err: 'Some details are missing' };\n\n  var lock = LockService.getDocumentLock();\n  lock.waitLock(20000);\n  try {\n    var width = sh.getLastColumn();\n    var row = last + 2;                       // 1-based row just below the last entry\n    var below = row <= sh.getLastRow() ? sh.getRange(row, 1, 1, width).getValues()[0].join('') : '';\n    if (below !== '') sh.insertRowAfter(row - 1);\n    var prev = sh.getRange(row - 1, 1, 1, width), dest = sh.getRange(row, 1, 1, width);\n    if (last > hr) prev.copyTo(dest, SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);\n    var sr = maxSr + 1;\n    var set = function (col, val) { if (col != null) sh.getRange(row, col + 1).setValue(val); };\n    set(c.sr, sr);\n    set(c.stock, stock);\n    set(c.acct, p.acct || '');\n    var pd = last > hr ? v[last][c.date] : null;\n    set(c.date, pd instanceof Date || last === hr ? new Date(+dm[1], +dm[2] - 1, +dm[3]) : dm[3] + '-' + dm[2] + '-' + dm[1]);\n    set(c.buy, buy);\n    set(c.sell, sell);\n    set(c.qty, qty);\n    if (c.pl != null) {\n      var f = last > hr ? sh.getRange(row - 1, c.pl + 1).getFormulaR1C1() : '';\n      if (f) sh.getRange(row, c.pl + 1).setFormulaR1C1(f);\n      else sh.getRange(row, c.pl + 1).setValue(Math.round((sell - buy) * qty * 100) / 100);\n    }\n    SpreadsheetApp.flush();\n    return { ok: true, sr: sr, row: row };\n  } finally {\n    lock.releaseLock();\n  }\n}\n";
+  var gswBusy = false, gswMsg = null;
+  function renderSheetWrite() {
+    var R = S.realised || {};
+    if (!$('gsWrite')) return;
+    if (document.activeElement !== $('gsWrite')) $('gsWrite').value = R.writeUrl || '';
+    $('gsWStatus').innerHTML = gswBusy ? '<div class="ok" style="background:#0E2236;color:#7DD3FC">Testing the helper…</div>'
+      : gswMsg ? gswMsg
+      : R.writeUrl ? '<div class="ok">✓ Ready · new sales from the Realised tab are added to your sheet</div>' : '';
+    $('gsCopy').onclick = function () { A.copyText(HELPER); toast('✓ Helper copied · paste it in Apps Script'); };
+    $('gsWriteSave').onclick = function () {
+      var u = $('gsWrite').value.trim();
+      if (u && !/^https:\/\/script\.google\.com\//.test(u)) { toast('Paste the Web app URL (https://script.google.com/macros/s/…/exec)', true); return; }
+      gswBusy = true; gswMsg = null; renderSheetWrite();
+      A.setSheetWrite(u);
     };
   }
   function everyLabel(m) { m = m || 60; return m < 60 ? m + ' min' : m === 60 ? '1 hour' : (m / 60) + ' hours'; }
@@ -1836,13 +1951,14 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     if (view === 'dashboard') renderDashboard();
     if (view === 'watch') renderWatch();
     if (view === 'port') renderPortfolio();
-    if (view === 'real') renderRealised();
+    if (view === 'real') { renderRealised(); renderRAdd(); }
     renderHoldings();
     renderHistory();
     renderBattWarn();
     renderBackupBanner();
     var tb = A.takeTab ? A.takeTab() : '';
     if (tb === 'backup') { show('settings'); A.backupSave(); }   // from the backup reminder
+    else if (tb && tb.indexOf('sale:') === 0) { show('real'); raOpen(+tb.slice(5)); window.scrollTo(0, 0); }
     else if (tb) show(tb);
     var f = A.takeFocusSlot();
     if (f >= 0) focusSlot(f);
@@ -1931,6 +2047,18 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     } else if (ev === 'restored') {
       toast('✓ Restored ' + d.alerts + ' alerts and ' + d.stocks + ' stocks');
       load();
+    } else if (ev === 'realisedAdded') {
+      ra.busy = false;
+      if (d.ok) { ra.open = false; toast('✓ Saved to your sheet' + (d.sr ? ' as Sr. No. ' + d.sr : '')); rbusy = true; }
+      else toast(d.err || 'Couldn\'t save to the sheet', true);
+      renderRAdd(); if (view === 'real') renderRealised();
+    } else if (ev === 'sheetWrite') {
+      gswBusy = false;
+      if (d.ok) { S.realised = S.realised || {}; S.realised.writeUrl = d.off ? '' : $('gsWrite').value.trim();
+        gswMsg = d.off ? null : '<div class="ok">✓ Connected · last Sr. No. in the sheet is ' + (d.last || 0) + ' · ' + (d.rows || 0) + ' trades</div>';
+        toast(d.off ? 'Adding trades from the app is off' : '✓ Helper works · you can add sales from the Realised tab'); }
+      else gswMsg = '<div class="ok" style="background:#3A1419;color:#FCA5A5">⚠ ' + esc(d.err || 'The helper didn\'t answer') + '</div>';
+      renderSheetWrite(); load();
     } else if (ev === 'sheet') {
       rbusy = false;
       if (d.ok) toast(d.changed ? '✓ Sheet read · ' + d.n + ' trades' : 'Sheet checked · no changes');
