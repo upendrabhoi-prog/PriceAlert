@@ -98,6 +98,12 @@
                 android:resource="@xml/wl_target" />
         </receiver>
 
+        <provider
+            android:name=".BackupProvider"
+            android:authorities="com.pricealert.app.backup"
+            android:exported="false"
+            android:grantUriPermissions="true" />
+
         <service
             android:name=".WatchService"
             android:exported="false"
