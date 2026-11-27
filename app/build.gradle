@@ -10,11 +10,28 @@ android {
         applicationId "com.pricealert.app"
         minSdk 26
         targetSdk 36
-        versionCode 11
-        versionName "2.0"
+        versionCode 12
+        versionName "2.1"
+    }
+
+    // One permanent signing key (the key file itself is kept only as a GitHub secret), so every new version installs
+    // over the old one and keeps the user's data. Without it, the default debug key is used.
+    def ksPath = System.getenv("WEALTHORA_KS")
+    signingConfigs {
+        if (ksPath) {
+            fixed {
+                storeFile file(ksPath)
+                storePassword "wealthora-sign"
+                keyAlias "wealthora"
+                keyPassword "wealthora-sign"
+            }
+        }
     }
 
     buildTypes {
+        debug {
+            if (ksPath) signingConfig signingConfigs.fixed
+        }
         release {
             minifyEnabled false
         }
