@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -84,6 +85,71 @@ public class MainActivity extends Activity {
             bridge.openTab = tab;
             i.removeExtra("tab");
         }
+    }
+
+    // ---------- backup & restore ----------
+    private static final int REQ_SAVE = 41, REQ_OPEN = 42;
+
+    void pickBackupDestination() {
+        Intent i = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        i.addCategory(Intent.CATEGORY_OPENABLE);
+        i.setType("application/json");
+        i.putExtra(Intent.EXTRA_TITLE, Backup.fileName());
+        try { startActivityForResult(i, REQ_SAVE); }
+        catch (Exception e) { bridge.emit("backup", "{\"ok\":false,\"err\":\"No file manager found on this phone\"}"); }
+    }
+
+    void pickBackupFile() {
+        Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        i.addCategory(Intent.CATEGORY_OPENABLE);
+        i.setType("*/*");
+        i.putExtra(Intent.EXTRA_MIME_TYPES, new String[]{"application/json", "application/octet-stream", "text/plain"});
+        try { startActivityForResult(i, REQ_OPEN); }
+        catch (Exception e) { bridge.emit("restorePreview", "{\"ok\":false,\"err\":\"No file manager found on this phone\"}"); }
+    }
+
+    void shareBackup() {
+        try {
+            java.io.File f = Backup.cacheFile(this);
+            Intent send = new Intent(Intent.ACTION_SEND);
+            send.setType("application/json");
+            send.putExtra(Intent.EXTRA_STREAM, BackupProvider.uriFor(f));
+            send.putExtra(Intent.EXTRA_SUBJECT, f.getName());
+            send.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(Intent.createChooser(send, "Send Wealthora backup to"));
+            Backup.saved(this, "Shared · " + f.getName());
+            bridge.emit("backup", "{\"ok\":false}");     // refresh "last backup" without a success toast
+        } catch (Exception e) {
+            bridge.emit("backup", "{\"ok\":false,\"err\":" + org.json.JSONObject.quote("Couldn't share: " + e.getMessage()) + "}");
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode != REQ_SAVE && requestCode != REQ_OPEN) return;
+        if (resultCode != RESULT_OK || data == null || data.getData() == null) return;   // user cancelled
+        Uri uri = data.getData();
+        new Thread(() -> {
+            try {
+                if (requestCode == REQ_SAVE) {
+                    Backup.write(this, uri);
+                    String where = Store.get(this).backupInfo().optString("where", "");
+                    String place = where.startsWith("Google Drive") ? "Google Drive" : where.startsWith("Phone") ? "your phone" : "";
+                    bridge.emit("backup", "{\"ok\":true,\"where\":" + org.json.JSONObject.quote(place) + "}");
+                } else {
+                    org.json.JSONObject o = Backup.read(this, uri);
+                    String name = Backup.where(this, uri).replaceFirst("^[^·]*· ", "");
+                    bridge.pendingRestore = o;
+                    org.json.JSONObject pv = Backup.preview(o, name);
+                    pv.put("token", "r" + System.currentTimeMillis());
+                    bridge.emit("restorePreview", pv.toString());
+                }
+            } catch (Exception e) {
+                String ev = requestCode == REQ_SAVE ? "backup" : "restorePreview";
+                bridge.emit(ev, "{\"ok\":false,\"err\":" + org.json.JSONObject.quote(String.valueOf(e.getMessage())) + "}");
+            }
+        }, "backup").start();
     }
 
     @Override

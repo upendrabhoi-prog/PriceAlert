@@ -75,6 +75,27 @@ public final class Store {
         put("slots", a);
     }
 
+    /** Sector id of an alert slot ("" = no sector). Kept separately so a price change doesn't lose it. */
+    public synchronized void setSlotSector(int i, String sector) {
+        if (i < 0 || i >= MAX_SLOTS) return;
+        JSONArray a = slots();
+        JSONObject o = a.optJSONObject(i);
+        if (o == null) return;
+        try { o.put("sector", sector == null ? "" : sector); } catch (JSONException ignored) { }
+        put("slots", a);
+    }
+
+    /** Replaces all alerts and My Stocks entries (used by restore). */
+    public synchronized void replaceAll(JSONArray newSlots, JSONArray newHoldings) {
+        put("slots", newSlots);
+        put("holdings", newHoldings);
+    }
+
+    // ---------- backup info ----------
+    public synchronized JSONObject backupInfo() { return obj("backupInfo"); }
+
+    public synchronized void saveBackupInfo(JSONObject o) { put("backupInfo", o); }
+
     // ---------- my stocks (holdings) ----------
     private static JSONObject holding(String sym, double buy, double qty, double target, String acct) {
         JSONObject o = new JSONObject();

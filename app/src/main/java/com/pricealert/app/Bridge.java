@@ -75,6 +75,12 @@ public class Bridge {
             o.put("alertState", s.alertState());
             o.put("lastFetch", s.lastFetch());
             o.put("realised", Sheets.state(ctx()));
+            JSONObject bk = s.backupInfo();
+            JSONObject bo = new JSONObject();
+            bo.put("last", bk.optLong("last", 0));
+            bo.put("where", bk.optString("where", ""));
+            bo.put("every", s.settings().optString("backupEvery", "month"));
+            o.put("backup", bo);
             o.put("running", PriceService.running != null);
             o.put("marketOpen", Market.isOpen(System.currentTimeMillis()));
             o.put("nextOpen", Market.nextOpen(System.currentTimeMillis()));
@@ -191,6 +197,54 @@ public class Bridge {
             emit("refreshed", r.toString());
             if (Store.get(ctx()).monitoring() && PriceService.running == null) {
                 act.runOnUiThread(() -> PriceService.start(act));
+            }
+        });
+    }
+
+    @JavascriptInterface
+    public void setSlotSector(int i, String sector) {
+        Store.get(ctx()).setSlotSector(i, sector);
+    }
+
+    // ---------- backup & restore ----------
+    volatile JSONObject pendingRestore;
+
+    /** Opens the phone's "Save to" screen (Downloads, Google Drive...). Result: "backup" event. */
+    @JavascriptInterface
+    public void backupSave() {
+        act.runOnUiThread(act::pickBackupDestination);
+    }
+
+    /** Shares the backup file to Google Drive, WhatsApp, email... */
+    @JavascriptInterface
+    public void backupShare() {
+        act.runOnUiThread(act::shareBackup);
+    }
+
+    /** Opens the phone's file picker to choose a backup. Result: "restorePreview" event. */
+    @JavascriptInterface
+    public void backupRestore() {
+        act.runOnUiThread(act::pickBackupFile);
+    }
+
+    /** Restores the backup that was just previewed. Result: "restored" event. */
+    @JavascriptInterface
+    public void backupApply(String token) {
+        JSONObject o = pendingRestore;
+        pendingRestore = null;
+        if (o == null) return;
+        bg.execute(() -> {
+            JSONObject r = new JSONObject();
+            try {
+                JSONObject pv = Backup.preview(o, "");
+                Backup.apply(ctx(), o);
+                r.put("alerts", pv.optInt("alerts"));
+                r.put("stocks", pv.optInt("stocks"));
+                emit("restored", r.toString());
+                act.runOnUiThread(() -> { if (Store.get(ctx()).monitoring()) PriceService.start(act); });
+                Checker.run(ctx(), false);           // load prices for the restored stocks
+            } catch (Exception e) {
+                emit("backup", "{\"ok\":false,\"err\":" + JSONObject.quote("Restore failed: " + e.getMessage()) + "}");
             }
         });
     }

@@ -151,6 +151,29 @@ public final class Notifier {
         try { nm(c).notify(id, n); } catch (SecurityException ignored) { }
     }
 
+    /** "Time to back up" reminder; tapping it opens Settings and starts a backup. */
+    public static void backupReminder(Context c, long last) {
+        Intent i = new Intent(c, MainActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        i.putExtra("tab", "backup");
+        PendingIntent pi = PendingIntent.getActivity(c, 5001, i, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+        String when = last > 0
+                ? "Last backup was " + java.time.Instant.ofEpochMilli(last).atZone(Market.IST)
+                    .format(java.time.format.DateTimeFormatter.ofPattern("d MMM yyyy", Locale.ENGLISH)) + "."
+                : "You haven't backed up your alerts and stocks yet.";
+        Notification n = new Notification.Builder(c, "al_n")
+                .setSmallIcon(R.drawable.ic_stat_alert)
+                .setColor(COLOR)
+                .setContentTitle("Time to back up Wealthora")
+                .setContentText(when + " Tap to save a fresh copy.")
+                .setStyle(new Notification.BigTextStyle().bigText(when + " Tap to save a fresh copy to your phone or Google Drive."))
+                .setAutoCancel(true)
+                .setContentIntent(pi)
+                .addAction(action(c, "Back up now", pi))
+                .build();
+        try { nm(c).notify(5000, n); } catch (SecurityException ignored) { }
+    }
+
     public static void test(Context c) {
         post(c, 3000, -1, "TEST", "Wealthora test",
                 "Notifications are working. You'll get alerts like this when a stock reaches your price.");

@@ -36,6 +36,7 @@ public class WatchJob extends JobService {
         new Thread(() -> {
             try {
                 try { Sheets.maybeSync(c); } catch (Exception ignored) { }
+                try { Backup.maybeRemind(c); } catch (Exception ignored) { }
                 long now = System.currentTimeMillis();
                 boolean marketOnly = store.settings().optBoolean("marketOnly", true);
                 boolean stale = now - store.lastFetch().optLong("t", 0) > 5 * 60_000L;
