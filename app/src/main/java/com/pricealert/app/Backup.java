@@ -23,7 +23,7 @@ import java.util.Locale;
 /** Backup file of alerts, My Stocks, accounts, sectors and settings; and restoring it. */
 public final class Backup {
     static final String[] KEEP = {"accounts", "sectors", "repeatMin", "pollSec", "pollMin", "nearPct", "nearWarn",
-            "sound", "vibrate", "sheetUrl", "sheetTab", "sheetEvery", "backupEvery"};
+            "sound", "vibrate", "sheetUrl", "sheetTab", "sheetEvery", "sheetWrite", "backupEvery"};
     private static final long DAY = 86_400_000L;
 
     private Backup() { }

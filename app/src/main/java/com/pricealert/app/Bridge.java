@@ -255,6 +255,47 @@ public class Bridge {
         bg.execute(() -> Sheets.sync(ctx()));
     }
 
+    /** Adds a sold trade to the sheet. Result: "realisedAdded" event, then a fresh "sheet" event. */
+    @JavascriptInterface
+    public void addRealised(String json) {
+        bg.execute(() -> {
+            JSONObject r;
+            try { r = Sheets.append(ctx(), new JSONObject(json)); }
+            catch (Exception e) {
+                r = new JSONObject();
+                try { r.put("ok", false); r.put("err", String.valueOf(e.getMessage())); } catch (Exception ignored) { }
+            }
+            emit("realisedAdded", r.toString());
+            if (r.optBoolean("ok")) Sheets.sync(ctx());
+        });
+    }
+
+    /** Saves and tests the Apps Script link. Result: "sheetWrite" event. */
+    @JavascriptInterface
+    public void setSheetWrite(String url) {
+        bg.execute(() -> {
+            String u = url == null ? "" : url.trim();
+            JSONObject r = u.isEmpty() ? new JSONObject() : Sheets.testWrite(ctx(), u);
+            try {
+                if (u.isEmpty() || r.optBoolean("ok")) {
+                    Store.get(ctx()).mergeSettings(new JSONObject().put("sheetWrite", u));
+                    if (u.isEmpty()) r.put("ok", true).put("off", true);
+                }
+            } catch (Exception ignored) { }
+            emit("sheetWrite", r.toString());
+        });
+    }
+
+    @JavascriptInterface
+    public void copyText(String text) {
+        act.runOnUiThread(() -> {
+            try {
+                android.content.ClipboardManager cm = (android.content.ClipboardManager) act.getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+                cm.setPrimaryClip(android.content.ClipData.newPlainText("Wealthora helper", text));
+            } catch (Exception ignored) { }
+        });
+    }
+
     @JavascriptInterface
     public void testNotification() { Notifier.test(ctx()); }
 

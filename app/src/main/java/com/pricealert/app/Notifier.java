@@ -37,32 +37,46 @@ public final class Notifier {
         m.createNotificationChannel(mon);
 
         String[][] defs = {
-                {"al_sv", "Price alerts (sound + vibrate)"},
-                {"al_s", "Price alerts (sound only)"},
-                {"al_v", "Price alerts (vibrate only)"},
-                {"al_n", "Price alerts (silent)"}
+                {"al_sv", "Buy alerts (sound + vibrate)"},
+                {"al_s", "Buy alerts (sound only)"},
+                {"al_v", "Buy alerts (vibrate only)"},
+                {"al_n", "Buy alerts (silent)"},
+                {"tg_sv", "Target hits · sell (sound + vibrate)"},
+                {"tg_s", "Target hits · sell (sound only)"},
+                {"tg_v", "Target hits · sell (vibrate only)"},
+                {"tg_n", "Target hits · sell (silent)"}
         };
         for (String[] d : defs) {
             NotificationChannel ch = new NotificationChannel(d[0], d[1], NotificationManager.IMPORTANCE_HIGH);
-            boolean sound = d[0].equals("al_sv") || d[0].equals("al_s");
-            boolean vib = d[0].equals("al_sv") || d[0].equals("al_v");
+            boolean sound = d[0].endsWith("_sv") || d[0].endsWith("_s");
+            boolean vib = d[0].endsWith("_sv") || d[0].endsWith("_v");
             if (!sound) ch.setSound(null, null);
             ch.enableVibration(vib);
             if (vib) ch.setVibrationPattern(new long[]{0, 400, 200, 400});
             ch.enableLights(true);
-            ch.setLightColor(COLOR);
+            ch.setLightColor(d[0].startsWith("tg") ? 0xFF22C55E : 0xFFF59E0B);
+            if (d[0].startsWith("tg")) ch.setVibrationPattern(new long[]{0, 250, 120, 250, 120, 500});
             m.createNotificationChannel(ch);
         }
     }
 
-    private static String alertChannel(Context c) {
+    private static String alertChannel(Context c) { return channel(c, "al"); }
+
+    private static String channel(Context c, String kind) {
         JSONObject s = Store.get(c).settings();
         boolean snd = s.optBoolean("sound", true);
         boolean vib = s.optBoolean("vibrate", true);
-        if (snd && vib) return "al_sv";
-        if (snd) return "al_s";
-        if (vib) return "al_v";
-        return "al_n";
+        if (snd && vib) return kind + "_sv";
+        if (snd) return kind + "_s";
+        if (vib) return kind + "_v";
+        return kind + "_n";
+    }
+
+    private static PendingIntent openTab(Context c, String tab, int req) {
+        Intent i = new Intent(c, MainActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        i.putExtra("tab", tab);
+        return PendingIntent.getActivity(c, req, i, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     public static String rupees(double v) {
@@ -93,10 +107,12 @@ public final class Notifier {
                 Icon.createWithResource(c, R.drawable.ic_stat_alert), title, pi).build();
     }
 
-    private static void post(Context c, int id, int slot, String sym, String title, String text) {
+    private static void post(Context c, int id, int slot, String sym, String title, String text, int color, String sub) {
         Notification n = new Notification.Builder(c, alertChannel(c))
                 .setSmallIcon(R.drawable.ic_stat_alert)
-                .setColor(COLOR)
+                .setColor(color)
+                .setColorized(false)
+                .setSubText(sub)
                 .setContentTitle(title)
                 .setContentText(text)
                 .setStyle(new Notification.BigTextStyle().bigText(text))
@@ -104,7 +120,7 @@ public final class Notifier {
                 .setAutoCancel(true)
                 .setShowWhen(true)
                 .setContentIntent(openApp(c, slot, id))
-                .addAction(action(c, "Edit price", openApp(c, slot, id + 500)))
+                .addAction(action(c, "Edit alert", openApp(c, slot, id + 500)))
                 .addAction(action(c, "Pause today", pause(c, sym, id + 900)))
                 .build();
         try { nm(c).notify(id, n); } catch (SecurityException ignored) { }
@@ -112,43 +128,65 @@ public final class Notifier {
 
     public static void alertHit(Context c, int slot, PriceFetcher.Quote q, double alert, int count) {
         double below = (q.price - alert) / alert * 100.0;
-        String title = q.sym + " hit your alert price";
-        String text = "Now " + rupees(q.price) + " — at or below your alert of " + rupees(alert)
+        String title = "🔔 BUY ALERT — " + q.sym + " · price dropped to your level";
+        String text = "Now " + rupees(q.price) + ", at or below your buy alert " + rupees(alert)
                 + String.format(Locale.US, " (%.2f%%).", below)
-                + (count > 1 ? " Reminder #" + count + "." : "")
-                + " Source: " + q.src + ".";
-        post(c, 1000 + slot, slot, q.sym, title, text);
+                + (count > 1 ? " Reminder #" + count + "." : "");
+        post(c, 1000 + slot, slot, q.sym, title, text, 0xFFF59E0B, "Buy alert");
     }
 
     public static void alertNear(Context c, int slot, PriceFetcher.Quote q, double alert) {
         double above = (q.price - alert) / alert * 100.0;
-        String title = q.sym + " is close to your alert";
-        String text = "Now " + rupees(q.price) + String.format(Locale.US, ", %.2f%% above", above)
-                + " your alert of " + rupees(alert) + ". Source: " + q.src + ".";
-        post(c, 2000 + slot, slot, q.sym, title, text);
+        String title = "⏳ NEAR BUY ALERT — " + q.sym + String.format(Locale.US, " · %.1f%% away", above);
+        String text = "Now " + rupees(q.price) + String.format(Locale.US, ", just %.1f%% above", above)
+                + " your buy alert " + rupees(alert) + ".";
+        post(c, 2000 + slot, slot, q.sym, title, text, 0xFF38BDF8, "Near buy alert");
     }
 
     public static void targetHit(Context c, int holdingSlot, PriceFetcher.Quote q, double target, int count) {
-        double above = (q.price - target) / target * 100.0;
-        String title = q.sym + " reached your target";
-        String text = "Now " + rupees(q.price) + " — at or above your target of " + rupees(target)
-                + String.format(Locale.US, " (+%.2f%%).", above)
-                + (count > 1 ? " Reminder #" + count + "." : "")
-                + " Source: " + q.src + ".";
+        Store s = Store.get(c);
+        JSONObject h = s.holdings().optJSONObject(holdingSlot);
+        double buy = h == null ? 0 : h.optDouble("buy", 0), qty = h == null ? 0 : h.optDouble("qty", 0);
+        String acct = h == null ? "" : acctName(s, h.optString("acct", ""));
+        String title = "🎯 TARGET HIT — " + q.sym + " · time to sell";
+        StringBuilder text = new StringBuilder("Now " + rupees(q.price) + ", at or above your target " + rupees(target) + ".");
+        if (buy > 0 && qty > 0) {
+            double pl = (q.price - buy) * qty, pc = (q.price - buy) / buy * 100.0;
+            text.append("\n").append(acct.isEmpty() ? "" : acct + " · ").append(fmtQty(qty)).append(" shares bought at ").append(rupees(buy))
+                    .append(" → profit ").append(pl >= 0 ? "+" : "−").append(rupees(Math.abs(pl)))
+                    .append(String.format(Locale.US, " (%+.2f%%)", pc));
+        }
+        if (count > 1) text.append(" Reminder #").append(count).append(".");
         int id = 4000 + holdingSlot;
-        Notification n = new Notification.Builder(c, alertChannel(c))
+        Notification n = new Notification.Builder(c, channel(c, "tg"))
                 .setSmallIcon(R.drawable.ic_stat_alert)
-                .setColor(0xFF34D399)
+                .setColor(0xFF22C55E)
+                .setSubText("Target hit · SELL")
                 .setContentTitle(title)
-                .setContentText(text)
-                .setStyle(new Notification.BigTextStyle().bigText(text))
+                .setContentText(text.toString().replace("\n", " "))
+                .setStyle(new Notification.BigTextStyle().bigText(text.toString()))
                 .setCategory(Notification.CATEGORY_REMINDER)
                 .setAutoCancel(true)
                 .setShowWhen(true)
-                .setContentIntent(openApp(c, -1, id))
+                .setContentIntent(openTab(c, "my", id))
+                .addAction(action(c, "Record sale", openTab(c, "sale:" + holdingSlot, id + 300)))
+                .addAction(action(c, "Edit target", openTab(c, "my", id + 600)))
                 .addAction(action(c, "Pause today", pause(c, q.sym, id + 900)))
                 .build();
         try { nm(c).notify(id, n); } catch (SecurityException ignored) { }
+    }
+
+    private static String fmtQty(double q) { return q == Math.rint(q) ? String.valueOf((long) q) : String.valueOf(q); }
+
+    private static String acctName(Store s, String id) {
+        org.json.JSONArray a = s.settings().optJSONArray("accounts");
+        if (a == null || a.length() == 0) return "";
+        for (int k = 0; k < a.length(); k++) {
+            JSONObject o = a.optJSONObject(k);
+            if (o != null && id.equals(o.optString("id"))) return o.optString("name");
+        }
+        JSONObject f = a.optJSONObject(0);
+        return f == null ? "" : f.optString("name");
     }
 
     /** "Time to back up" reminder; tapping it opens Settings and starts a backup. */
@@ -176,7 +214,7 @@ public final class Notifier {
 
     public static void test(Context c) {
         post(c, 3000, -1, "TEST", "Wealthora test",
-                "Notifications are working. You'll get alerts like this when a stock reaches your price.");
+                "Notifications are working. You'll get alerts like this when a stock reaches your price.", COLOR, "Test");
     }
 
     public static Notification monitor(Context c, String text) {

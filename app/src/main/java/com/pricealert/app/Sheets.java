@@ -38,6 +38,64 @@ public final class Sheets {
         String t = s.settings().optString("sheetTab", "").trim();
         return t.isEmpty() ? "Realised Trades" : t;
     }
+    /** The Apps Script web-app link that lets the app add rows ("" = not set up). */
+    static String writeUrl(Store s) { return s.settings().optString("sheetWrite", "").trim(); }
+
+    private static JSONObject script(String base, String query) throws Exception {
+        if (!base.startsWith("https://script.google.com/")) throw new Exception("Paste the Web app URL (https://script.google.com/macros/s/…/exec)");
+        String body;
+        try { body = get(base + (base.contains("?") ? "&" : "?") + query); }
+        catch (HttpErr e) {
+            if (e.code == 403 || e.code == 401) throw new Exception("Google refused access. In Apps Script deploy again with \"Who has access: Anyone\"");
+            if (e.code == 404) throw new Exception("That Web app link wasn't found. Copy the URL from Deploy → Manage deployments");
+            throw new Exception("The helper didn't answer (" + e.getMessage() + ")");
+        } catch (IOException e) { throw new Exception("No internet connection"); }
+        String t = body.trim();
+        if (!t.startsWith("{")) throw new Exception(t.startsWith("<") ? "The helper isn't set up right. Paste the helper again, Save, and deploy as a Web app" : "Unexpected answer from the helper");
+        JSONObject o = new JSONObject(t);
+        if (!o.optBoolean("ok")) throw new Exception(o.optString("err", "The sheet refused the change"));
+        return o;
+    }
+
+    /** Checks the helper link; returns {ok, last, rows} or {ok:false, err}. */
+    public static JSONObject testWrite(Context c, String url) {
+        JSONObject r = new JSONObject();
+        try {
+            JSONObject o = script(url.trim(), "action=test&tab=" + URLEncoder.encode(tab(Store.get(c)), "UTF-8"));
+            r.put("ok", true);
+            r.put("last", o.optInt("last"));
+            r.put("rows", o.optInt("rows"));
+        } catch (Exception e) {
+            try { r.put("ok", false); r.put("err", String.valueOf(e.getMessage())); } catch (JSONException ignored) { }
+        }
+        return r;
+    }
+
+    /** Adds one sold trade below the last entry of the sheet, then re-reads the sheet. */
+    public static JSONObject append(Context c, JSONObject t) {
+        Store s = Store.get(c);
+        JSONObject r = new JSONObject();
+        try {
+            String w = writeUrl(s);
+            if (w.isEmpty()) throw new Exception("Finish the one-time sheet setup in Settings first");
+            String q = "action=add&tab=" + enc(tab(s)) + "&stock=" + enc(t.optString("stock")) + "&acct=" + enc(t.optString("acct"))
+                    + "&date=" + enc(t.optString("date")) + "&buy=" + enc(t.optString("buy")) + "&sell=" + enc(t.optString("sell"))
+                    + "&qty=" + enc(t.optString("qty"));
+            JSONObject o = script(w, q);
+            r.put("ok", true);
+            r.put("sr", o.optInt("sr"));
+            r.put("row", o.optInt("row"));
+        } catch (Exception e) {
+            try { r.put("ok", false); r.put("err", String.valueOf(e.getMessage())); } catch (JSONException ignored) { }
+        }
+        if (r.optBoolean("ok")) {
+            try { s.saveRealised(s.realised().put("tried", 0)); } catch (JSONException ignored) { }
+        }
+        return r;
+    }
+
+    private static String enc(String v) throws java.io.UnsupportedEncodingException { return URLEncoder.encode(v == null ? "" : v, "UTF-8"); }
+
     /** Minutes between sheet checks: 30 min, 1 hour (default), 6 hours or 10 hours. */
     static int every(Store s) {
         int m = s.settings().optInt("sheetEvery", 60);
@@ -52,6 +110,7 @@ public final class Sheets {
             r.put("url", url(s));
             r.put("tab", tab(s));
             r.put("every", every(s));
+            r.put("writeUrl", writeUrl(s));
         } catch (JSONException ignored) { }
         return r;
     }
@@ -137,10 +196,10 @@ public final class Sheets {
     /** Returns the trades, or null when no heading row with the needed columns was found. */
     static JSONArray parse(String csv) throws JSONException {
         List<List<String>> t = csv(csv);
-        int hr = -1, cStock = -1, cAcct = -1, cDate = -1, cBuy = -1, cSell = -1, cQty = -1, cPl = -1;
+        int hr = -1, cStock = -1, cAcct = -1, cDate = -1, cBuy = -1, cSell = -1, cQty = -1, cPl = -1, cSr = -1;
         for (int i = 0; i < Math.min(t.size(), 15) && hr < 0; i++) {
             List<String> row = t.get(i);
-            int st = -1, ac = -1, dt = -1, by = -1, sl = -1, qt = -1, pl = -1;
+            int st = -1, ac = -1, dt = -1, by = -1, sl = -1, qt = -1, pl = -1, sr = -1;
             for (int k = 0; k < row.size(); k++) {
                 String h = row.get(k).toLowerCase(Locale.ROOT).replace('\n', ' ').trim();
                 if (h.isEmpty()) continue;
@@ -151,9 +210,10 @@ public final class Sheets {
                 else if (h.contains("buy")) { if (by < 0) by = k; }
                 else if (h.contains("sell") || h.contains("sale")) { if (sl < 0) sl = k; }
                 else if (h.contains("qty") || h.contains("quantity") || h.contains("shares")) { if (qt < 0) qt = k; }
+                else if (h.matches(".*\\bsr\\b.*") || h.contains("serial") || h.matches(".*\\bs\\.? ?no\\b.*")) { if (sr < 0) sr = k; }
             }
             if (st >= 0 && dt >= 0 && (pl >= 0 || (by >= 0 && sl >= 0 && qt >= 0))) {
-                hr = i; cStock = st; cAcct = ac; cDate = dt; cBuy = by; cSell = sl; cQty = qt; cPl = pl;
+                hr = i; cStock = st; cAcct = ac; cDate = dt; cBuy = by; cSell = sl; cQty = qt; cPl = pl; cSr = sr;
             }
         }
         if (hr < 0) return null;
@@ -179,6 +239,8 @@ public final class Sheets {
             o.put("sell", Double.isNaN(sell) ? 0 : sell);
             o.put("qty", Double.isNaN(qty) ? 0 : qty);
             o.put("pl", Math.round(pl * 100) / 100.0);
+            double srn = num(cell(r, cSr));
+            if (!Double.isNaN(srn)) o.put("sr", (int) srn);
             out.put(o);
         }
         return out;
