@@ -206,46 +206,42 @@ public final class Widgets {
     // ---------------- Market (NIFTY 50 / BANK NIFTY) ----------------
     static RemoteViews marketViews(Context c, int widgetId) {
         AppWidgetManager m = AppWidgetManager.getInstance(c);
-        int minW = 0;
-        try { minW = m.getAppWidgetOptions(widgetId).getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 0); } catch (Exception ignored) { }
-        boolean wide = minW == 0 || minW >= 230;
+        int minW = 0, minH = 0;
+        try {
+            android.os.Bundle o = m.getAppWidgetOptions(widgetId);
+            minW = o.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 0);
+            minH = o.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 0);
+        } catch (Exception ignored) { }
+        int layout = minW == 0 || minW >= 230 ? R.layout.w_market_h          // side by side
+                : minH > 0 && minH < 100 ? R.layout.w_market_t                // tiny: one line each
+                : R.layout.w_market_v;                                        // stacked
         Store s = Store.get(c);
-        RemoteViews v = new RemoteViews(c.getPackageName(), wide ? R.layout.w_market_h : R.layout.w_market_v);
+        RemoteViews v = new RemoteViews(c.getPackageName(), layout);
         v.setOnClickPendingIntent(R.id.w_root, openApp(c, "dashboard", 64, false));
-        v.setOnClickPendingIntent(R.id.w_refresh, refresh(c));
-        long t = s.lastFetch().optLong("t", 0);
-        boolean open = Market.isOpen(System.currentTimeMillis());
-        v.setTextViewText(R.id.w_time, t <= 0 ? "not updated yet" : (open ? "Live · " : "Closed · ") + time(t));
         JSONObject quotes = s.quotes();
         marketTile(v, quotes.optJSONObject("NIFTY"), R.id.m_n, R.id.m_n_v, R.id.m_n_c, R.id.m_n_ar);
         marketTile(v, quotes.optJSONObject("BANKNIFTY"), R.id.m_b, R.id.m_b_v, R.id.m_b_c, R.id.m_b_ar);
         return v;
     }
 
-    private static void marketTile(RemoteViews v, JSONObject q, int box, int val, int chg, int arrow) {
-        if (q == null || q.optDouble("price", 0) <= 0) {
+    private static void marketTile(RemoteViews v, JSONObject q, int box, int val, int pts, int pill) {
+        double price = q == null ? 0 : q.optDouble("price", 0);
+        v.setTextViewText(val, price > 0 ? String.format(Locale.ENGLISH, "%,.2f", price) : "—");
+        if (price <= 0 || !q.optBoolean("hasChg", false)) {
             v.setInt(box, "setBackgroundResource", R.drawable.w_row_n);
-            v.setTextViewText(val, "—");
-            v.setTextViewText(chg, "waiting for price");
-            v.setTextColor(chg, MUTED);
-            v.setTextViewText(arrow, "");
-            return;
-        }
-        v.setTextViewText(val, String.format(Locale.ENGLISH, "%,.2f", q.optDouble("price", 0)));
-        if (!q.optBoolean("hasChg", false)) {
-            v.setInt(box, "setBackgroundResource", R.drawable.w_row_n);
-            v.setTextViewText(chg, "—");
-            v.setTextColor(chg, MUTED);
-            v.setTextViewText(arrow, "");
+            v.setInt(pill, "setBackgroundResource", R.drawable.w_chip_n);
+            v.setTextViewText(pill, "—");
+            v.setTextViewText(pts, price > 0 ? "" : "waiting…");
+            v.setTextColor(pts, MUTED);
             return;
         }
         double ch = q.optDouble("chg", 0), pc = q.optDouble("pchg", 0);
         boolean up = ch >= 0;
         v.setInt(box, "setBackgroundResource", up ? R.drawable.w_row_g : R.drawable.w_row_r);
-        v.setTextViewText(chg, String.format(Locale.ENGLISH, "%s%,.2f (%s%.2f%%)", up ? "+" : "−", Math.abs(ch), up ? "+" : "−", Math.abs(pc)));
-        v.setTextColor(chg, up ? GREEN : RED);
-        v.setTextViewText(arrow, up ? "▲" : "▼");
-        v.setTextColor(arrow, up ? GREEN : RED);
+        v.setInt(pill, "setBackgroundResource", up ? R.drawable.w_chip_g : R.drawable.w_chip_r);
+        v.setTextViewText(pill, String.format(Locale.ENGLISH, "%s %.2f%%", up ? "▲" : "▼", Math.abs(pc)));
+        v.setTextViewText(pts, String.format(Locale.ENGLISH, "%s%,.2f", up ? "+" : "−", Math.abs(ch)));
+        v.setTextColor(pts, up ? GREEN : RED);
     }
 
     // ---------------- Watchlist ----------------
