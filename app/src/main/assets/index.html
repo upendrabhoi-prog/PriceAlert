@@ -1813,12 +1813,13 @@ nav.bot button.on{color:var(--acc);font-weight:600}
       '<div class="nm"><b>' + esc(r.sym) + '</b><small>' + r.qty + ' × ₹' + fmt(r.buy) + '</small></div>' +
       '<div class="val"><b>' + (r.q ? '₹' + fmt(r.q.price) : '—') + '</b><small>' + (r.cur != null ? money(r.cur) : '') + '</small></div>' +
       '<div class="pp">' + (r.plp == null ? '—' : (r.plp >= 0 ? '+' : '') + r.plp.toFixed(2) + '%') + '<small>' + (r.pl == null ? '' : signed(r.pl)) + '</small></div></div>' +
-      targetLine(r) +
       '<div class="more"><div><small>Invested</small><b>' + money(r.inv) + '</b></div><div><small>Current</small><b>' + (r.cur != null ? money(r.cur) : '—') + '</b></div>' +
       '<div><small>Today</small><b>' + (r.q && r.q.hasChg ? signed(r.day) : '—') + '</b></div>' +
       '<div><small>Day change</small><b>' + (r.q && r.q.hasChg ? (r.q.pchg >= 0 ? '+' : '') + r.q.pchg.toFixed(2) + '%' : '—') + '</b></div>' +
       '<div><small>Weight</small><b>' + (r.cur && total ? (r.cur / total * 100).toFixed(1) + '%' : '—') + '</b></div>' +
-      '<div><small>Account</small><b style="font-family:inherit;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(acctName(r.acct)) + '</b></div></div></button>';
+      '<div><small>Account</small><b style="font-family:inherit;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(acctName(r.acct)) + '</b></div>' +
+      '<div><small>Target</small><b>' + (r.target > 0 ? '₹' + fmt(r.target) : '—') + '</b></div>' +
+      '<div><small>Target left</small><b' + (r.target > 0 && r.q && r.q.price >= r.target ? ' style="color:#34D399"' : '') + '>' + (!(r.target > 0) || !r.q ? '—' : r.q.price >= r.target ? '✓ Hit' : ((r.target - r.q.price) / r.q.price * 100).toFixed(2) + '%') + '</b></div></div></button>';
   }
   function sortRows(list) {
     var key = psort === 'tgt' ? 'tleft' : psort === 'value' ? 'cur' : 'plp';
@@ -1919,7 +1920,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
       sortRows(rows.slice()).forEach(function (r) { html += holdingRow(r, t.cur); });
       html += '</div>';
     }
-    html += '<p style="font-size:11px;color:var(--mut);text-align:center;margin:14px 8px;line-height:1.5">Green = in profit, red = in loss, compared with your buy price. The yellow bar shows progress from your buy price to your target, with the % still left to go. Tap a holding for more detail. ' +
+    html += '<p style="font-size:11px;color:var(--mut);text-align:center;margin:14px 8px;line-height:1.5">Green = in profit, red = in loss, compared with your buy price. Tap a holding for more detail, including its target and % left (see the Dashboard for target progress). ' +
       (t.priced < rows.length ? (rows.length - t.priced) + ' holding(s) are waiting for a price and are not in the totals yet.' : '') + '</p>';
     el.innerHTML = html;
     Array.prototype.forEach.call(el.querySelectorAll('.acchips button, .accard'), function (b) {
