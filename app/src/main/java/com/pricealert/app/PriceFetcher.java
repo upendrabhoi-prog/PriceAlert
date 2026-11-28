@@ -239,6 +239,53 @@ public final class PriceFetcher {
         return q;
     }
 
+    /** Candles for the chart screen (Yahoo Finance). range: 1d, 5d, 1mo, 6mo, 1y, 5y. */
+    public static JSONObject candles(String sym, String range) throws Exception {
+        String s = sym == null ? "" : sym.trim().toUpperCase(java.util.Locale.ROOT);
+        String[] idx = INDICES.get(s);
+        String code = idx != null && idx[1] != null ? idx[1] : s + ".NS";
+        String interval;
+        switch (range) {
+            case "1d": interval = "5m"; break;
+            case "5d": interval = "15m"; break;
+            case "1mo": case "6mo": case "1y": interval = "1d"; break;
+            case "5y": interval = "1mo"; break;
+            default: range = "1d"; interval = "5m";
+        }
+        String body = get("https://query1.finance.yahoo.com/v8/finance/chart/" + enc(code)
+                + "?range=" + range + "&interval=" + interval + "&includePrePost=false", null, true);
+        JSONObject chart = new JSONObject(body).optJSONObject("chart");
+        JSONArray res = chart == null ? null : chart.optJSONArray("result");
+        JSONObject r0 = res == null ? null : res.optJSONObject(0);
+        if (r0 == null) throw new Exception("No chart data for " + s);
+        JSONObject meta = r0.optJSONObject("meta");
+        JSONArray ts = r0.optJSONArray("timestamp");
+        JSONObject ind = r0.optJSONObject("indicators");
+        JSONArray qa = ind == null ? null : ind.optJSONArray("quote");
+        JSONObject q = qa == null ? null : qa.optJSONObject(0);
+        if (ts == null || q == null) throw new Exception("No chart data for " + s);
+        JSONArray o = q.optJSONArray("open"), h = q.optJSONArray("high"), l = q.optJSONArray("low"),
+                c = q.optJSONArray("close"), v = q.optJSONArray("volume");
+        JSONArray T = new JSONArray(), O = new JSONArray(), Hh = new JSONArray(), L = new JSONArray(), C = new JSONArray(), V = new JSONArray();
+        for (int i = 0; i < ts.length(); i++) {
+            double oo = o == null ? Double.NaN : o.optDouble(i), hh = h == null ? Double.NaN : h.optDouble(i),
+                    ll = l == null ? Double.NaN : l.optDouble(i), cc = c == null ? Double.NaN : c.optDouble(i);
+            if (Double.isNaN(oo) || Double.isNaN(hh) || Double.isNaN(ll) || Double.isNaN(cc)) continue;   // empty candle
+            T.put(ts.optLong(i));
+            O.put(oo); Hh.put(hh); L.put(ll); C.put(cc);
+            V.put(v == null ? 0 : v.optLong(i, 0));
+        }
+        if (T.length() == 0) throw new Exception("No trades in this period yet");
+        JSONObject out = new JSONObject();
+        out.put("t", T); out.put("o", O); out.put("h", Hh); out.put("l", L); out.put("c", C); out.put("v", V);
+        if (meta != null) {
+            out.put("price", meta.optDouble("regularMarketPrice", 0));
+            out.put("prev", meta.optDouble("chartPreviousClose", meta.optDouble("previousClose", 0)));
+            out.put("name", meta.optString("longName", meta.optString("shortName", "")));
+        }
+        return out;
+    }
+
     /** Fetch every symbol it can; symbols it can't price are left out of the map. */
     /** Fetches several stocks at once so a full list finishes within a 15-second check. */
     private static final java.util.concurrent.ExecutorService POOL =
