@@ -116,6 +116,18 @@
     </LinearLayout>
 
     <TextView
+        android:id="@+id/w_split"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/w_tag"
+        android:padding="6dp"
+        android:textColor="#FFE6EAF2"
+        android:textSize="11.5sp"
+        android:lineSpacingExtra="2dp"
+        android:visibility="gone" />
+
+    <TextView
         android:id="@+id/w_count"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
