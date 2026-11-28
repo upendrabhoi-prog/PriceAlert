@@ -85,6 +85,8 @@ public final class Widgets {
             for (int id : d) m.updateAppWidget(id, listViews(c, id, "dist"));
             m.notifyAppWidgetViewDataChanged(d, R.id.w_list);
         }
+        int[] mk = m.getAppWidgetIds(new ComponentName(c, MarketWidget.class));
+        if (mk != null) for (int id : mk) m.updateAppWidget(id, marketViews(c, id));
         int[] t = m.getAppWidgetIds(new ComponentName(c, TargetWidget.class));
         if (t != null && t.length > 0) {
             for (int id : t) m.updateAppWidget(id, listViews(c, id, "target"));
@@ -199,6 +201,51 @@ public final class Widgets {
         v.setTextViewText(R.id.w_count, n + " holding" + (n == 1 ? "" : "s")
                 + (priced < n ? " · " + (n - priced) + " waiting for price" : ""));
         return v;
+    }
+
+    // ---------------- Market (NIFTY 50 / BANK NIFTY) ----------------
+    static RemoteViews marketViews(Context c, int widgetId) {
+        AppWidgetManager m = AppWidgetManager.getInstance(c);
+        int minW = 0;
+        try { minW = m.getAppWidgetOptions(widgetId).getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 0); } catch (Exception ignored) { }
+        boolean wide = minW == 0 || minW >= 230;
+        Store s = Store.get(c);
+        RemoteViews v = new RemoteViews(c.getPackageName(), wide ? R.layout.w_market_h : R.layout.w_market_v);
+        v.setOnClickPendingIntent(R.id.w_root, openApp(c, "dashboard", 64, false));
+        v.setOnClickPendingIntent(R.id.w_refresh, refresh(c));
+        long t = s.lastFetch().optLong("t", 0);
+        boolean open = Market.isOpen(System.currentTimeMillis());
+        v.setTextViewText(R.id.w_time, t <= 0 ? "not updated yet" : (open ? "Live · " : "Closed · ") + time(t));
+        JSONObject quotes = s.quotes();
+        marketTile(v, quotes.optJSONObject("NIFTY"), R.id.m_n, R.id.m_n_v, R.id.m_n_c, R.id.m_n_ar);
+        marketTile(v, quotes.optJSONObject("BANKNIFTY"), R.id.m_b, R.id.m_b_v, R.id.m_b_c, R.id.m_b_ar);
+        return v;
+    }
+
+    private static void marketTile(RemoteViews v, JSONObject q, int box, int val, int chg, int arrow) {
+        if (q == null || q.optDouble("price", 0) <= 0) {
+            v.setInt(box, "setBackgroundResource", R.drawable.w_row_n);
+            v.setTextViewText(val, "—");
+            v.setTextViewText(chg, "waiting for price");
+            v.setTextColor(chg, MUTED);
+            v.setTextViewText(arrow, "");
+            return;
+        }
+        v.setTextViewText(val, String.format(Locale.ENGLISH, "%,.2f", q.optDouble("price", 0)));
+        if (!q.optBoolean("hasChg", false)) {
+            v.setInt(box, "setBackgroundResource", R.drawable.w_row_n);
+            v.setTextViewText(chg, "—");
+            v.setTextColor(chg, MUTED);
+            v.setTextViewText(arrow, "");
+            return;
+        }
+        double ch = q.optDouble("chg", 0), pc = q.optDouble("pchg", 0);
+        boolean up = ch >= 0;
+        v.setInt(box, "setBackgroundResource", up ? R.drawable.w_row_g : R.drawable.w_row_r);
+        v.setTextViewText(chg, String.format(Locale.ENGLISH, "%s%,.2f (%s%.2f%%)", up ? "+" : "−", Math.abs(ch), up ? "+" : "−", Math.abs(pc)));
+        v.setTextColor(chg, up ? GREEN : RED);
+        v.setTextViewText(arrow, up ? "▲" : "▼");
+        v.setTextColor(arrow, up ? GREEN : RED);
     }
 
     // ---------------- Watchlist ----------------
