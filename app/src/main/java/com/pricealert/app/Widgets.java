@@ -227,13 +227,14 @@ public final class Widgets {
             it.sub = "CMP " + Notifier.rupees(price) + " · Buy " + Notifier.rupees(al);
             it.pct = pct(d);
             it.sortKey = d;
-            it.color = price <= al ? 'r' : d <= nearPct ? 'y' : 'b';
-            it.progress = (int) Math.max(4, Math.min(100, Math.abs(d) / 5 * 100));
+            it.color = d < 5 ? 'g' : 'b';
             if (d < 5) it.bg = 'g';      // less than 5% from buy price: green
             out.add(it);
         }
         out.sort((a, b) -> Double.compare(a.sortKey, b.sortKey));
-        return out.size() > 10 ? new ArrayList<>(out.subList(0, 10)) : out;
+        List<Item> top = out.size() > 10 ? new ArrayList<>(out.subList(0, 10)) : out;
+        closeness(top);
+        return top;
     }
 
     /** My Stocks with a target: % the price still has to rise, smallest first (reached targets on top). */
@@ -262,14 +263,25 @@ public final class Widgets {
             it.note = hit ? "reached" : "to go";
             it.sortKey = left;
             it.good = hit;
-            it.color = hit ? 'g' : 'y';
-            double span = tg - buy;
-            it.progress = hit ? 100 : (int) Math.max(2, Math.min(100, span > 0 ? (price - buy) / span * 100 : 2));
+            it.color = left < 5 ? 'g' : 'y';
             if (left < 5) it.bg = 'g';   // less than 5% left (or reached): green
             out.add(it);
         }
         out.sort((a, b) -> Double.compare(a.sortKey, b.sortKey));
+        closeness(out);
         return out;
+    }
+
+    /** Bar length = closeness on one shared scale: full at the target / buy price, shorter the further away. */
+    static void closeness(List<Item> list) {
+        double m = 0;
+        for (Item it : list) m = Math.max(m, it.sortKey);
+        double sc = 50;
+        for (double st : new double[]{5, 10, 15, 20, 25, 30, 40, 50}) if (m <= st) { sc = st; break; }
+        for (Item it : list) {
+            double v = it.sortKey;
+            it.progress = v <= 0 ? 100 : (int) Math.round(Math.max(4, (1 - Math.min(v, sc) / sc) * 100));
+        }
     }
 
     /** Account name for a holding, shown only when the user has more than one account. */
