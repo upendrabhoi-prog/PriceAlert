@@ -75,6 +75,18 @@
         </receiver>
 
         <receiver
+            android:name=".MarketWidget"
+            android:exported="false"
+            android:label="@string/w_market">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/wl_market" />
+        </receiver>
+
+        <receiver
             android:name=".DistWidget"
             android:exported="false"
             android:label="@string/w_dist">
