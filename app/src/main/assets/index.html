@@ -240,6 +240,8 @@ nav.bot button.on{color:var(--acc);font-weight:600}
 .wtabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px;margin:8px 0 12px}
 .wtabs button{height:40px;border:0;border-radius:10px;background:transparent;color:var(--mut);font-weight:700;font-size:13px}
 .wtabs button.on{background:var(--acc);color:#0A0F1C}
+.dtabs button{font-size:12.5px;display:flex;align-items:center;justify-content:center;gap:5px;padding:0 4px}
+.dtabs .gb{min-width:18px;height:18px;border-radius:9px;background:#16A34A;color:#fff;font-size:10.5px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;padding:0 5px}
 .hcard .r2{gap:6px}
 .hcard .ap{padding:0 8px}
 .hcard .ap.qty{flex:0 0 92px}
@@ -616,7 +618,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
 
       <button class="btn" id="testBtn">Send test notification</button>
       <button class="btn" id="chanBtn" style="margin-top:8px">Notification sound &amp; style settings</button>
-      <p style="font-size:11px;color:var(--mut);text-align:center;margin:16px 8px;line-height:1.5">Wealthora v2.3 · Prices may be delayed. Not investment advice.</p>
+      <p style="font-size:11px;color:var(--mut);text-align:center;margin:16px 8px;line-height:1.5">Wealthora v2.4 · Prices may be delayed. Not investment advice.</p>
     </section>
   </main>
 
@@ -639,6 +641,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
   var S = null;            // latest state from the phone
   var view = 'dashboard';
   var dsort = 'near';       // dashboard order: near | az
+  var dtab = (function () { try { return localStorage.getItem('dtab') || 'target'; } catch (e) { return 'target'; } })();
   var tsort = 'near';      // dashboard target list: near (smallest first) | az
   var wsort = 'up';         // watchlist order: up (gainers first) | down (losers first)
   var wtab = 'mine';        // watchlist section: mine | alerts
@@ -1009,30 +1012,31 @@ nav.bot button.on{color:var(--acc);font-weight:600}
       if (tsort === 'az') return a.sym < b.sym ? -1 : a.sym > b.sym ? 1 : 0;
       var x = a.left == null ? 1e9 : a.left, y = b.left == null ? 1e9 : b.left; return x - y;
     });
-    html += '<div class="dlist"><div class="dhead"><b>% Target left</b><div class="seg" data-g="t">' +
+    var tgHtml = '';
+    tgHtml += '<div class="dlist"><div class="dhead"><b>% Target left</b><div class="seg" data-g="t">' +
       '<button data-s="near" class="' + (tsort === 'near' ? 'on' : '') + '">Smallest</button><button data-s="az" class="' + (tsort === 'az' ? 'on' : '') + '">A–Z</button></div></div>' +
       '<div class="hlnote"><i></i>Green = less than 5% left to target (or target reached)</div>';
     if (!tg.length && !noT.length) {
-      html += '<div class="dempty" style="margin:6px 0">No stocks in your portfolio yet.<br><button id="goMy">Add stocks in My Stocks</button></div>';
+      tgHtml += '<div class="dempty" style="margin:6px 0">No stocks in your portfolio yet.<br><button id="goMy">Add stocks in My Stocks</button></div>';
     }
     tg.forEach(function (r) {
       var hit = r.q && r.q.price >= r.target, hl = r.left != null && r.left < 5;
       var col = hit ? '#34D399' : '#FCD34D';
-      html += '<button class="brow t' + (hl ? ' hl' : '') + '" data-h="' + r.i + '"><div class="top"><b>' + esc(r.sym) + '</b>' +
+      tgHtml += '<button class="brow t' + (hl ? ' hl' : '') + '" data-h="' + r.i + '"><div class="top"><b>' + esc(r.sym) + '</b>' +
         (multi ? '<span class="tag2" style="background:' + acctColor(r.acct) + '">' + esc(acctName(r.acct)) + '</span>' : '') +
         '<div class="prices"><span>CMP <em>' + (r.q ? '₹' + fmt(r.q.price) : '—') + '</em></span><span class="buy">Target <em>₹' + fmt(r.target) + '</em></span></div></div>' +
         '<div class="bar2"><div class="btrack"><div class="fill" style="left:0;width:' + (r.prog || 0).toFixed(1) + '%;background:' + col + '"></div></div>' +
         '<div class="val" style="color:' + col + '">' + (r.left == null ? '—' : hit ? '✓ Hit' : r.left.toFixed(2) + '%') + '</div></div></button>';
     });
     noT.forEach(function (r) {
-      html += '<button class="brow t nt" data-h="' + r.i + '"><div class="top"><b>' + esc(r.sym) + '</b>' +
+      tgHtml += '<button class="brow t nt" data-h="' + r.i + '"><div class="top"><b>' + esc(r.sym) + '</b>' +
         (multi ? '<span class="tag2" style="background:' + acctColor(r.acct) + '">' + esc(acctName(r.acct)) + '</span>' : '') +
         '<div class="prices"><span>CMP <em>' + (r.q ? '₹' + fmt(r.q.price) : '—') + '</em></span><span class="buy">No target · tap to add</span></div></div></button>';
     });
-    html += '</div>';
+    tgHtml += '</div>';
 
     // ---- distance from buy price (alerts) ----
-    var items = [];
+    var dHtml = '', items = [];
     S.slots.forEach(function (s, i) {
       if (!s.sym || !(s.alert > 0)) return;
       var inf = slotInfo(s);
@@ -1040,7 +1044,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
       items.push({ i: i, sym: s.sym, name: inf.q.name || '', price: inf.q.price, alert: s.alert, d: inf.d, kind: inf.kind });
     });
     if (!items.length) {
-      html += '<div class="dlist"><div class="dhead"><b>Distance from buy price</b></div><div class="dempty" style="margin:6px 0">No alerts with prices yet.<br><button id="goAlerts">Go to Alerts</button></div></div>';
+      dHtml += '<div class="dlist"><div class="dhead"><b>Distance from buy price</b></div><div class="dempty" style="margin:6px 0">No alerts with prices yet.<br><button id="goAlerts">Go to Alerts</button></div></div>';
     } else {
     var list = items.slice();
     if (dsort === 'az') list.sort(function (a, b) { return a.sym < b.sym ? -1 : 1; });
@@ -1050,7 +1054,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     var minNeg = Math.min(0, Math.min.apply(null, list.map(function (x) { return x.d; })));
     var negSpan = minNeg < 0 ? Math.max(2, Math.ceil(-minNeg)) : 0;
     var zeroAt = negSpan ? 18 : 3;           // % of track width used for "below alert"
-    html += '<div class="dlist"><div class="dhead"><b>Distance from buy price</b><div class="seg" data-g="d">' +
+    dHtml += '<div class="dlist"><div class="dhead"><b>Distance from buy price</b><div class="seg" data-g="d">' +
       '<button data-s="near" class="' + (dsort === 'near' ? 'on' : '') + '">Closest</button><button data-s="az" class="' + (dsort === 'az' ? 'on' : '') + '">A–Z</button></div></div>' +
       '<div class="hlnote"><i></i>Green = less than 5% above buy price (or below it)</div>' +
       '<div class="scale"><div class="sp"></div><div class="st">' +
@@ -1062,15 +1066,24 @@ nav.bot button.on{color:var(--acc);font-weight:600}
       var col = kindColor(x.kind), left, width;
       if (x.d >= 0) { left = zeroAt; width = Math.max(1.5, Math.min(1, x.d / maxPos) * (100 - zeroAt)); }
       else { width = Math.min(1, -x.d / negSpan) * zeroAt; left = zeroAt - width; }
-      html += '<button class="brow' + (x.d < 5 ? ' hl' : '') + '" data-i="' + x.i + '"><div class="top"><b>' + esc(x.sym) + '</b>' +
+      dHtml += '<button class="brow' + (x.d < 5 ? ' hl' : '') + '" data-i="' + x.i + '"><div class="top"><b>' + esc(x.sym) + '</b>' +
         '<div class="prices"><span>CMP <em>₹' + fmt(x.price) + '</em></span><span class="buy">Buy <em>₹' + fmt(x.alert) + '</em></span></div></div>' +
         '<div class="bar2"><div class="btrack"><div class="fill" style="left:' + left.toFixed(1) + '%;width:' + width.toFixed(1) + '%;background:' + col + '"></div><div class="zero" style="left:calc(' + zeroAt + '% - 1px)"></div></div>' +
         '<div class="val" style="color:' + col + '">' + (x.d >= 0 ? '+' : '') + x.d.toFixed(2) + '%</div></div></button>';
     });
-    html += '</div>';
+    dHtml += '</div>';
     }
+    var nT = tg.length + noT.length, nD = items.length;
+    var gT = tg.filter(function (r) { return r.left != null && r.left < 5; }).length, gD = items.filter(function (x) { return x.d < 5; }).length;
+    var badge = function (n) { return n ? ' <span class="gb">' + n + '</span>' : ''; };
+    html += '<div class="wtabs dtabs"><button data-dt="target" class="' + (dtab === 'target' ? 'on' : '') + '">% Target left (' + nT + ')' + badge(gT) + '</button>' +
+      '<button data-dt="dist" class="' + (dtab === 'dist' ? 'on' : '') + '">Distance from buy (' + nD + ')' + badge(gD) + '</button></div>';
+    html += dtab === 'dist' ? dHtml : tgHtml;
     html += '<p style="font-size:11px;color:var(--mut);text-align:center;margin:14px 8px;line-height:1.5">CMP = current market price. % Target left = how much the price still has to rise to reach your target (My Stocks). Buy = your alert price. Prices update Mon–Fri, 9:00 AM – 3:30 PM. Tap a row to edit it.</p>';
     el.innerHTML = html;
+    Array.prototype.forEach.call(el.querySelectorAll('.dtabs button'), function (b) {
+      b.onclick = function () { dtab = b.dataset.dt; try { localStorage.setItem('dtab', dtab); } catch (e) { } renderDashboard(); window.scrollTo(0, 0); };
+    });
     Array.prototype.forEach.call(el.querySelectorAll('.seg button'), function (b) {
       b.onclick = function () { if (b.parentNode.dataset.g === 't') tsort = b.dataset.s; else dsort = b.dataset.s; renderDashboard(); };
     });
