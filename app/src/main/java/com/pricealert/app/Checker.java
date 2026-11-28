@@ -41,6 +41,8 @@ public final class Checker {
             if (!sym.isEmpty()) syms.add(sym);
         }
 
+        syms.add("NIFTY");                       // always shown at the top of Dashboard / Watchlist
+        syms.add("BANKNIFTY");
         Result r = new Result();
         r.asked = syms.size();
         Map<String, PriceFetcher.Quote> got = PriceFetcher.fetchAll(syms);
