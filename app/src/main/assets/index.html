@@ -618,7 +618,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
 
       <button class="btn" id="testBtn">Send test notification</button>
       <button class="btn" id="chanBtn" style="margin-top:8px">Notification sound &amp; style settings</button>
-      <p style="font-size:11px;color:var(--mut);text-align:center;margin:16px 8px;line-height:1.5">Wealthora v2.4 · Prices may be delayed. Not investment advice.</p>
+      <p style="font-size:11px;color:var(--mut);text-align:center;margin:16px 8px;line-height:1.5">Wealthora v2.5 · Prices may be delayed. Not investment advice.</p>
     </section>
   </main>
 
@@ -993,6 +993,19 @@ nav.bot button.on{color:var(--acc);font-weight:600}
   }
   function kindColor(k) { return k === 'hit' ? '#F87171' : k === 'near' ? '#FCD34D' : k === 'paused' ? '#A5B4FC' : '#38BDF8'; }
 
+  // Closeness bar: full = at the target / buy price, shorter = further away. Same scale for every row in a list.
+  function niceScale(vals) {
+    var m = Math.max.apply(null, vals.filter(function (v) { return v > 0; }).concat([0]));
+    var st = [5, 10, 15, 20, 25, 30, 40, 50];
+    for (var k = 0; k < st.length; k++) if (m <= st[k]) return st[k];
+    return 50;
+  }
+  function closeFill(v, sc) { return v <= 0 ? 100 : Math.max(4, (1 - Math.min(v, sc) / sc) * 100); }
+  function scaleRow(sc, end) {
+    return '<div class="scale"><div class="sp"></div><div class="st"><span style="left:0;transform:none">' + sc + '%+ away</span>' +
+      '<span style="left:50%">' + (sc / 2) + '%</span><span class="r" style="left:100%">' + end + '</span></div><div class="sv"></div></div>';
+  }
+
   function renderDashboard() {
     var el = $('dash'), html = '';
     // ---- % target left (My Stocks / Portfolio) ----
@@ -1004,8 +1017,6 @@ nav.bot button.on{color:var(--acc);font-weight:600}
       if (!(r.target > 0)) { noT.push(r); return; }
       if (!q) { r.left = null; tg.push(r); return; }
       r.left = (r.target - q.price) / q.price * 100;
-      var span = r.target - r.buy;
-      r.prog = q.price >= r.target ? 100 : span > 0 ? Math.max(2, Math.min(100, (q.price - r.buy) / span * 100)) : 2;
       tg.push(r);
     });
     tg.sort(function (a, b) {
@@ -1016,12 +1027,15 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     tgHtml += '<div class="dlist"><div class="dhead"><b>% Target left</b><div class="seg" data-g="t">' +
       '<button data-s="near" class="' + (tsort === 'near' ? 'on' : '') + '">Smallest</button><button data-s="az" class="' + (tsort === 'az' ? 'on' : '') + '">A–Z</button></div></div>' +
       '<div class="hlnote"><i></i>Green = less than 5% left to target (or target reached)</div>';
+    var tsc = niceScale(tg.map(function (r) { return r.left == null ? 0 : r.left; }));
+    tg.forEach(function (r) { r.prog = r.left == null ? 0 : closeFill(r.left, tsc); });
+    if (tg.some(function (r) { return r.left != null; })) tgHtml += scaleRow(tsc, 'Target');
     if (!tg.length && !noT.length) {
       tgHtml += '<div class="dempty" style="margin:6px 0">No stocks in your portfolio yet.<br><button id="goMy">Add stocks in My Stocks</button></div>';
     }
     tg.forEach(function (r) {
       var hit = r.q && r.q.price >= r.target, hl = r.left != null && r.left < 5;
-      var col = hit ? '#34D399' : '#FCD34D';
+      var col = hl ? '#34D399' : '#FCD34D';
       tgHtml += '<button class="brow t' + (hl ? ' hl' : '') + '" data-h="' + r.i + '"><div class="top"><b>' + esc(r.sym) + '</b>' +
         (multi ? '<span class="tag2" style="background:' + acctColor(r.acct) + '">' + esc(acctName(r.acct)) + '</span>' : '') +
         '<div class="prices"><span>CMP <em>' + (r.q ? '₹' + fmt(r.q.price) : '—') + '</em></span><span class="buy">Target <em>₹' + fmt(r.target) + '</em></span></div></div>' +
@@ -1049,26 +1063,15 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     var list = items.slice();
     if (dsort === 'az') list.sort(function (a, b) { return a.sym < b.sym ? -1 : 1; });
     else list.sort(function (a, b) { return a.d - b.d; });
-    var maxPos = Math.max(5, Math.ceil(Math.max.apply(null, list.map(function (x) { return x.d; }))));
-    maxPos = Math.min(maxPos, 30);
-    var minNeg = Math.min(0, Math.min.apply(null, list.map(function (x) { return x.d; })));
-    var negSpan = minNeg < 0 ? Math.max(2, Math.ceil(-minNeg)) : 0;
-    var zeroAt = negSpan ? 18 : 3;           // % of track width used for "below alert"
+    var dsc = niceScale(list.map(function (x) { return x.d; }));
     dHtml += '<div class="dlist"><div class="dhead"><b>Distance from buy price</b><div class="seg" data-g="d">' +
       '<button data-s="near" class="' + (dsort === 'near' ? 'on' : '') + '">Closest</button><button data-s="az" class="' + (dsort === 'az' ? 'on' : '') + '">A–Z</button></div></div>' +
-      '<div class="hlnote"><i></i>Green = less than 5% above buy price (or below it)</div>' +
-      '<div class="scale"><div class="sp"></div><div class="st">' +
-      (negSpan ? '<span style="left:0;transform:none">−' + negSpan + '%</span>' : '') +
-      '<span style="left:' + zeroAt + '%">buy</span>' +
-      '<span style="left:' + (zeroAt + (100 - zeroAt) / 2) + '%">+' + (maxPos / 2) + '%</span>' +
-      '<span class="r" style="left:100%">+' + maxPos + '%</span></div><div class="sv"></div></div>';
+      '<div class="hlnote"><i></i>Green = less than 5% above buy price (or below it)</div>' + scaleRow(dsc, 'Buy price');
     list.forEach(function (x) {
-      var col = kindColor(x.kind), left, width;
-      if (x.d >= 0) { left = zeroAt; width = Math.max(1.5, Math.min(1, x.d / maxPos) * (100 - zeroAt)); }
-      else { width = Math.min(1, -x.d / negSpan) * zeroAt; left = zeroAt - width; }
+      var col = x.d < 5 ? '#34D399' : kindColor(x.kind), left = 0, width = closeFill(x.d, dsc);
       dHtml += '<button class="brow' + (x.d < 5 ? ' hl' : '') + '" data-i="' + x.i + '"><div class="top"><b>' + esc(x.sym) + '</b>' +
         '<div class="prices"><span>CMP <em>₹' + fmt(x.price) + '</em></span><span class="buy">Buy <em>₹' + fmt(x.alert) + '</em></span></div></div>' +
-        '<div class="bar2"><div class="btrack"><div class="fill" style="left:' + left.toFixed(1) + '%;width:' + width.toFixed(1) + '%;background:' + col + '"></div><div class="zero" style="left:calc(' + zeroAt + '% - 1px)"></div></div>' +
+        '<div class="bar2"><div class="btrack"><div class="fill" style="left:' + left.toFixed(1) + '%;width:' + width.toFixed(1) + '%;background:' + col + '"></div></div>' +
         '<div class="val" style="color:' + col + '">' + (x.d >= 0 ? '+' : '') + x.d.toFixed(2) + '%</div></div></button>';
     });
     dHtml += '</div>';
