@@ -308,6 +308,16 @@ nav.bot button.on{color:var(--acc);font-weight:600}
 .acadd input{flex:1;min-width:0;height:44px;border-radius:12px;border:1px dashed #1E3A5F;background:var(--bg);padding:0 12px;font-size:14px}
 .acadd button{height:44px;border-radius:12px;border:0;background:var(--acc);color:#0A0F1C;font-weight:700;padding:0 16px}
 .acgrid{display:grid;gap:8px;margin-bottom:14px}
+.fno{display:inline-block;font-size:9.5px;font-weight:800;letter-spacing:.3px;color:#0A0F1C;background:#FB923C;border-radius:5px;padding:1px 5px;margin-left:6px;vertical-align:2px;font-family:inherit}
+.tychips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px;margin:0 0 12px}
+.tychips button{height:34px;border:0;border-radius:9px;background:transparent;color:var(--mut);font-size:12.5px;font-weight:700}
+.tychips button.on{background:#E6EAF2;color:#0A0F1C}
+.tychips button.on.f{background:#FB923C}
+.fnosw{display:flex;align-items:center;gap:4px;margin-top:6px}
+.fnosw span{font-size:11px;color:var(--mut);font-weight:600;margin-right:2px}
+.fnosw button{height:26px;min-width:46px;border-radius:999px;border:1px solid var(--line2);background:transparent;color:var(--mut);font-size:11.5px;font-weight:700;padding:0 10px}
+.fnosw button.on{background:#E6EAF2;border-color:#E6EAF2;color:#0A0F1C}
+.fnosw button.on.y{background:#FB923C;border-color:#FB923C}
 .accard{display:flex;align-items:center;gap:10px;width:100%;text-align:left;color:inherit;border-radius:14px;padding:12px 14px;border:1px solid var(--line);background:var(--card);cursor:pointer}
 .accard .abar{width:5px;align-self:stretch;border-radius:4px;flex-shrink:0}
 .accard .an{flex:1;min-width:0}
@@ -618,7 +628,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
 
       <button class="btn" id="testBtn">Send test notification</button>
       <button class="btn" id="chanBtn" style="margin-top:8px">Notification sound &amp; style settings</button>
-      <p style="font-size:11px;color:var(--mut);text-align:center;margin:16px 8px;line-height:1.5">Wealthora v2.5 · Prices may be delayed. Not investment advice.</p>
+      <p style="font-size:11px;color:var(--mut);text-align:center;margin:16px 8px;line-height:1.5">Wealthora v2.6 · Prices may be delayed. Not investment advice.</p>
     </section>
   </main>
 
@@ -1006,6 +1016,18 @@ nav.bot button.on{color:var(--acc);font-weight:600}
       '<span style="left:50%">' + (sc / 2) + '%</span><span class="r" style="left:100%">' + end + '</span></div><div class="sv"></div></div>';
   }
 
+  function isFno(h) { return !!(h && (h.fno === true || h.fno === 1 || /^y/i.test(String(h.fno || '')))); }
+  function fnoTag(f) { return f ? '<span class="fno">F&amp;O</span>' : ''; }
+  function tyChips(cur, nAll, nS, nF, attr) {
+    return '<div class="tychips">' +
+      '<button ' + attr + '="all" class="' + (cur === 'all' ? 'on' : '') + '">All (' + nAll + ')</button>' +
+      '<button ' + attr + '="stock" class="' + (cur === 'stock' ? 'on' : '') + '">Stocks (' + nS + ')</button>' +
+      '<button ' + attr + '="fno" class="f' + (cur === 'fno' ? ' on' : '') + '">F&amp;O (' + nF + ')</button></div>';
+  }
+  function fnoSwitch(on, cls) {
+    return '<div class="fnosw ' + (cls || '') + '"><span>F&amp;O?</span><button type="button" data-f="0" class="' + (on ? '' : 'on') + '">No</button><button type="button" data-f="1" class="y' + (on ? ' on' : '') + '">Yes</button></div>';
+  }
+
   function renderDashboard() {
     var el = $('dash'), html = '';
     // ---- % target left (My Stocks / Portfolio) ----
@@ -1247,6 +1269,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
 
 
   // ---------- realised (Google Sheet) ----------
+  var rtype = 'all';
   var rper = 'fy', racct = 'all', rsort = 'date', rdir = -1, rfrom = '', rto = '', rbusy = false;
   var MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   function p2(n) { return (n < 10 ? '0' : '') + n; }
@@ -1297,7 +1320,9 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     var all = R.rows || [], rg = rRange(), acs = rAccts(all);
     if (racct !== 'all' && acs.indexOf(racct) < 0) racct = 'all';
     var inR = all.filter(function (r) { return r.date >= rg.f && r.date <= rg.t; });
-    var rows = racct === 'all' ? inR : inR.filter(function (r) { return r.acct === racct; });
+    var rowsA = racct === 'all' ? inR : inR.filter(function (r) { return r.acct === racct; });
+    var rows = rtype === 'all' ? rowsA : rowsA.filter(function (r) { return rtype === 'fno' ? r.fno : !r.fno; });
+    var nRF = rowsA.filter(function (r) { return r.fno; }).length;
     var col = function (a) { var k = acs.indexOf(a); return ACOL[(k < 0 ? 0 : k) % ACOL.length]; };
     var y = fyStart(new Date());
     var h = '';
@@ -1320,25 +1345,38 @@ nav.bot button.on{color:var(--acc);font-weight:600}
       acs.forEach(function (a) { h += '<button data-a="' + esc(a) + '" class="' + (racct === a ? 'on' : '') + '">' + esc(a) + '</button>'; });
       h += '</div>';
     }
+    if (rowsA.length) h += tyChips(rtype, rowsA.length, rowsA.length - nRF, nRF, 'data-ty');
     if (!rows.length) {
-      h += '<div class="dempty" style="margin-top:8px">No realised trades ' + (racct === 'all' ? '' : 'in ' + esc(racct) + ' ') + (rper === 'all' ? 'yet.' : 'between ' + nice(rg.f) + ' and ' + nice(rg.t) + '.') +
+      h += '<div class="dempty" style="margin-top:8px">No realised ' + (rtype === 'fno' ? 'F&amp;O ' : rtype === 'stock' ? 'stock ' : '') + 'trades ' + (racct === 'all' ? '' : 'in ' + esc(racct) + ' ') + (rper === 'all' ? 'yet.' : 'between ' + nice(rg.f) + ' and ' + nice(rg.t) + '.') +
         (rper === 'fy' ? '<br><button id="rLfy">Show last FY (' + fyName(y - 1) + ')</button>' : '') + '</div>';
       el.innerHTML = h; bindReal(); renderRAdd(); return;
     }
     var t = rTot(rows), up = t.pl >= 0, c = up ? '#34D399' : '#F87171';
     // hero
-    h += '<div class="phero rhero ' + (up ? 'g' : 'r') + '"><div class="lbl">REALISED P&amp;L · ' + (racct === 'all' ? (acs.length > 1 ? 'CONSOLIDATED' : esc(acs[0] || '')) : esc(racct)) + ' · ' + esc(rper === 'cus' ? 'CUSTOM' : rg.name.toUpperCase()) + '</div>' +
+    h += '<div class="phero rhero ' + (up ? 'g' : 'r') + '"><div class="lbl">REALISED P&amp;L · ' + (rtype === 'fno' ? 'F&amp;O · ' : rtype === 'stock' ? 'STOCKS · ' : '') + (racct === 'all' ? (acs.length > 1 ? 'CONSOLIDATED' : esc(acs[0] || '')) : esc(racct)) + ' · ' + esc(rper === 'cus' ? 'CUSTOM' : rg.name.toUpperCase()) + '</div>' +
       '<div class="big" style="color:' + c + '">' + signed(t.pl) + '</div>' +
       '<div class="pnl" style="color:' + c + '"><span class="pchip" style="background:' + c + '">' + (t.ret >= 0 ? '+' : '') + t.ret.toFixed(2) + '%</span><span style="font-size:11.5px;color:var(--mut);font-family:inherit;font-weight:600">return on buy value · ' + t.n + ' trade' + (t.n === 1 ? '' : 's') + '</span></div>' +
       '<div class="stats"><div><small>Total profit</small><b class="g1">' + signed(Math.round(t.gp)).replace('.00', '') + '</b></div><div><small>Total loss</small><b class="r1">' + signed(Math.round(t.gl)).replace('.00', '') + '</b></div><div><small>Win rate</small><b>' + Math.round(t.win / t.n * 100) + '%</b></div>' +
       '<div><small>Buy value</small><b>₹' + compact(t.cost) + '</b></div><div><small>Sell value</small><b>₹' + compact(t.sale) + '</b></div><div><small>Avg / trade</small><b style="color:' + c + '">' + signed(Math.round(t.pl / t.n)).replace('.00', '') + '</b></div></div>' +
       '<div class="wl"><i style="width:' + (t.win / t.n * 100) + '%;background:#34D399"></i><i style="width:' + (t.loss / t.n * 100) + '%;background:#F87171"></i></div>' +
       '<div class="wlt"><span class="g1">' + t.win + ' profitable</span><span class="r1">' + t.loss + ' in loss</span></div></div>';
+    // stocks vs F&O
+    if (rtype === 'all' && nRF) {
+      h += '<div class="dcard" style="margin-bottom:12px"><h4>Stocks vs F&amp;O · tap to open</h4><div class="acgrid" style="margin:0">';
+      [['stock', 'Stocks (delivery)', '#38BDF8', false], ['fno', 'F&amp;O', '#FB923C', true]].forEach(function (k) {
+        var at = rTot(rows.filter(function (r) { return !!r.fno === k[3]; }));
+        var cc = at.pl >= 0 ? '#34D399' : '#F87171';
+        h += '<button class="accard" data-ty="' + k[0] + '"><span class="abar" style="background:' + k[2] + '"></span>' +
+          '<div class="an"><b>' + k[1] + '</b><small>' + at.n + ' trade' + (at.n === 1 ? '' : 's') + (at.n ? ' · ' + Math.round(at.win / at.n * 100) + '% wins' : '') + '</small></div>' +
+          '<div class="av"><b style="color:' + (at.n ? cc : 'var(--mut)') + '">' + (at.n ? signed(at.pl) : '—') + '</b><small style="color:' + cc + '">' + (at.n ? (at.ret >= 0 ? '+' : '') + at.ret.toFixed(2) + '%' : 'no trades') + '</small></div></button>';
+      });
+      h += '</div></div>';
+    }
     // per account
     if (racct === 'all' && acs.length > 1) {
       h += '<div class="dcard" style="margin-bottom:12px"><h4>By account · tap to open</h4><div class="acgrid" style="margin:0">';
       acs.forEach(function (a) {
-        var at = rTot(inR.filter(function (r) { return r.acct === a; }));
+        var at = rTot(inR.filter(function (r) { return r.acct === a && (rtype === 'all' || (rtype === 'fno') === !!r.fno); }));
         var cc = at.pl >= 0 ? '#34D399' : '#F87171';
         h += '<button class="accard" data-a="' + esc(a) + '"><span class="abar" style="background:' + col(a) + '"></span>' +
           '<div class="an"><b>' + esc(a) + '</b><small>' + at.n + ' trade' + (at.n === 1 ? '' : 's') + (at.n ? ' · ' + Math.round(at.win / at.n * 100) + '% wins' : '') + '</small></div>' +
@@ -1348,13 +1386,13 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     }
     // by stock
     var bs = {};
-    rows.forEach(function (r) { var o = bs[r.stock] || (bs[r.stock] = { s: r.stock, pl: 0, n: 0 }); o.pl += r.pl; o.n++; });
+    rows.forEach(function (r) { var key = r.stock + (r.fno ? '|F' : ''); var o = bs[key] || (bs[key] = { s: r.stock, f: !!r.fno, pl: 0, n: 0 }); o.pl += r.pl; o.n++; });
     var sl = Object.keys(bs).map(function (k) { return bs[k]; }).sort(function (a, b) { return b.pl - a.pl; });
     var smx = Math.max.apply(null, sl.map(function (o) { return Math.abs(o.pl); }).concat([1]));
     h += '<div class="dcard" style="margin-bottom:12px"><h4>By stock · ' + sl.length + ' stock' + (sl.length === 1 ? '' : 's') + '</h4>';
     sl.forEach(function (o) {
       var w = (Math.abs(o.pl) / smx * 100).toFixed(1) + '%';
-      h += '<div class="rstk"><div class="n"><b>' + esc(o.s) + '</b><small>' + o.n + ' trade' + (o.n === 1 ? '' : 's') + '</small></div>' +
+      h += '<div class="rstk"><div class="n"><b>' + esc(o.s) + fnoTag(o.f) + '</b><small>' + o.n + ' trade' + (o.n === 1 ? '' : 's') + '</small></div>' +
         '<div class="bw"><div class="h l">' + (o.pl < 0 ? '<i style="width:' + w + ';background:#F87171"></i>' : '') + '</div><div class="h">' + (o.pl >= 0 ? '<i style="width:' + w + ';background:#34D399"></i>' : '') + '</div></div>' +
         '<div class="v ' + (o.pl >= 0 ? 'g1' : 'r1') + '">' + signed(o.pl).replace('.00', '') + '</div></div>';
     });
@@ -1370,7 +1408,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     });
     tr.forEach(function (r) {
       var pc = (r.sell - r.buy) / r.buy * 100, g = r.pl >= 0;
-      h += '<div class="rtr ' + (g ? 'g' : 'r') + '"><div class="a"><b>' + esc(r.stock) + '</b><span class="tg" style="background:' + col(r.acct) + '">' + esc(r.acct) + '</span><span class="pv ' + (g ? 'g1' : 'r1') + '">' + signed(r.pl) + '</span></div>' +
+      h += '<div class="rtr ' + (g ? 'g' : 'r') + '"><div class="a"><b>' + esc(r.stock) + fnoTag(r.fno) + '</b><span class="tg" style="background:' + col(r.acct) + '">' + esc(r.acct) + '</span><span class="pv ' + (g ? 'g1' : 'r1') + '">' + signed(r.pl) + '</span></div>' +
         '<div class="b"><span>' + nice(r.date) + '</span>·<span>₹' + fmt(r.buy) + ' → ₹' + fmt(r.sell) + ' × ' + r.qty + '</span><span class="pc ' + (g ? 'g1' : 'r1') + '">' + (pc >= 0 ? '+' : '') + pc.toFixed(2) + '%</span></div></div>';
     });
     h += '<p style="font-size:11px;color:var(--mut);text-align:center;margin:14px 8px;line-height:1.5">Financial year runs 1 April – 31 March. Totals use the Profit/Loss column of your sheet. Edit the sheet any time; the app picks up changes automatically.</p>';
@@ -1380,6 +1418,9 @@ nav.bot button.on{color:var(--acc);font-weight:600}
   }
   function bindReal() {
     var el = $('real');
+    Array.prototype.forEach.call(el.querySelectorAll('[data-ty]'), function (b) {
+      b.onclick = function () { rtype = b.dataset.ty; renderRealised(); window.scrollTo(0, 0); };
+    });
     Array.prototype.forEach.call(el.querySelectorAll('.rseg button'), function (b) {
       b.onclick = function () { rper = b.dataset.r; renderRealised(); };
     });
@@ -1410,18 +1451,18 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     };
   }
   // ---------- add a sale (writes a row to the sheet) ----------
-  var ra = { open: false, i: -1, acct: '', date: '', buy: '', sell: '', qty: '', busy: false, qd: 'today' };
+  var ra = { open: false, i: -1, acct: '', date: '', buy: '', sell: '', qty: '', busy: false, qd: 'today', fno: false };
   function raHold() { return holdings().map(function (h, i) { return { h: h, i: i }; }).filter(function (x) { return x.h.sym && x.h.qty > 0; }); }
   function raOpen(i) {
     var R = S.realised || {};
-    ra.open = true; ra.i = -1; ra.acct = accounts()[0].id; ra.date = isoD(new Date()); ra.qd = 'today'; ra.buy = ra.sell = ra.qty = '';
+    ra.open = true; ra.i = -1; ra.fno = false; ra.acct = accounts()[0].id; ra.date = isoD(new Date()); ra.qd = 'today'; ra.buy = ra.sell = ra.qty = '';
     if (i != null && i >= 0) raPick(i);
     renderRAdd();
   }
   function raPick(i) {
     var h = holdings()[i]; ra.i = i;
     if (!h) return;
-    ra.acct = acctOf(h); ra.buy = h.buy ? String(h.buy) : ''; ra.qty = h.qty ? String(h.qty) : '';
+    ra.acct = acctOf(h); ra.fno = isFno(h); ra.buy = h.buy ? String(h.buy) : ''; ra.qty = h.qty ? String(h.qty) : '';
     var q = S.quotes[h.sym]; ra.sell = q && q.price ? String(q.price) : '';
   }
   function nextSr() {
@@ -1440,7 +1481,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     if (!ra.open) { el.innerHTML = '<div class="radd">' + hd + '</div>'; $('raOpenB').onclick = function () { raOpen(); }; return; }
     var hs = raHold();
     var so = '<option value="-1">Choose from your portfolio…</option>' + hs.map(function (x) {
-      return '<option value="' + x.i + '"' + (x.i === ra.i ? ' selected' : '') + '>' + esc(x.h.sym) + ' · ' + esc(acctName(acctOf(x.h))) + ' · ' + x.h.qty + ' sh</option>';
+      return '<option value="' + x.i + '"' + (x.i === ra.i ? ' selected' : '') + '>' + esc(x.h.sym) + (isFno(x.h) ? ' · F&O' : '') + ' · ' + esc(acctName(acctOf(x.h))) + ' · ' + x.h.qty + ' sh</option>';
     }).join('');
     var ao = accounts().map(function (a) { return '<option value="' + a.id + '"' + (a.id === ra.acct ? ' selected' : '') + '>' + esc(a.name) + '</option>'; }).join('');
     var h = ra.i >= 0 ? holdings()[ra.i] : null, q = h ? S.quotes[h.sym] : null;
@@ -1448,7 +1489,8 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     var g = '<div class="g">' +
       '<label class="f w' + (ra.i < 0 ? ' need' : '') + '"><span>STOCK · from your portfolio</span><select id="raStock">' + so + '</select>' + (h ? '<div class="hint">Bought at ₹' + fmt(h.buy) + ' · holding ' + h.qty + ' shares' + (q ? ' · now ₹' + fmt(q.price) : '') + '</div>' : '') + '</label>' +
       '<label class="f"><span>ACCOUNT</span><select id="raAcct">' + ao + '</select></label>' +
-      '<label class="f"><span>DATE OF SELLING</span><div class="dt"><b class="dv">' + (ra.date ? nice(ra.date) : 'Pick date') + '</b><span class="cal" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span>' +
+      '<div class="f"><span>F&amp;O TRADE?</span>' + fnoSwitch(ra.fno, 'rafno').replace('<span>F&amp;O?</span>', '') + '</div>' +
+      '<label class="f w"><span>DATE OF SELLING</span><div class="dt"><b class="dv">' + (ra.date ? nice(ra.date) : 'Pick date') + '</b><span class="cal" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span>' +
         '<input type="date" id="raDate" value="' + ra.date + '" max="' + isoD(new Date()) + '" aria-label="Date of selling"></div></label>' +
       '<div class="f w" style="padding:6px"><div class="qd" style="margin:0">' + qd('today', 'Today') + qd('yday', 'Yesterday') + qd('pick', 'Pick a date…') + '</div></div>' +
       '<label class="f"><span>BUY PRICE ₹</span><input class="m" id="raBuy" inputmode="decimal" value="' + esc(ra.buy) + '" placeholder="0.00"></label>' +
@@ -1465,6 +1507,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     $('raClose').onclick = function () { ra.open = false; renderRAdd(); };
     $('raStock').onchange = function () { var v = +this.value; if (v >= 0) raPick(v); else ra.i = -1; renderRAdd(); };
     $('raAcct').onchange = function () { ra.acct = this.value; };
+    Array.prototype.forEach.call(el.querySelectorAll('.rafno button'), function (b) { b.onclick = function () { ra.fno = b.dataset.f === '1'; renderRAdd(); }; });
     $('raDate').onchange = function () { ra.date = this.value; var t = isoD(new Date()), y = isoD(new Date(Date.now() - 864e5)); ra.qd = ra.date === t ? 'today' : ra.date === y ? 'yday' : 'pick'; renderRAdd(); };
     var openCal = function () { var d = $('raDate'); try { d.showPicker(); } catch (e) { d.focus(); d.click(); } };
     $('raDate').onclick = function (e) { e.preventDefault(); openCal(); };
@@ -1479,10 +1522,10 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     if ($('raSetup')) $('raSetup').onclick = function () { show('settings'); setTimeout(function () { $('gsWrite').scrollIntoView({ block: 'center' }); }, 100); };
     if ($('raSave')) $('raSave').onclick = function () {
       ra.busy = true; renderRAdd();
-      A.addRealised(JSON.stringify({ stock: h.sym, acct: acctName(ra.acct), date: ra.date, buy: b, sell: sl, qty: n }));
+      A.addRealised(JSON.stringify({ stock: h.sym, acct: acctName(ra.acct), fno: ra.fno ? 'Yes' : 'No', date: ra.date, buy: b, sell: sl, qty: n }));
     };
   }
-  var HELPER = "// Wealthora helper: lets the Wealthora app add sold trades to this sheet.\n// Deploy: Deploy > New deployment > Web app. Execute as: Me. Who has access: Anyone.\nfunction doGet(e) {\n  var out;\n  try { out = run_(e && e.parameter ? e.parameter : {}); }\n  catch (err) { out = { ok: false, err: String(err && err.message ? err.message : err) }; }\n  return ContentService.createTextOutput(JSON.stringify(out)).setMimeType(ContentService.MimeType.JSON);\n}\n\nfunction run_(p) {\n  var tab = p.tab || 'Realised Trades';\n  var sh = SpreadsheetApp.getActive().getSheetByName(tab);\n  if (!sh) return { ok: false, err: 'No tab named \"' + tab + '\" in this sheet' };\n  var v = sh.getDataRange().getValues();\n  var hr = -1, c = null;\n  for (var i = 0; i < Math.min(v.length, 15) && hr < 0; i++) {\n    var m = {};\n    for (var k = 0; k < v[i].length; k++) {\n      var h = String(v[i][k]).toLowerCase().replace(/\\n/g, ' ');\n      if (!h) continue;\n      if (h.indexOf('date') >= 0) { if (m.date == null) m.date = k; }\n      else if (/profit|p&l|p\\/l|loss/.test(h)) { if (m.pl == null) m.pl = k; }\n      else if (/stock|symbol|scrip|company/.test(h)) { if (m.stock == null) m.stock = k; }\n      else if (/account|broker|demat/.test(h)) { if (m.acct == null) m.acct = k; }\n      else if (h.indexOf('buy') >= 0) { if (m.buy == null) m.buy = k; }\n      else if (/sell|sale/.test(h)) { if (m.sell == null) m.sell = k; }\n      else if (/qty|quantity|shares/.test(h)) { if (m.qty == null) m.qty = k; }\n      else if (/\\bsr\\b|serial|\\bs\\.? ?no\\b/.test(h)) { if (m.sr == null) m.sr = k; }\n    }\n    if (m.stock != null && m.date != null) { hr = i; c = m; }\n  }\n  if (hr < 0) return { ok: false, err: 'Could not find the headings (Stock Name, Date of Selling...) in \"' + tab + '\"' };\n  var last = hr, maxSr = 0;\n  for (var r = hr + 1; r < v.length; r++) {\n    if (String(v[r][c.stock]).trim() !== '') {\n      last = r;\n      if (c.sr != null) { var n = parseFloat(v[r][c.sr]); if (!isNaN(n) && n > maxSr) maxSr = n; }\n    }\n  }\n  if (p.action === 'test') return { ok: true, last: maxSr, rows: last - hr };\n  if (p.action !== 'add') return { ok: false, err: 'Unknown action' };\n\n  var stock = String(p.stock || '').trim().toUpperCase();\n  var buy = parseFloat(p.buy), sell = parseFloat(p.sell), qty = parseFloat(p.qty);\n  var dm = /^(\\d{4})-(\\d{2})-(\\d{2})$/.exec(p.date || '');\n  if (!stock || !dm || isNaN(buy) || isNaN(sell) || isNaN(qty) || qty <= 0) return { ok: false, err: 'Some details are missing' };\n\n  var lock = LockService.getDocumentLock();\n  lock.waitLock(20000);\n  try {\n    var width = sh.getLastColumn();\n    var row = last + 2;                       // 1-based row just below the last entry\n    var below = row <= sh.getLastRow() ? sh.getRange(row, 1, 1, width).getValues()[0].join('') : '';\n    if (below !== '') sh.insertRowAfter(row - 1);\n    var prev = sh.getRange(row - 1, 1, 1, width), dest = sh.getRange(row, 1, 1, width);\n    if (last > hr) prev.copyTo(dest, SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);\n    var sr = maxSr + 1;\n    var set = function (col, val) { if (col != null) sh.getRange(row, col + 1).setValue(val); };\n    set(c.sr, sr);\n    set(c.stock, stock);\n    set(c.acct, p.acct || '');\n    var pd = last > hr ? v[last][c.date] : null;\n    set(c.date, pd instanceof Date || last === hr ? new Date(+dm[1], +dm[2] - 1, +dm[3]) : dm[3] + '-' + dm[2] + '-' + dm[1]);\n    set(c.buy, buy);\n    set(c.sell, sell);\n    set(c.qty, qty);\n    if (c.pl != null) {\n      var f = last > hr ? sh.getRange(row - 1, c.pl + 1).getFormulaR1C1() : '';\n      if (f) sh.getRange(row, c.pl + 1).setFormulaR1C1(f);\n      else sh.getRange(row, c.pl + 1).setValue(Math.round((sell - buy) * qty * 100) / 100);\n    }\n    SpreadsheetApp.flush();\n    return { ok: true, sr: sr, row: row };\n  } finally {\n    lock.releaseLock();\n  }\n}\n";
+  var HELPER = "// Wealthora helper v2 (F&O): lets the Wealthora app add sold trades to this sheet.\n// Deploy: Deploy > New deployment > Web app. Execute as: Me. Who has access: Anyone.\nfunction doGet(e) {\n  var out;\n  try { out = run_(e && e.parameter ? e.parameter : {}); }\n  catch (err) { out = { ok: false, err: String(err && err.message ? err.message : err) }; }\n  return ContentService.createTextOutput(JSON.stringify(out)).setMimeType(ContentService.MimeType.JSON);\n}\n\nfunction run_(p) {\n  var tab = p.tab || 'Realised Trades';\n  var sh = SpreadsheetApp.getActive().getSheetByName(tab);\n  if (!sh) return { ok: false, err: 'No tab named \"' + tab + '\" in this sheet' };\n  var v = sh.getDataRange().getValues();\n  var hr = -1, c = null;\n  for (var i = 0; i < Math.min(v.length, 15) && hr < 0; i++) {\n    var m = {};\n    for (var k = 0; k < v[i].length; k++) {\n      var h = String(v[i][k]).toLowerCase().replace(/\\n/g, ' ');\n      if (!h) continue;\n      if (/f\\s*&\\s*o|^fno$|futures/.test(h)) { if (m.fno == null) m.fno = k; }\n      else if (h.indexOf('date') >= 0) { if (m.date == null) m.date = k; }\n      else if (/profit|p&l|p\\/l|loss/.test(h)) { if (m.pl == null) m.pl = k; }\n      else if (/stock|symbol|scrip|company/.test(h)) { if (m.stock == null) m.stock = k; }\n      else if (/account|broker|demat/.test(h)) { if (m.acct == null) m.acct = k; }\n      else if (h.indexOf('buy') >= 0) { if (m.buy == null) m.buy = k; }\n      else if (/sell|sale/.test(h)) { if (m.sell == null) m.sell = k; }\n      else if (/qty|quantity|shares/.test(h)) { if (m.qty == null) m.qty = k; }\n      else if (/\\bsr\\b|serial|\\bs\\.? ?no\\b/.test(h)) { if (m.sr == null) m.sr = k; }\n    }\n    if (m.stock != null && m.date != null) { hr = i; c = m; }\n  }\n  if (hr < 0) return { ok: false, err: 'Could not find the headings (Stock Name, Date of Selling...) in \"' + tab + '\"' };\n  var last = hr, maxSr = 0;\n  for (var r = hr + 1; r < v.length; r++) {\n    if (String(v[r][c.stock]).trim() !== '') {\n      last = r;\n      if (c.sr != null) { var n = parseFloat(v[r][c.sr]); if (!isNaN(n) && n > maxSr) maxSr = n; }\n    }\n  }\n  if (p.action === 'test') return { ok: true, last: maxSr, rows: last - hr };\n  if (p.action !== 'add') return { ok: false, err: 'Unknown action' };\n\n  var stock = String(p.stock || '').trim().toUpperCase();\n  var buy = parseFloat(p.buy), sell = parseFloat(p.sell), qty = parseFloat(p.qty);\n  var dm = /^(\\d{4})-(\\d{2})-(\\d{2})$/.exec(p.date || '');\n  if (!stock || !dm || isNaN(buy) || isNaN(sell) || isNaN(qty) || qty <= 0) return { ok: false, err: 'Some details are missing' };\n\n  var lock = LockService.getDocumentLock();\n  lock.waitLock(20000);\n  try {\n    var width = sh.getLastColumn();\n    var row = last + 2;                       // 1-based row just below the last entry\n    var below = row <= sh.getLastRow() ? sh.getRange(row, 1, 1, width).getValues()[0].join('') : '';\n    if (below !== '') sh.insertRowAfter(row - 1);\n    var prev = sh.getRange(row - 1, 1, 1, width), dest = sh.getRange(row, 1, 1, width);\n    if (last > hr) prev.copyTo(dest, SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);\n    var sr = maxSr + 1;\n    var set = function (col, val) { if (col != null) sh.getRange(row, col + 1).setValue(val); };\n    set(c.sr, sr);\n    set(c.stock, stock);\n    set(c.acct, p.acct || '');\n    set(c.fno, /^y/i.test(p.fno || '') ? 'Yes' : 'No');\n    var pd = last > hr ? v[last][c.date] : null;\n    set(c.date, pd instanceof Date || last === hr ? new Date(+dm[1], +dm[2] - 1, +dm[3]) : dm[3] + '-' + dm[2] + '-' + dm[1]);\n    set(c.buy, buy);\n    set(c.sell, sell);\n    set(c.qty, qty);\n    if (c.pl != null) {\n      var f = last > hr ? sh.getRange(row - 1, c.pl + 1).getFormulaR1C1() : '';\n      if (f) sh.getRange(row, c.pl + 1).setFormulaR1C1(f);\n      else sh.getRange(row, c.pl + 1).setValue(Math.round((sell - buy) * qty * 100) / 100);\n    }\n    SpreadsheetApp.flush();\n    return { ok: true, sr: sr, row: row };\n  } finally {\n    lock.releaseLock();\n  }\n}\n";
   var gswBusy = false, gswMsg = null;
   function renderSheetWrite() {
     var R = S.realised || {};
@@ -1533,15 +1576,16 @@ nav.bot button.on{color:var(--acc);font-weight:600}
       var seen = {};
       holdings().forEach(function (h, i) {
         if (!h.sym || !(h.qty > 0)) return;
-        if (seen[h.sym]) {                 // same stock in two accounts: show once, average buy price
-          var m = seen[h.sym];
+        var key = h.sym + (isFno(h) ? '|F' : '');
+        if (seen[key]) {                 // same stock in two accounts: show once, average buy price
+          var m = seen[key];
           m.buy = (m.buy * m.qty + h.buy * h.qty) / (m.qty + h.qty); m.qty += h.qty;
           return;
         }
         var q = S.quotes[h.sym];
-        seen[h.sym] = { i: i, sym: h.sym, name: q && q.name ? q.name : '', q: q, buy: h.buy, qty: h.qty, lbl: 'Buy',
-          p: q && q.hasChg ? q.pchg : null };
-        items.push(seen[h.sym]);
+        seen[key] = { i: i, sym: h.sym, name: q && q.name ? q.name : '', q: q, buy: h.buy, qty: h.qty, lbl: 'Buy',
+          p: q && q.hasChg ? q.pchg : null, fno: isFno(h) };
+        items.push(seen[key]);
       });
     } else {
       S.slots.forEach(function (s, i) {
@@ -1594,7 +1638,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
         var cls = x.p == null || x.p === 0 ? '' : x.p > 0 ? ' up' : ' dn';
         var pct = x.p == null ? '—' : (x.p > 0 ? '+' : '') + x.p.toFixed(2) + '%';
         var chg = x.q && x.q.hasChg ? (x.q.chg >= 0 ? '+' : '') + fmt(x.q.chg) : '';
-        return '<button class="wrow' + cls + '" data-i="' + x.i + '"><div class="nm"><b>' + esc(x.sym) + '</b><small>' + esc(x.name) + '</small></div>' +
+        return '<button class="wrow' + cls + '" data-i="' + x.i + '"><div class="nm"><b>' + esc(x.sym) + fnoTag(x.fno) + '</b><small>' + esc(x.name) + '</small></div>' +
           '<div class="pr"><b>' + (x.q ? '₹' + fmt(x.q.price) : '—') + '</b><small>' + x.lbl + ' <em>₹' + fmt(x.buy) + '</em></small></div>' +
           '<div class="pc">' + pct + (chg ? '<small>' + chg + '</small>' : '') + '</div></button>';
       };
@@ -1636,7 +1680,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
       html += '<div class="card hcard empty" id="h' + i + '" data-i="' + i + '">' +
         '<div class="r1"><div class="symbox"><div class="symrow"><span class="num">' + (i + 1) + '</span>' +
         '<input class="sym" maxlength="20" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="Stock (e.g. SBIN)" aria-label="Stock symbol for holding ' + (i + 1) + '">' +
-        '</div><div class="name"></div><select class="acsel" aria-label="Account for holding ' + (i + 1) + '"></select></div>' +
+        '</div><div class="name"></div><select class="acsel" aria-label="Account for holding ' + (i + 1) + '"></select>' + fnoSwitch(false, 'hfno') + '</div>' +
         '<div class="px"><div class="ltp">—</div><div class="pl"></div></div></div>' +
         '<div class="r2"><label class="ap"><span>Buy ₹</span><input class="hb" inputmode="decimal" placeholder="0.00" aria-label="Buy price for holding ' + (i + 1) + '"></label>' +
         '<label class="ap qty"><span>Qty</span><input class="hq" inputmode="numeric" placeholder="0" aria-label="Quantity for holding ' + (i + 1) + '"></label></div>' +
@@ -1659,10 +1703,23 @@ nav.bot button.on{color:var(--acc);font-weight:600}
       c.querySelector('.hq').addEventListener('input', function () { hDirty(i); });
       c.querySelector('.ht').addEventListener('input', function () { hDirty(i); });
       c.querySelector('.acsel').addEventListener('change', function () { hDirty(i); });
+      Array.prototype.forEach.call(c.querySelectorAll('.hfno button'), function (b) {
+        b.addEventListener('click', function () {
+          var on = b.dataset.f === '1', h0 = holdings()[i] || {};
+          setFnoUI(c, on);
+          if (h0.sym && !hdirty[i]) { h0.fno = on; A.setHoldingFno(i, on); toast(h0.sym + (on ? ' marked as F&O' : ' marked as a normal stock')); render(); }
+          else hDirty(i);
+        });
+      });
       c.querySelector('.set').addEventListener('click', function () { saveHolding(i); });
       c.querySelector('.clr').addEventListener('click', function () { clearHolding(i); });
     });
   }
+  function setFnoUI(c, on) {
+    var bs = c.querySelectorAll('.hfno button');
+    bs[0].className = on ? '' : 'on'; bs[1].className = 'y' + (on ? ' on' : '');
+  }
+  function fnoUI(c) { return c.querySelector('.hfno button.y').classList.contains('on'); }
   function hDirty(i) {
     hdirty[i] = true;
     var b = $('h' + i).querySelector('.set');
@@ -1675,21 +1732,22 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     var buy = c.querySelector('.hb').value.trim().replace(/,/g, '');
     var qty = c.querySelector('.hq').value.trim().replace(/,/g, '');
     var tgt = c.querySelector('.ht').value.trim().replace(/,/g, '');
-    var acct = c.querySelector('.acsel').value;
+    var acct = c.querySelector('.acsel').value, fno = fnoUI(c);
     if (!sym) { toast('Type a stock symbol first', true); return; }
     if (!/^[A-Z0-9&\-_.]{1,20}$/.test(sym)) { toast('Use the NSE symbol, e.g. SBIN or M&M', true); return; }
     if (!(+buy > 0)) { toast('Enter your buy price', true); return; }
     if (!(+qty > 0) || Math.floor(+qty) !== +qty) { toast('Enter a whole-number quantity', true); return; }
     if (tgt && !(+tgt > 0)) { toast('Enter a valid target price, or leave it empty', true); return; }
     var dupe = -1;
-    holdings().forEach(function (h, k) { if (k !== i && h.sym === sym && acctOf(h) === acct) dupe = k; });
-    if (dupe >= 0) { toast(sym + ' is already in ' + acctName(acct) + ' (slot ' + (dupe + 1) + ')', true); return; }
+    holdings().forEach(function (h, k) { if (k !== i && h.sym === sym && acctOf(h) === acct && isFno(h) === fno) dupe = k; });
+    if (dupe >= 0) { toast(sym + (fno ? ' (F&O)' : '') + ' is already in ' + acctName(acct) + ' (slot ' + (dupe + 1) + ')', true); return; }
     hbusy[i] = true;
     var b = c.querySelector('.set');
     b.disabled = true;
     b.textContent = 'Checking…';
     A.saveHolding(i, sym, buy, qty, tgt || '0', acct);
-    S.holdings[i] = { sym: sym, buy: +buy, qty: +qty, target: +tgt || 0, acct: acct };
+    A.setHoldingFno(i, fno);
+    S.holdings[i] = { sym: sym, buy: +buy, qty: +qty, target: +tgt || 0, acct: acct, fno: fno };
     delete hdirty[i];
   }
   function clearHolding(i) {
@@ -1731,6 +1789,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
       var sel = c.querySelector('.acsel');
       if (sel.dataset.opts !== opts) { var keep = sel.value; sel.innerHTML = opts; sel.dataset.opts = opts; if (keep) sel.value = keep; }
       if (!hdirty[i] && act !== sel) sel.value = h.sym ? acctOf(h) : (myAcct !== 'all' ? myAcct : acs[0].id);
+      if (!hdirty[i]) setFnoUI(c, isFno(h));
       sel.style.display = acs.length > 1 || h.sym ? '' : 'none';
       c.style.display = (myAcct === 'all' || !h.sym || acctOf(h) === myAcct) ? '' : 'none';
       var q = h.sym ? S.quotes[h.sym] : null;
@@ -1810,7 +1869,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
   function holdingRow(r, total) {
     var c = r.pl == null ? '' : r.pl > 0 ? ' g' : r.pl < 0 ? ' r' : '';
     return '<button class="prow' + c + (popen[r.i] ? ' open' : '') + '" data-i="' + r.i + '"><div class="l1">' +
-      '<div class="nm"><b>' + esc(r.sym) + '</b><small>' + r.qty + ' × ₹' + fmt(r.buy) + '</small></div>' +
+      '<div class="nm"><b>' + esc(r.sym) + fnoTag(r.fno) + '</b><small>' + r.qty + ' × ₹' + fmt(r.buy) + '</small></div>' +
       '<div class="val"><b>' + (r.q ? '₹' + fmt(r.q.price) : '—') + '</b><small>' + (r.cur != null ? money(r.cur) : '') + '</small></div>' +
       '<div class="pp">' + (r.plp == null ? '—' : (r.plp >= 0 ? '+' : '') + r.plp.toFixed(2) + '%') + '<small>' + (r.pl == null ? '' : signed(r.pl)) + '</small></div></div>' +
       '<div class="more"><div><small>Invested</small><b>' + money(r.inv) + '</b></div><div><small>Current</small><b>' + (r.cur != null ? money(r.cur) : '—') + '</b></div>' +
@@ -1832,13 +1891,14 @@ nav.bot button.on{color:var(--acc);font-weight:600}
       return (x - y) * pdir;
     });
   }
+  var ptype = 'all';
   function renderPortfolio() {
     var all = [], acs = accounts();
     if (pview !== 'all' && !acs.some(function (x) { return x.id === pview; })) pview = 'all';
     holdings().forEach(function (h, i) {
       if (!h.sym || !(h.qty > 0) || !(h.buy > 0)) return;
       var q = S.quotes[h.sym];
-      var r = { i: i, sym: h.sym, qty: h.qty, buy: h.buy, target: h.target || 0, acct: acctOf(h), q: q, name: q && q.name ? q.name : '' };
+      var r = { i: i, sym: h.sym, qty: h.qty, buy: h.buy, target: h.target || 0, acct: acctOf(h), q: q, name: q && q.name ? q.name : '', fno: isFno(h) };
       r.inv = h.buy * h.qty;
       if (q) {
         r.cur = q.price * h.qty; r.pl = r.cur - r.inv; r.plp = r.pl / r.inv * 100;
@@ -1860,14 +1920,35 @@ nav.bot button.on{color:var(--acc);font-weight:600}
       acs.forEach(function (x) { html += '<button data-v="' + x.id + '" class="' + (pview === x.id ? 'on' : '') + '">' + esc(x.name) + '</button>'; });
       html += '</div>';
     }
-    var rows = pview === 'all' ? all : all.filter(function (r) { return r.acct === pview; });
+    var rowsA = pview === 'all' ? all : all.filter(function (r) { return r.acct === pview; });
+    var nPF = rowsA.filter(function (r) { return r.fno; }).length;
+    var rows = ptype === 'all' ? rowsA : rowsA.filter(function (r) { return ptype === 'fno' ? r.fno : !r.fno; });
+    html += tyChips(ptype, rowsA.length, rowsA.length - nPF, nPF, 'data-pt');
+    if (!rows.length) {
+      html += '<div class="dempty">No ' + (ptype === 'fno' ? 'F&amp;O positions' : 'stocks') + ' here yet.<br>' + (ptype === 'fno' ? 'In My Stocks, set F&amp;O? to Yes for an F&amp;O position.' : '') + '</div>';
+      el.innerHTML = html; bindPort(el); return;
+    }
     var t = sumRows(rows);
-    html += heroCard(t, pview === 'all' ? (acs.length > 1 ? 'CONSOLIDATED · ALL ' + acs.length + ' ACCOUNTS' : 'CURRENT VALUE') : esc(acctName(pview)).toUpperCase() + ' · CURRENT VALUE');
+    var tyL = ptype === 'fno' ? 'F&amp;O · ' : ptype === 'stock' ? 'STOCKS · ' : '';
+    html += heroCard(t, tyL + (pview === 'all' ? (acs.length > 1 ? 'CONSOLIDATED · ALL ' + acs.length + ' ACCOUNTS' : 'CURRENT VALUE') : esc(acctName(pview)).toUpperCase() + ' · CURRENT VALUE'));
+    if (ptype === 'all' && nPF) {
+      var tS = sumRows(rowsA.filter(function (r) { return !r.fno; })), tF = sumRows(rowsA.filter(function (r) { return r.fno; }));
+      html += '<div class="dcard" style="margin-bottom:12px"><h4>Stocks vs F&amp;O · tap to open</h4><div class="pbar">' +
+        (tS.cur ? '<i style="width:' + (tS.cur / t.cur * 100).toFixed(2) + '%;background:#38BDF8"></i>' : '') + (tF.cur ? '<i style="width:' + (tF.cur / t.cur * 100).toFixed(2) + '%;background:#FB923C"></i>' : '') +
+        '</div><div class="acgrid" style="margin:10px 0 0">';
+      [['stock', 'Stocks (delivery)', '#38BDF8', tS], ['fno', 'F&amp;O', '#FB923C', tF]].forEach(function (k) {
+        var p = k[3], cl = p.pl >= 0 ? '#34D399' : '#F87171';
+        html += '<button class="accard" data-pt="' + k[0] + '"><span class="abar" style="background:' + k[2] + '"></span>' +
+          '<div class="an"><b>' + k[1] + '</b><small>' + p.n + ' position' + (p.n === 1 ? '' : 's') + '</small><small>Invested ' + money(p.inv) + '</small></div>' +
+          '<div class="av"><b>' + money(p.cur) + '</b><small style="color:' + cl + '">' + signed(p.pl) + ' (' + (p.plp >= 0 ? '+' : '') + p.plp.toFixed(2) + '%)</small></div></button>';
+      });
+      html += '</div></div>';
+    }
 
     // per-account summary (consolidated view only)
     if (pview === 'all' && acs.length > 1) {
       html += '<div class="dcard" style="margin-bottom:12px"><h4>Accounts · share of current value</h4><div class="pbar">';
-      var per = acs.map(function (x, k) { var rr = all.filter(function (r) { return r.acct === x.id; }); return { x: x, k: k, t: sumRows(rr) }; });
+      var per = acs.map(function (x, k) { var rr = all.filter(function (r) { return r.acct === x.id && (ptype === 'all' || (ptype === 'fno') === r.fno); }); return { x: x, k: k, t: sumRows(rr) }; });
       per.forEach(function (p) { if (p.t.cur) html += '<i style="width:' + (p.t.cur / t.cur * 100).toFixed(2) + '%;background:' + ACOL[p.k % ACOL.length] + '"></i>'; });
       html += '</div><div class="acgrid" style="margin:10px 0 0">';
       per.forEach(function (p) {
@@ -1923,7 +2004,13 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     html += '<p style="font-size:11px;color:var(--mut);text-align:center;margin:14px 8px;line-height:1.5">Green = in profit, red = in loss, compared with your buy price. Tap a holding for more detail, including its target and % left (see the Dashboard for target progress). ' +
       (t.priced < rows.length ? (rows.length - t.priced) + ' holding(s) are waiting for a price and are not in the totals yet.' : '') + '</p>';
     el.innerHTML = html;
-    Array.prototype.forEach.call(el.querySelectorAll('.acchips button, .accard'), function (b) {
+    bindPort(el);
+  }
+  function bindPort(el) {
+    Array.prototype.forEach.call(el.querySelectorAll('[data-pt]'), function (b) {
+      b.onclick = function () { ptype = b.dataset.pt; renderPortfolio(); window.scrollTo(0, 0); };
+    });
+    Array.prototype.forEach.call(el.querySelectorAll('.acchips button, .accard[data-v]'), function (b) {
       b.onclick = function () { pview = b.dataset.v; renderPortfolio(); window.scrollTo(0, 0); };
     });
     Array.prototype.forEach.call(el.querySelectorAll('.psort button'), function (b) {
