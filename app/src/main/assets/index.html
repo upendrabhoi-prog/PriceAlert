@@ -240,6 +240,14 @@ nav.bot button.on{color:var(--acc);font-weight:600}
 .wtabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px;margin:8px 0 12px}
 .wtabs button{height:40px;border:0;border-radius:10px;background:transparent;color:var(--mut);font-weight:700;font-size:13px}
 .wtabs button.on{background:var(--acc);color:#0A0F1C}
+.idxs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:8px 0 2px}
+.idx{border-radius:11px;padding:6px 8px;border:1px solid var(--line);background:var(--card);min-width:0}
+.idx.up{background:#0E2A22;border-color:#1F5C45}.idx.dn{background:#2E1418;border-color:#6B2530}
+.idx .r{display:flex;align-items:baseline;justify-content:space-between;gap:6px;white-space:nowrap}
+.idx .n{font-size:10px;font-weight:700;letter-spacing:.2px;color:var(--mut)}
+.idx .v{font-family:var(--mono);font-size:14px;font-weight:800}
+.idx .c{font-family:var(--mono);font-size:11px;font-weight:700;margin-top:1px;text-align:right;white-space:nowrap}
+.idx.up .c{color:#34D399}.idx.dn .c{color:#F87171}
 .dtabs button{font-size:12.5px;display:flex;align-items:center;justify-content:center;gap:5px;padding:0 4px}
 .dtabs .gb{min-width:18px;height:18px;border-radius:9px;background:#16A34A;color:#fff;font-size:10.5px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;padding:0 5px}
 .hcard .r2{gap:6px}
@@ -442,6 +450,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
       </div>
     </div>
     <div class="status"><span class="dot" id="mDot"></span><span id="mText">Loading…</span></div>
+    <div class="idxs" id="idxBar" style="display:none"></div>
     <div class="search" id="searchBox">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9AA4B8" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
       <input id="q" type="text" enterkeyhint="search" autocomplete="off" spellcheck="false" placeholder="Search alerts by stock or index name" aria-label="Search alerts">
@@ -628,7 +637,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
 
       <button class="btn" id="testBtn">Send test notification</button>
       <button class="btn" id="chanBtn" style="margin-top:8px">Notification sound &amp; style settings</button>
-      <p style="font-size:11px;color:var(--mut);text-align:center;margin:16px 8px;line-height:1.5">Wealthora v2.6 · Prices may be delayed. Not investment advice.</p>
+      <p style="font-size:11px;color:var(--mut);text-align:center;margin:16px 8px;line-height:1.5">Wealthora v2.7 · Prices may be delayed. Not investment advice.</p>
     </section>
   </main>
 
@@ -1028,7 +1037,23 @@ nav.bot button.on{color:var(--acc);font-weight:600}
     return '<div class="fnosw ' + (cls || '') + '"><span>F&amp;O?</span><button type="button" data-f="0" class="' + (on ? '' : 'on') + '">No</button><button type="button" data-f="1" class="y' + (on ? ' on' : '') + '">Yes</button></div>';
   }
 
+  // ---------- market indices (NIFTY 50 / BANK NIFTY) ----------
+  var IDX = [['NIFTY', 'NIFTY 50'], ['BANKNIFTY', 'BANK NIFTY']];
+  function renderIdx() {
+    var el = $('idxBar');
+    if (!el) return;
+    el.style.display = view === 'dashboard' || view === 'watch' ? 'grid' : 'none';
+    el.innerHTML = IDX.map(function (x) {
+      var q = S && S.quotes[x[0]];
+      if (!q || !q.price) return '<div class="idx"><div class="r"><span class="n">' + x[1] + '</span><span class="v" style="color:var(--mut)">—</span></div><div class="c" style="color:var(--mut)">waiting…</div></div>';
+      var has = q.hasChg, up = has && q.chg >= 0;
+      return '<div class="idx' + (!has ? '' : up ? ' up' : ' dn') + '" role="group" aria-label="' + x[1] + '"><div class="r"><span class="n">' + x[1] + '</span><span class="v">' + fmt(q.price) + '</span></div>' +
+        '<div class="c">' + (has ? (up ? '▲ +' : '▼ −') + fmt(Math.abs(q.chg)) + ' (' + (up ? '+' : '−') + Math.abs(q.pchg).toFixed(2) + '%)' : '—') + '</div></div>';
+    }).join('');
+  }
+
   function renderDashboard() {
+    renderIdx();
     var el = $('dash'), html = '';
     // ---- % target left (My Stocks / Portfolio) ----
     var acs = accounts(), multi = acs.length > 1, tg = [], noT = [];
@@ -1571,6 +1596,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
   // ---------- watchlist ----------
   function holdings() { return (S && S.holdings) || []; }
   function renderWatch() {
+    renderIdx();
     var items = [];
     if (wtab === 'mine') {
       var seen = {};
@@ -2110,6 +2136,7 @@ nav.bot button.on{color:var(--acc);font-weight:600}
       b.className = b.dataset.v === v ? 'on' : '';
     });
     window.scrollTo(0, 0);
+    renderIdx();
     if (S) { if (v === 'settings') renderSettings(); if (v === 'dashboard') renderDashboard(); if (v === 'watch') renderWatch(); if (v === 'port') renderPortfolio(); if (v === 'real') renderRealised(); renderHistory(); }
   }
 
