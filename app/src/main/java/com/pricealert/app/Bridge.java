@@ -202,6 +202,12 @@ public class Bridge {
     }
 
     @JavascriptInterface
+    public void setHoldingFno(int i, boolean fno) {
+        Store.get(ctx()).setHoldingFno(i, fno);
+        Widgets.updateAll(ctx());
+    }
+
+    @JavascriptInterface
     public void setSlotSector(int i, String sector) {
         Store.get(ctx()).setSlotSector(i, sector);
     }

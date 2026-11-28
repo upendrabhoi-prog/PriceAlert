@@ -80,7 +80,7 @@ public final class Sheets {
             if (w.isEmpty()) throw new Exception("Finish the one-time sheet setup in Settings first");
             String q = "action=add&tab=" + enc(tab(s)) + "&stock=" + enc(t.optString("stock")) + "&acct=" + enc(t.optString("acct"))
                     + "&date=" + enc(t.optString("date")) + "&buy=" + enc(t.optString("buy")) + "&sell=" + enc(t.optString("sell"))
-                    + "&qty=" + enc(t.optString("qty"));
+                    + "&qty=" + enc(t.optString("qty")) + "&fno=" + enc(t.optString("fno", "No"));
             JSONObject o = script(w, q);
             r.put("ok", true);
             r.put("sr", o.optInt("sr"));
@@ -196,14 +196,15 @@ public final class Sheets {
     /** Returns the trades, or null when no heading row with the needed columns was found. */
     static JSONArray parse(String csv) throws JSONException {
         List<List<String>> t = csv(csv);
-        int hr = -1, cStock = -1, cAcct = -1, cDate = -1, cBuy = -1, cSell = -1, cQty = -1, cPl = -1, cSr = -1;
+        int hr = -1, cStock = -1, cAcct = -1, cDate = -1, cBuy = -1, cSell = -1, cQty = -1, cPl = -1, cSr = -1, cFno = -1;
         for (int i = 0; i < Math.min(t.size(), 15) && hr < 0; i++) {
             List<String> row = t.get(i);
-            int st = -1, ac = -1, dt = -1, by = -1, sl = -1, qt = -1, pl = -1, sr = -1;
+            int st = -1, ac = -1, dt = -1, by = -1, sl = -1, qt = -1, pl = -1, sr = -1, fo = -1;
             for (int k = 0; k < row.size(); k++) {
                 String h = row.get(k).toLowerCase(Locale.ROOT).replace('\n', ' ').trim();
                 if (h.isEmpty()) continue;
-                if (h.contains("date")) { if (dt < 0) dt = k; }
+                if (h.contains("f&o") || h.contains("f & o") || h.equals("fno") || h.contains("f&amp;o") || h.contains("futures")) { if (fo < 0) fo = k; }
+                else if (h.contains("date")) { if (dt < 0) dt = k; }
                 else if (h.contains("profit") || h.contains("p&l") || h.contains("p/l") || h.contains("loss")) { if (pl < 0) pl = k; }
                 else if (h.contains("stock") || h.contains("symbol") || h.contains("scrip") || h.contains("company")) { if (st < 0) st = k; }
                 else if (h.contains("account") || h.contains("broker") || h.contains("demat")) { if (ac < 0) ac = k; }
@@ -213,7 +214,7 @@ public final class Sheets {
                 else if (h.matches(".*\\bsr\\b.*") || h.contains("serial") || h.matches(".*\\bs\\.? ?no\\b.*")) { if (sr < 0) sr = k; }
             }
             if (st >= 0 && dt >= 0 && (pl >= 0 || (by >= 0 && sl >= 0 && qt >= 0))) {
-                hr = i; cStock = st; cAcct = ac; cDate = dt; cBuy = by; cSell = sl; cQty = qt; cPl = pl; cSr = sr;
+                hr = i; cStock = st; cAcct = ac; cDate = dt; cBuy = by; cSell = sl; cQty = qt; cPl = pl; cSr = sr; cFno = fo;
             }
         }
         if (hr < 0) return null;
@@ -234,6 +235,7 @@ public final class Sheets {
             JSONObject o = new JSONObject();
             o.put("stock", stock);
             o.put("acct", acct.isEmpty() ? "Main" : acct);
+            o.put("fno", cell(r, cFno).trim().toLowerCase(Locale.ROOT).startsWith("y"));
             o.put("date", date);
             o.put("buy", Double.isNaN(buy) ? 0 : buy);
             o.put("sell", Double.isNaN(sell) ? 0 : sell);

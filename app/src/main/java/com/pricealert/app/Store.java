@@ -85,6 +85,15 @@ public final class Store {
         put("slots", a);
     }
 
+    /** Marks a My Stocks entry as an F&O position (true) or a normal stock (false). */
+    public synchronized void setHoldingFno(int i, boolean fno) {
+        JSONArray a = holdings();
+        JSONObject o = a.optJSONObject(i);
+        if (o == null) return;
+        try { o.put("fno", fno); } catch (JSONException ignored) { }
+        put("holdings", a);
+    }
+
     /** Replaces all alerts and My Stocks entries (used by restore). */
     public synchronized void replaceAll(JSONArray newSlots, JSONArray newHoldings) {
         put("slots", newSlots);

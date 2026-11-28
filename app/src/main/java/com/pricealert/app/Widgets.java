@@ -7,6 +7,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.BackgroundColorSpan;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
 import android.widget.RemoteViews;
 
 import org.json.JSONArray;
@@ -38,6 +43,27 @@ public final class Widgets {
         boolean hasPrice;
         boolean hasChg;
         double ref;          // buy price (My stocks) or alert price (Alert stocks)
+        boolean fno;         // F&O position
+    }
+
+    static final int ORANGE = 0xFFFB923C;
+
+    static boolean isFno(JSONObject h) {
+        if (h == null) return false;
+        Object f = h.opt("fno");
+        return Boolean.TRUE.equals(f) || (f instanceof String && ((String) f).toLowerCase(Locale.ROOT).startsWith("y"));
+    }
+
+    /** "SBIN" followed by a small orange "F&O" tag when it is an F&O position. */
+    static CharSequence symText(String sym, boolean fno) {
+        if (!fno) return sym;
+        SpannableStringBuilder b = new SpannableStringBuilder(sym).append("  ");
+        int st = b.length();
+        b.append("\u00A0F&O\u00A0");
+        b.setSpan(new BackgroundColorSpan(ORANGE), st, b.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        b.setSpan(new ForegroundColorSpan(0xFF0A0F1C), st, b.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        b.setSpan(new RelativeSizeSpan(0.7f), st, b.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return b;
     }
 
     /** Redraws every widget the user has placed. Safe to call from any thread. */
@@ -105,6 +131,8 @@ public final class Widgets {
         JSONArray hs = s.holdings();
         JSONObject quotes = s.quotes();
         double inv = 0, cur = 0, day = 0;
+        double[] fInv = new double[2], fCur = new double[2];
+        int[] fN = new int[2];
         int n = 0, priced = 0;
         for (int i = 0; i < hs.length(); i++) {
             JSONObject h = hs.optJSONObject(i);
@@ -113,11 +141,15 @@ public final class Widgets {
             double buy = h.optDouble("buy", 0), qty = h.optDouble("qty", 0);
             if (sym.isEmpty() || buy <= 0 || qty <= 0) continue;
             n++;
+            int f = isFno(h) ? 1 : 0;
+            fN[f]++;
             JSONObject q = quotes.optJSONObject(sym);
             if (q == null) continue;
             priced++;
             inv += buy * qty;
             cur += q.optDouble("price", 0) * qty;
+            fInv[f] += buy * qty;
+            fCur[f] += q.optDouble("price", 0) * qty;
             if (q.optBoolean("hasChg", false)) day += q.optDouble("chg", 0) * qty;
         }
         double pl = cur - inv, plp = inv > 0 ? pl / inv * 100 : 0;
@@ -146,6 +178,24 @@ public final class Widgets {
         v.setTextViewText(R.id.w_inv, Notifier.rupees(inv));
         v.setTextViewText(R.id.w_day, signed(day) + " (" + pct(dayp) + ")");
         v.setTextColor(R.id.w_day, day >= 0 ? GREEN : RED);
+        if (fN[1] > 0) {
+            SpannableStringBuilder sb = new SpannableStringBuilder();
+            String[] lab = {"Stocks", "F&O"};
+            int[] col = {0xFF38BDF8, ORANGE};
+            for (int f = 0; f < 2; f++) {
+                if (f == 1) sb.append("\n");
+                int a = sb.length();
+                sb.append("■ ");
+                sb.setSpan(new ForegroundColorSpan(col[f]), a, sb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                sb.append(lab[f]).append(" · ").append(String.valueOf(fN[f])).append("   ").append(Notifier.rupees(fCur[f])).append("   ");
+                double fp = fInv[f] > 0 ? (fCur[f] - fInv[f]) / fInv[f] * 100 : 0;
+                int b0 = sb.length();
+                sb.append(fInv[f] > 0 ? pct(fp) : "—");
+                sb.setSpan(new ForegroundColorSpan(fp >= 0 ? GREEN : RED), b0, sb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+            v.setViewVisibility(R.id.w_split, android.view.View.VISIBLE);
+            v.setTextViewText(R.id.w_split, sb);
+        } else v.setViewVisibility(R.id.w_split, android.view.View.GONE);
         v.setTextViewText(R.id.w_count, n + " holding" + (n == 1 ? "" : "s")
                 + (priced < n ? " · " + (n - priced) + " waiting for price" : ""));
         return v;
@@ -180,6 +230,7 @@ public final class Widgets {
         double sortKey;
         int color;       // 'r', 'y', 'b' or 'g' bar
         int progress;    // 0-100
+        boolean fno;     // F&O position
         boolean good;    // green row (target reached)
         char bg = 'n';   // row background: 'n' normal, 'g' green (less than 5% away)
     }
@@ -258,6 +309,7 @@ public final class Widgets {
             Item it = new Item();
             it.sym = sym;
             it.tag = accountName(accts, h.optString("acct", ""));
+            it.fno = isFno(h);
             it.sub = "CMP " + Notifier.rupees(price) + " · Target " + Notifier.rupees(tg);
             it.pct = hit ? "✓ Hit" : String.format(Locale.US, "%.2f%%", left);
             it.note = hit ? "reached" : "to go";
@@ -297,7 +349,7 @@ public final class Widgets {
 
     static RemoteViews itemViews(Context c, Item it) {
         RemoteViews v = new RemoteViews(c.getPackageName(), R.layout.w_row2);
-        v.setTextViewText(R.id.r2_sym, it.sym);
+        v.setTextViewText(R.id.r2_sym, symText(it.sym, it.fno));
         v.setTextViewText(R.id.r2_sub, it.sub);
         v.setTextViewText(R.id.r2_pct, it.pct);
         int col = it.color == 'r' ? RED : it.color == 'y' ? 0xFFFCD34D : it.color == 'g' ? GREEN : 0xFF38BDF8;
@@ -342,12 +394,15 @@ public final class Widgets {
                 String sym = h.optString("sym", "");
                 double qty = h.optDouble("qty", 0), buy = h.optDouble("buy", 0);
                 if (sym.isEmpty() || qty <= 0) continue;
-                double[] a = agg.get(sym);
-                if (a == null) agg.put(sym, new double[]{buy * qty, qty});
+                String key = isFno(h) ? sym + "|F" : sym;
+                double[] a = agg.get(key);
+                if (a == null) agg.put(key, new double[]{buy * qty, qty});
                 else { a[0] += buy * qty; a[1] += qty; }
             }
             for (Map.Entry<String, double[]> e : agg.entrySet()) {
-                Row r = row(e.getKey(), quotes);
+                boolean f = e.getKey().endsWith("|F");
+                Row r = row(f ? e.getKey().substring(0, e.getKey().length() - 2) : e.getKey(), quotes);
+                r.fno = f;
                 r.ref = e.getValue()[1] > 0 ? e.getValue()[0] / e.getValue()[1] : 0;
                 map.put(e.getKey(), r);
             }
@@ -388,7 +443,7 @@ public final class Widgets {
 
     static RemoteViews rowViews(Context c, Row r, boolean mine) {
         RemoteViews v = new RemoteViews(c.getPackageName(), R.layout.w_row);
-        v.setTextViewText(R.id.r_sym, r.sym);
+        v.setTextViewText(R.id.r_sym, symText(r.sym, r.fno));
         v.setTextViewText(R.id.r_name, (mine ? "Buy " : "Alert ") + Notifier.rupees(r.ref));
         v.setTextViewText(R.id.r_price, r.hasPrice ? Notifier.rupees(r.price) : "—");
         v.setTextViewText(R.id.r_pct, r.hasChg ? pct(r.pchg) : "—");
