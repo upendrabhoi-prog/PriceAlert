@@ -201,6 +201,23 @@ public class Bridge {
         });
     }
 
+    /** Loads candles for the chart screen. Result: "chart" event. */
+    @JavascriptInterface
+    public void chart(String sym, String range, String token) {
+        bg.execute(() -> {
+            JSONObject r;
+            try {
+                r = PriceFetcher.candles(sym, range);
+                r.put("ok", true);
+            } catch (Exception e) {
+                r = new JSONObject();
+                try { r.put("ok", false); r.put("err", e.getMessage() == null ? "Couldn't load the chart" : e.getMessage()); } catch (Exception ignored) { }
+            }
+            try { r.put("sym", sym); r.put("range", range); r.put("token", token); } catch (Exception ignored) { }
+            emit("chart", r.toString());
+        });
+    }
+
     @JavascriptInterface
     public void setHoldingFno(int i, boolean fno) {
         Store.get(ctx()).setHoldingFno(i, fno);
